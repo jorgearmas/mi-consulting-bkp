@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MI Consulting Group — Turn SQF Certification Into Business Growth</title>
+<meta name="description" content="Compliance as Confidence. MI builds your SQF program, develops your people into a food safety team, and turns certification into retailer contracts, export access, and pricing power. 300+ manufacturers served. Bilingual. Month-to-month.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0A2540;
+    --navy-2:#13314F;
+    --navy-3:#1C3F5E;
+    --green:#1B9E77;
+    --green-d:#15805F;
+    --green-l:#27B98C;
+    --gold:#E0A82E;
+    --gold-d:#C9942099;
+    --ink:#16273B;
+    --slate:#5A6B82;
+    --cloud:#F3F6FA;
+    --mist:#E7EDF4;
+    --line:#D4DDE8;
+    --white:#FFFFFF;
+    --ice:#BFD0E0;
+    --shadow-sm:0 2px 8px rgba(10,37,64,.06);
+    --shadow-md:0 12px 32px rgba(10,37,64,.10);
+    --shadow-lg:0 28px 64px rgba(10,37,64,.18);
+    --r:18px;
+    --maxw:1200px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Archivo',sans-serif;
+    color:var(--ink);
+    background:var(--white);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',serif;line-height:1.1;letter-spacing:-.01em;font-weight:600}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .eyebrow{
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.78rem;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--green);
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:28px;height:2px;background:var(--green);display:inline-block}
+  .eyebrow.on-dark{color:var(--gold)}
+  .eyebrow.on-dark::before{background:var(--gold)}
+  .eyebrow.centered{justify-content:center}
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;
+    padding:16px 30px;border-radius:100px;cursor:pointer;border:none;
+    transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,background .2s;
+    white-space:nowrap;
+  }
+  .btn-primary{background:var(--green);color:#fff;box-shadow:0 10px 28px rgba(27,158,119,.36)}
+  .btn-primary:hover{background:var(--green-d);transform:translateY(-3px);box-shadow:0 16px 36px rgba(27,158,119,.46)}
+  .btn-gold{background:var(--gold);color:var(--navy);box-shadow:0 10px 28px rgba(224,168,46,.34)}
+  .btn-gold:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(224,168,46,.46)}
+  .btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--green);color:var(--green-d);transform:translateY(-3px)}
+  .btn-ghost.on-dark{color:#fff;border-color:rgba(255,255,255,.28)}
+  .btn-ghost.on-dark:hover{border-color:var(--gold);color:var(--gold)}
+  .btn-block{width:100%;justify-content:center}
+  .btn .arrow{transition:transform .25s}
+  .btn:hover .arrow{transform:translateX(4px)}
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(255,255,255,.86);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:74px}
+  .logo{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-weight:700;font-size:1.32rem;color:var(--navy)}
+  .logo .mark{
+    width:42px;height:42px;border-radius:11px;
+    background:linear-gradient(135deg,var(--navy),var(--navy-3));
+    display:grid;place-items:center;color:#fff;font-size:1.05rem;font-weight:900;
+    position:relative;overflow:hidden;
+  }
+  .logo .mark::after{content:"";position:absolute;inset:0;background:
+    radial-gradient(circle at 72% 78%,rgba(27,158,119,.9),transparent 56%)}
+  .logo .mark span{position:relative;z-index:1;letter-spacing:-.04em}
+  .logo small{display:block;font-family:'Archivo',sans-serif;font-weight:600;font-size:.6rem;letter-spacing:.18em;color:var(--slate);text-transform:uppercase;margin-top:-3px}
+  .nav-links{display:flex;align-items:center;gap:34px}
+  .nav-links a{font-weight:600;font-size:.95rem;color:var(--ink);transition:color .2s;position:relative}
+  .nav-links a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;background:var(--green);transition:width .25s}
+  .nav-links a:not(.btn):hover::after{width:100%}
+  .nav-links a:not(.btn):hover{color:var(--green-d)}
+  .nav-cta{padding:11px 22px;font-size:.92rem}
+  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
+  .burger span{width:24px;height:2.4px;background:var(--navy);border-radius:2px;transition:.3s}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;background:var(--navy);color:#fff;overflow:hidden;padding:72px 0 0}
+  .hero::before{content:"";position:absolute;top:-180px;right:-160px;width:560px;height:560px;
+    background:radial-gradient(circle,rgba(27,158,119,.34),transparent 66%);pointer-events:none}
+  .hero::after{content:"";position:absolute;bottom:-160px;left:-180px;width:480px;height:480px;
+    background:radial-gradient(circle,rgba(224,168,46,.16),transparent 66%);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:2}
+  .hero-copy{padding-bottom:80px}
+  .hero h1{font-size:clamp(2.7rem,4.6vw,4rem);font-weight:600;margin:22px 0 0;color:#fff}
+  .hero h1 .hl{color:var(--green-l);font-style:italic;font-weight:500}
+  .hero .sub{font-size:1.18rem;color:var(--ice);margin:24px 0 32px;max-width:33ch}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .trust-row{display:flex;gap:26px;margin-top:38px;flex-wrap:wrap}
+  .trust-item{display:flex;flex-direction:column}
+  .trust-item b{font-family:'Fraunces',serif;font-size:1.7rem;color:#fff;font-weight:600}
+  .trust-item span{font-size:.82rem;color:var(--ice);letter-spacing:.02em}
+  .trust-item + .trust-item{padding-left:26px;border-left:1px solid var(--navy-3)}
+
+  /* hero visual */
+  .hero-visual{position:relative;align-self:stretch;display:flex;align-items:flex-end}
+  .hero-visual .photo{
+    position:relative;border-radius:22px 22px 0 0;overflow:hidden;width:100%;
+    box-shadow:0 -10px 60px rgba(0,0,0,.4);
+  }
+  .hero-visual .photo img{width:100%;height:560px;object-fit:cover;object-position:center 30%}
+  .hero-visual .photo::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 55%,rgba(10,37,64,.5))}
+  .hero-badge{
+    position:absolute;left:-28px;top:60px;background:#fff;color:var(--ink);
+    border-radius:16px;padding:18px 22px;box-shadow:var(--shadow-lg);
+    display:flex;align-items:center;gap:14px;z-index:3;max-width:265px;
+    animation:floaty 5s ease-in-out infinite;
+  }
+  .hero-badge .ic{width:46px;height:46px;border-radius:12px;background:var(--green);display:grid;place-items:center;flex-shrink:0}
+  .hero-badge .ic svg{width:24px;height:24px}
+  .hero-badge b{display:block;font-family:'Fraunces',serif;font-size:1.04rem;color:var(--navy)}
+  .hero-badge span{font-size:.8rem;color:var(--slate);line-height:1.35;display:block}
+  .hero-badge-2{
+    position:absolute;right:-22px;bottom:96px;background:var(--gold);color:var(--navy);
+    border-radius:14px;padding:14px 20px;box-shadow:var(--shadow-lg);z-index:3;
+    animation:floaty 5s ease-in-out infinite .8s;
+  }
+  .hero-badge-2 b{font-family:'Fraunces',serif;font-size:1.5rem;display:block;line-height:1}
+  .hero-badge-2 span{font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  /* logo strip */
+  .marquee-band{background:var(--navy-2);padding:20px 0;position:relative;z-index:2}
+  .marquee-band .wrap{display:flex;align-items:center;gap:30px;flex-wrap:wrap;justify-content:center}
+  .marquee-band p{font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ice);font-weight:600}
+  .pill-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .pill{
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    color:#fff;font-size:.82rem;font-weight:600;padding:8px 16px;border-radius:100px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .pill svg{width:15px;height:15px}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:104px 0}
+  .sec-head{max-width:720px;margin-bottom:56px}
+  .sec-head.centered{margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head h2{font-size:clamp(2.1rem,3.4vw,3rem);margin:18px 0 16px;color:var(--navy)}
+  .sec-head p{font-size:1.12rem;color:var(--slate)}
+
+  /* ---------- CONCEPT (3 shifts) ---------- */
+  .concept{background:var(--cloud);position:relative}
+  .shifts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .shift{
+    background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:34px 30px;
+    position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;
+  }
+  .shift::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:var(--c)}
+  .shift:hover{transform:translateY(-8px);box-shadow:var(--shadow-md)}
+  .shift .ic{width:58px;height:58px;border-radius:15px;background:var(--c);display:grid;place-items:center;margin-bottom:22px}
+  .shift .ic svg{width:30px;height:30px}
+  .shift .tags{display:flex;align-items:center;gap:9px;margin-bottom:16px;font-size:.74rem;font-weight:700;letter-spacing:.04em}
+  .shift .tag-from{background:var(--mist);color:var(--slate);padding:5px 12px;border-radius:100px;text-transform:uppercase}
+  .shift .tag-to{background:var(--c);color:#fff;padding:5px 12px;border-radius:100px;text-transform:uppercase}
+  .shift .tags svg{width:15px;height:15px;color:var(--c);flex-shrink:0}
+  .shift h3{font-size:1.42rem;color:var(--navy);margin-bottom:12px}
+  .shift p{font-size:.98rem;color:var(--slate)}
+  .concept-line{
+    margin-top:36px;background:var(--navy);color:#fff;border-radius:var(--r);
+    padding:30px 38px;display:flex;align-items:center;gap:20px;box-shadow:var(--shadow-md);
+  }
+  .concept-line .ic{width:52px;height:52px;border-radius:13px;background:var(--green);display:grid;place-items:center;flex-shrink:0}
+  .concept-line .ic svg{width:26px;height:26px}
+  .concept-line .txt b{font-family:'Fraunces',serif;font-size:1.32rem;color:#fff;display:block}
+  .concept-line .txt span{color:var(--ice);font-size:.96rem}
+  .concept-band{margin-top:24px}
+  .concept-band figure{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-md)}
+  .concept-band img{width:100%;height:340px;object-fit:cover;object-position:center 40%}
+  .concept-band figcaption{
+    position:absolute;left:0;right:0;bottom:0;padding:40px 38px 32px;
+    background:linear-gradient(transparent,rgba(10,37,64,.92));
+  }
+  .concept-band figcaption p{color:#fff;font-family:'Fraunces',serif;font-size:1.36rem;font-weight:500;max-width:30ch;margin-top:10px;line-height:1.35}
+
+  /* ---------- PROBLEM / SOLUTION ---------- */
+  .ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+  .ps-col{padding:40px 38px}
+  .ps-col.prob{background:#fff}
+  .ps-col.sol{background:var(--navy);color:#fff}
+  .ps-col h3{font-size:1.05rem;font-family:'Archivo',sans-serif;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:26px}
+  .ps-col.prob h3{color:var(--slate)}
+  .ps-col.sol h3{color:var(--gold)}
+  .ps-item{display:flex;gap:14px;padding:17px 0;border-bottom:1px solid var(--line)}
+  .ps-col.sol .ps-item{border-bottom-color:var(--navy-3)}
+  .ps-item:last-child{border-bottom:none;padding-bottom:0}
+  .ps-item .dot{width:26px;height:26px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;margin-top:2px}
+  .ps-col.prob .dot{background:#FCEBE9}
+  .ps-col.sol .dot{background:rgba(27,158,119,.18)}
+  .ps-item .dot svg{width:15px;height:15px}
+  .ps-item p{font-size:.99rem}
+  .ps-col.prob .ps-item p{color:var(--ink)}
+  .ps-col.sol .ps-item p{color:var(--ice)}
+  .ps-col.sol .ps-item p b{color:#fff}
+
+  /* ---------- TIERS ---------- */
+  .tiers-wrap{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+  .tiers-wrap::before{content:"";position:absolute;top:-150px;left:-120px;width:420px;height:420px;
+    background:radial-gradient(circle,rgba(27,158,119,.22),transparent 68%)}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative;z-index:2}
+  .tier{
+    background:var(--navy-2);border:1px solid var(--navy-3);border-radius:var(--r);
+    padding:34px 30px;position:relative;transition:transform .3s,border-color .3s;display:flex;flex-direction:column;
+  }
+  .tier:hover{transform:translateY(-8px);border-color:var(--c)}
+  .tier.featured{border-color:var(--green);box-shadow:0 0 0 1px var(--green),0 24px 50px rgba(0,0,0,.4)}
+  .tier .badge-top{
+    position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    background:var(--green);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:.1em;
+    text-transform:uppercase;padding:6px 16px;border-radius:100px;white-space:nowrap;
+  }
+  .tier .t-ic{width:52px;height:52px;border-radius:13px;background:var(--c);display:grid;place-items:center;margin-bottom:18px}
+  .tier .t-ic svg{width:26px;height:26px}
+  .tier .t-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
+  .tier .t-price{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:600;color:#fff;line-height:1;margin:6px 0 4px}
+  .tier .t-price small{font-size:.95rem;color:var(--ice);font-family:'Archivo',sans-serif;font-weight:500}
+  .tier .t-desc{font-size:.94rem;color:var(--ice);margin:14px 0 20px;min-height:62px}
+  .tier ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:26px;flex-grow:1}
+  .tier li{display:flex;gap:10px;font-size:.9rem;color:#fff}
+  .tier li svg{width:17px;height:17px;color:var(--c);flex-shrink:0;margin-top:3px}
+  .tier .btn{margin-top:auto}
+  .tiers-note{text-align:center;margin-top:36px;color:var(--ice);font-size:.95rem;position:relative;z-index:2}
+  .tiers-note b{color:var(--gold)}
+
+  /* ---------- GEO MAP ---------- */
+  .geo{background:var(--cloud)}
+  .geo-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}
+  .geo-visual{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-md)}
+  .geo-visual img{width:100%;height:480px;object-fit:cover}
+  .geo-visual .ov{position:absolute;inset:0;background:linear-gradient(160deg,rgba(10,37,64,.1),rgba(10,37,64,.55))}
+  .geo-visual .cap{position:absolute;left:24px;bottom:22px;color:#fff}
+  .geo-visual .cap b{font-family:'Fraunces',serif;font-size:1.3rem;display:block}
+  .geo-visual .cap span{font-size:.85rem;color:var(--ice)}
+  .phases{display:flex;flex-direction:column;gap:14px}
+  .phase{
+    display:flex;gap:18px;background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:18px 20px;transition:transform .25s,box-shadow .25s;
+  }
+  .phase:hover{transform:translateX(6px);box-shadow:var(--shadow-sm)}
+  .phase .num{
+    width:42px;height:42px;border-radius:11px;background:var(--c);color:#fff;
+    display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:700;font-size:1.2rem;flex-shrink:0;
+  }
+  .phase .num.dark{color:var(--navy)}
+  .phase h4{font-size:1.06rem;color:var(--navy);margin-bottom:3px}
+  .phase h4 em{color:var(--c);font-style:normal;font-weight:700}
+  .phase p{font-size:.86rem;color:var(--slate)}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;counter-reset:s}
+  .step{position:relative;padding-top:20px}
+  .step .line{position:absolute;top:36px;left:46px;right:-22px;height:2px;background:var(--line);z-index:0}
+  .step:last-child .line{display:none}
+  .step .num{
+    width:56px;height:56px;border-radius:15px;background:var(--navy);color:#fff;
+    display:grid;place-items:center;font-family:'Fraunces',serif;font-size:1.4rem;font-weight:700;
+    position:relative;z-index:1;margin-bottom:20px;
+  }
+  .step:nth-child(2) .num{background:var(--green)}
+  .step:nth-child(3) .num{background:var(--gold);color:var(--navy)}
+  .step:nth-child(4) .num{background:var(--navy-3)}
+  .step h4{font-size:1.2rem;color:var(--navy);margin-bottom:8px}
+  .step p{font-size:.93rem;color:var(--slate)}
+
+  /* ---------- VALUE / PHOTO SPLIT ---------- */
+  .value{background:var(--navy);color:#fff;overflow:hidden}
+  .value-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:54px;align-items:center}
+  .value-photos{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-content:center}
+  .value-photos figure{border-radius:16px;overflow:hidden;position:relative}
+  .value-photos img{width:100%;height:100%;object-fit:cover;display:block}
+  /* tall vertical portrait — left column, spans both rows */
+  .value-photos figure.tall{grid-row:span 2;height:472px}
+  .value-photos figure.tall img{object-position:center 25%}
+  /* top-right: vertical portrait */
+  .value-photos figure.box{height:228px}
+  .value-photos figure.box img{object-position:center 22%}
+  /* bottom-right: horizontal landscape */
+  .value-photos figure.wide{height:228px}
+  .value-photos figure.wide img{object-position:center 42%}
+  .value-photos figure::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+  .value h2{color:#fff;font-size:clamp(2rem,3.2vw,2.8rem);margin:18px 0 20px}
+  .value h2 em{color:var(--green-l);font-style:italic;font-weight:500}
+  .value-list{display:flex;flex-direction:column;gap:20px;margin-top:8px}
+  .value-li{display:flex;gap:16px}
+  .value-li .ic{width:46px;height:46px;border-radius:12px;background:var(--navy-2);border:1px solid var(--navy-3);display:grid;place-items:center;flex-shrink:0}
+  .value-li .ic svg{width:23px;height:23px;color:var(--green-l)}
+  .value-li h4{font-size:1.1rem;color:#fff;margin-bottom:3px}
+  .value-li p{font-size:.93rem;color:var(--ice)}
+
+  /* ---------- STATS BAND ---------- */
+  .statband{background:var(--gold);padding:60px 0}
+  .statband .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:30px}
+  .stat{text-align:center}
+  .stat b{font-family:'Fraunces',serif;font-size:3rem;font-weight:700;color:var(--navy);display:block;line-height:1}
+  .stat span{font-size:.92rem;font-weight:600;color:var(--navy);opacity:.78}
+
+  /* ---------- TESTIMONIAL ---------- */
+  .quote-sec{background:var(--cloud)}
+  .quote-card{
+    background:#fff;border-radius:var(--r);padding:54px;display:grid;grid-template-columns:auto 1fr;
+    gap:40px;align-items:center;box-shadow:var(--shadow-md);border:1px solid var(--line);
+  }
+  .quote-card .portrait{width:200px;height:240px;border-radius:14px;overflow:hidden;flex-shrink:0}
+  .quote-card .portrait img{width:100%;height:100%;object-fit:cover}
+  .quote-mark{font-family:'Fraunces',serif;font-size:4rem;color:var(--green);line-height:.5;height:34px}
+  .quote-card blockquote{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--navy);font-weight:500;margin:14px 0 22px;line-height:1.4}
+  .quote-card .who b{display:block;color:var(--ink);font-weight:700}
+  .quote-card .who span{color:var(--slate);font-size:.9rem}
+  .quote-card .stars{display:flex;gap:3px;margin-top:10px}
+  .quote-card .stars svg{width:18px;height:18px;color:var(--gold)}
+
+  /* ---------- LEAD FORM ---------- */
+  .lead{background:var(--navy);color:#fff;position:relative;overflow:hidden;scroll-margin-top:80px}
+  .lead::before{content:"";position:absolute;top:-160px;right:-140px;width:520px;height:520px;
+    background:radial-gradient(circle,rgba(27,158,119,.3),transparent 66%)}
+  .lead::after{content:"";position:absolute;bottom:-180px;left:-160px;width:480px;height:480px;
+    background:radial-gradient(circle,rgba(224,168,46,.14),transparent 66%)}
+  .lead-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:60px;align-items:center;position:relative;z-index:2}
+  .lead-copy h2{color:#fff;font-size:clamp(2.1rem,3.4vw,3rem);margin:18px 0 18px}
+  .lead-copy h2 em{color:var(--green-l);font-style:italic;font-weight:500}
+  .lead-copy .lede{font-size:1.1rem;color:var(--ice);margin-bottom:30px}
+  .lead-assure{display:flex;flex-direction:column;gap:14px;margin-top:28px}
+  .lead-assure .row{display:flex;align-items:center;gap:13px;font-size:.97rem;color:#fff}
+  .lead-assure .row svg{width:22px;height:22px;color:var(--green-l);flex-shrink:0}
+  .lead-contact{margin-top:32px;padding-top:26px;border-top:1px solid var(--navy-3);display:flex;gap:28px;flex-wrap:wrap}
+  .lead-contact div span{display:block;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:3px}
+  .lead-contact div b{font-size:.98rem;color:#fff;font-weight:600}
+
+  .form-card{
+    background:#fff;border-radius:24px;padding:40px;box-shadow:var(--shadow-lg);
+    color:var(--ink);position:relative;
+  }
+  .form-card .tagline{
+    display:inline-flex;align-items:center;gap:8px;background:var(--cloud);
+    color:var(--green-d);font-size:.78rem;font-weight:700;letter-spacing:.04em;
+    padding:7px 14px;border-radius:100px;margin-bottom:18px;
+  }
+  .form-card .tagline svg{width:15px;height:15px}
+  .form-card h3{font-size:1.7rem;color:var(--navy);margin-bottom:6px}
+  .form-card .fc-sub{font-size:.95rem;color:var(--slate);margin-bottom:24px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:.01em}
+  .field label .req{color:var(--green)}
+  .field input,.field select,.field textarea{
+    width:100%;font-family:'Archivo',sans-serif;font-size:.96rem;color:var(--ink);
+    padding:13px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{
+    outline:none;border-color:var(--green);box-shadow:0 0 0 4px rgba(27,158,119,.12);
+  }
+  .field textarea{resize:vertical;min-height:84px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-card .btn{margin-top:8px}
+  .form-foot{font-size:.8rem;color:var(--slate);text-align:center;margin-top:14px}
+  .form-success{
+    display:none;text-align:center;padding:30px 10px;
+  }
+  .form-success.show{display:block}
+  .form-success .check{width:72px;height:72px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:0 auto 20px}
+  .form-success .check svg{width:38px;height:38px;color:#fff}
+  .form-success h3{color:var(--navy);margin-bottom:8px}
+  .form-success p{color:var(--slate);font-size:.97rem}
+  form.hide{display:none}
+
+  /* ---------- FAQ ---------- */
+  .faq-list{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  .faq-item{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden;transition:box-shadow .25s}
+  .faq-item[open]{box-shadow:var(--shadow-sm)}
+  .faq-item summary{
+    cursor:pointer;list-style:none;padding:22px 26px;font-family:'Fraunces',serif;
+    font-size:1.12rem;font-weight:600;color:var(--navy);display:flex;
+    justify-content:space-between;align-items:center;gap:20px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary .plus{
+    width:28px;height:28px;border-radius:8px;background:var(--cloud);flex-shrink:0;
+    display:grid;place-items:center;transition:transform .3s,background .3s;
+  }
+  .faq-item summary .plus svg{width:16px;height:16px;color:var(--green-d)}
+  .faq-item[open] summary .plus{transform:rotate(45deg);background:var(--green);}
+  .faq-item[open] summary .plus svg{color:#fff}
+  .faq-item .ans{padding:0 26px 24px;color:var(--slate);font-size:.98rem}
+
+  /* ---------- FINAL CTA ---------- */
+  .final{background:var(--cloud);text-align:center}
+  .final-card{
+    background:var(--navy);border-radius:28px;padding:72px 48px;position:relative;overflow:hidden;
+    box-shadow:var(--shadow-lg);
+  }
+  .final-card::before{content:"";position:absolute;top:-120px;left:-100px;width:380px;height:380px;
+    background:radial-gradient(circle,rgba(27,158,119,.3),transparent 66%)}
+  .final-card::after{content:"";position:absolute;bottom:-140px;right:-110px;width:360px;height:360px;
+    background:radial-gradient(circle,rgba(224,168,46,.16),transparent 66%)}
+  .final-card > *{position:relative;z-index:2}
+  .final-card h2{color:#fff;font-size:clamp(2.2rem,3.6vw,3.2rem);margin:18px auto 16px;max-width:18ch}
+  .final-card h2 em{color:var(--green-l);font-style:italic;font-weight:500}
+  .final-card p{color:var(--ice);font-size:1.12rem;max-width:52ch;margin:0 auto 32px}
+  .final-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* ---------- FOOTER ---------- */
+  footer.foot{background:var(--navy-2);color:var(--ice);padding:56px 0 30px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+  .foot-brand .logo{color:#fff;margin-bottom:14px}
+  .foot-brand p{font-size:.9rem;color:var(--ice);max-width:34ch}
+  .foot-col h5{font-family:'Archivo',sans-serif;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:16px;font-weight:700}
+  .foot-col a{display:block;font-size:.9rem;color:var(--ice);padding:5px 0;transition:color .2s}
+  .foot-col a:hover{color:var(--gold)}
+  .foot-bottom{border-top:1px solid var(--navy-3);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--ice)}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:980px){
+    .hero-grid,.geo-grid,.value-grid,.lead-grid{grid-template-columns:1fr;gap:40px}
+    .hero-copy{padding-bottom:40px}
+    .hero-visual .photo img{height:420px}
+    .hero-badge{left:8px;top:20px}
+    .hero-badge-2{right:8px;bottom:30px}
+    .shifts,.tiers,.steps{grid-template-columns:1fr}
+    .step .line{display:none}
+    .ps-grid{grid-template-columns:1fr}
+    .statband .wrap{grid-template-columns:1fr 1fr;gap:36px 20px}
+    .quote-card{grid-template-columns:1fr;text-align:center}
+    .quote-card .portrait{width:160px;height:190px;margin:0 auto}
+    .value-photos figure.tall{height:300px}
+    .value-photos figure.box,.value-photos figure.wide{height:170px}
+    .foot-grid{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:640px){
+    .wrap{padding:0 20px}
+    section{padding:72px 0}
+    .nav-links{
+      position:fixed;inset:74px 0 auto 0;background:#fff;flex-direction:column;
+      padding:24px;gap:18px;border-bottom:1px solid var(--line);
+      transform:translateY(-130%);transition:transform .35s;align-items:stretch;
+    }
+    .nav-links.open{transform:translateY(0)}
+    .nav-links a:not(.btn)::after{display:none}
+    .burger{display:flex}
+    .burger.x span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .burger.x span:nth-child(2){opacity:0}
+    .burger.x span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .trust-row{gap:14px}
+    .trust-item + .trust-item{padding-left:14px}
+    .trust-item b{font-size:1.4rem}
+    .field-row{grid-template-columns:1fr}
+    .statband .wrap{grid-template-columns:1fr 1fr}
+    .stat b{font-size:2.3rem}
+    .form-card,.final-card{padding:32px 24px}
+    .quote-card{padding:34px 24px}
+    .concept-line{flex-direction:column;text-align:center}
+    .foot-grid{grid-template-columns:1fr}
+    .lead-contact{gap:18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo">
+      <span class="mark"><span>MI</span></span>
+      <span>MI Consulting Group<small>Manufacturing Intelligence</small></span>
+    </a>
+    <nav class="nav-links" id="navlinks">
+      <a href="#concept">The Concept</a>
+      <a href="#tiers">Growth Scale</a>
+      <a href="#geo">Coverage</a>
+      <a href="#how">How It Works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#lead" class="btn btn-primary nav-cta">Book a Discovery Call</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow on-dark">Compliance as Confidence · Built for Growth</span>
+      <h1>Stop treating food safety as a cost. Start using it to <span class="hl">grow.</span></h1>
+      <p class="sub">MI builds your SQF program, develops your own people into a food safety team, and turns certification into the contracts, exports, and pricing power that scale your business.</p>
+      <div class="hero-actions">
+        <a href="#lead" class="btn btn-primary">Book a Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#assessment" class="btn btn-ghost on-dark">Take the SQF Quiz</a>
+      </div>
+      <div class="trust-row">
+        <div class="trust-item"><b>300+</b><span>Manufacturers served</span></div>
+        <div class="trust-item"><b>100%</b><span>SQF-focused practice</span></div>
+        <div class="trust-item"><b>EN / ES</b><span>Fully bilingual</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-badge">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><b>Unlocks retailer contracts</b><span>GFSI-recognized SQF — your key to Walmart, Costco &amp; export accounts</span></div>
+      </div>
+      <div class="hero-badge-2">
+        <b>Scale-Ready</b><span>From first audit → growth engine</span>
+      </div>
+      <div class="photo">
+        <img src="assets/hero-team.jpg" alt="MI Consulting Group's corporate food safety team reviewing SQF compliance on a manufacturing line">
+      </div>
+    </div>
+  </div>
+  <!-- pill band -->
+  <div class="marquee-band">
+    <div class="wrap">
+      <p>Helping manufacturers win business across</p>
+      <div class="pill-row">
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Meat &amp; Dairy</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Beverage &amp; Bottling</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Bakery &amp; Snacks</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Produce &amp; Co-Manufacturing</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Supplements</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CONCEPT ========== -->
+<section class="concept" id="concept">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The Campaign Concept</span>
+      <h2>Compliance as Confidence: Build Your Own Growth Team</h2>
+      <p>SQF stops being a cost your plant manager dreads — and becomes the growth engine your CEO champions. Three shifts turn certification into a competitive advantage.</p>
+    </div>
+    <div class="shifts">
+      <div class="shift reveal" style="--c:var(--green)">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="tags">
+          <span class="tag-from">Burden</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tag-to">Benefit</span>
+        </div>
+        <h3>From burden to benefit</h3>
+        <p>Compliance becomes a tool for winning retailer contracts, unlocking export markets, and commanding premium pricing — revenue you can't access without it.</p>
+      </div>
+      <div class="shift reveal" style="--c:var(--green-d)">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 14a4 4 0 100-8 4 4 0 000 8z" stroke="#fff" stroke-width="2"/><path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M17 7l2 2 3-3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="tags">
+          <span class="tag-from">Dependency</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tag-to">Autonomy</span>
+        </div>
+        <h3>From dependency to autonomy</h3>
+        <p>We build your <em>own</em> growth team — developing internal people instead of creating consultant reliance. The capability scales with you, and it's yours to keep.</p>
+      </div>
+      <div class="shift reveal" style="--c:var(--gold)">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16l4-5 3 3 5-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="tags">
+          <span class="tag-from">Compliance</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tag-to">Growth</span>
+        </div>
+        <h3>From compliance to growth</h3>
+        <p>SQF becomes a CEO-level conversation — a strategic lever for new accounts, bigger orders, and market expansion, not a line item on the budget.</p>
+      </div>
+    </div>
+    <div class="concept-line reveal">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="txt">
+        <b>"Don't just pass the audit. Use it to grow."</b>
+        <span>One idea that flexes from a first-time owner to a multi-site CEO.</span>
+      </div>
+    </div>
+    <div class="concept-band reveal">
+      <figure>
+        <img src="assets/boardroom.jpg" alt="Food manufacturing leadership team in a strategy meeting overlooking the production floor">
+        <figcaption>
+          <span class="eyebrow on-dark">From plant floor to boardroom</span>
+          <p>When SQF becomes a growth lever, food safety stops being a line item — and earns a seat at the strategy table.</p>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROBLEM / SOLUTION ========== -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">What's Holding You Back</span>
+      <h2>Five reasons SQF feels out of reach — and why it isn't</h2>
+      <p>Every barrier below is the reason a manufacturer stays stuck — locked out of bigger accounts. MI was built to remove all five and turn certification into your growth engine.</p>
+    </div>
+    <div class="ps-grid reveal">
+      <div class="ps-col prob">
+        <h3>The Growth Barrier</h3>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="#D64A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>A full-time SQF expert costs $70K–$100K+ a year — so you stay uncertified and locked out of the contracts that need it.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="#D64A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>Revolving door of talent — you train a specialist, they leave, and the knowledge that wins audits walks out the door.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="#D64A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>Consultants who build dependency — you pay them forever, and your margins never get the relief growth should bring.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="#D64A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>Binders, paper, and guesswork — every audit is a gamble, and one failure can cost you a buyer relationship.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="#D64A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>Floor teams left behind — English-only training disconnects the workforce that actually keeps you audit-ready.</p></div>
+      </div>
+      <div class="ps-col sol">
+        <h3>How MI Unlocks Growth</h3>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p><b>A corporate food safety team from $1,500–$5,000/mo.</b> Get certified — and open the accounts that were closed to you.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p><b>We build your own growth team.</b> Loyal employees become certified food safety leaders — the capability stays and scales with you.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p><b>A clear path to independence.</b> Our Growth Scale lowers your cost as your team matures — growth shouldn't mean a bigger bill.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p><b>Digital platform + standard work.</b> Your SQF program lives in the cloud — audit-ready every day, so you walk in confident.</p></div>
+        <div class="ps-item"><span class="dot"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#27B98C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p><b>A fully bilingual team.</b> Training and coaching in English and Spanish — your whole floor protects every contract you win.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TIERS ========== -->
+<section class="tiers-wrap" id="tiers">
+  <div class="wrap">
+    <div class="sec-head centered reveal">
+      <span class="eyebrow on-dark centered">The Growth Scale</span>
+      <h2 style="color:#fff">Three stages. One direction: forward.</h2>
+      <p style="color:var(--ice)">This isn't a pricing menu — it's a growth path. Start where you are, scale up as you launch, and step down as your own team takes the lead. Your cost falls as your capability rises.</p>
+    </div>
+    <div class="tiers">
+      <div class="tier reveal" style="--c:var(--green)">
+        <div class="t-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21h18M5 21V11l7-6 7 6v10M9 21v-5h6v5M9 11h.01M15 11h.01" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="t-name">Stage 1 · Build</div>
+        <div class="t-price">$5,000<small>/mo</small></div>
+        <div class="t-desc">Full-time corporate team. We come on as your complete SQF department and build the program that gets you certified — and gets you in the door.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Complete SQF program design</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Cloud platform + standard work</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Audit prep, mock recalls, crisis support</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>We coach — your team learns to lead</li>
+        </ul>
+        <a href="#lead" class="btn btn-ghost on-dark btn-block">Start with Build</a>
+      </div>
+      <div class="tier featured reveal" style="--c:var(--green-l)">
+        <div class="badge-top">Most Manufacturers Land Here</div>
+        <div class="t-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16l4-5 3 3 5-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="t-name">Stage 2 · Growth</div>
+        <div class="t-price">$2,500<small>/mo</small></div>
+        <div class="t-desc">Part-time corporate team. Your people lead day-to-day while MI coaches — so you can scale into new accounts without scaling risk.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Internal audits &amp; SQF audit prep</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>HACCP review &amp; coaching</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Mock recall drills &amp; crisis support</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Shared workload, your team in the lead</li>
+        </ul>
+        <a href="#lead" class="btn btn-primary btn-block">Book a Discovery Call</a>
+      </div>
+      <div class="tier reveal" style="--c:var(--gold)">
+        <div class="t-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5L16 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="t-name">Stage 3 · Sustain</div>
+        <div class="t-price">$1,500<small>/mo</small></div>
+        <div class="t-desc">Partial corporate team. Your own people run the program — MI stays on as the safety net that protects every contract you've won.</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Quarterly internal SQF audits</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>SQF certification audit prep</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Mock recalls &amp; crisis support</li>
+          <li><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Full independence with a backstop</li>
+        </ul>
+        <a href="#lead" class="btn btn-ghost on-dark btn-block">Start with Sustain</a>
+      </div>
+    </div>
+    <p class="tiers-note reveal">Every engagement is <b>month-to-month</b> — no lock-in, no penalties. As your team grows into the work, you move <b>down</b> the scale, not up. That's the only model where your consultant's success means your bill goes down.</p>
+  </div>
+</section>
+
+<!-- ========== GEO COVERAGE ========== -->
+<section class="geo" id="geo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Nationwide Coverage — California Roots</span>
+      <h2>We scale our reach the same way we scale your team</h2>
+      <p>Most of our day-to-day work happens remotely through our cloud platform, with on-site support for the moments that matter. From our Bakersfield base, MI grows outward in disciplined waves — and so does the support behind your growth.</p>
+    </div>
+    <div class="geo-grid">
+      <div class="geo-visual reveal">
+        <img src="assets/geo-map.jpg" alt="Map of MI Consulting Group coverage scaling outward from California across the western United States">
+        <div class="ov"></div>
+        <div class="cap"><b>From California, outward</b><span>Remote-first delivery · on-site when it counts</span></div>
+      </div>
+      <div class="phases reveal">
+        <div class="phase" style="--c:var(--green)">
+          <div class="num">1</div>
+          <div><h4><em>California</em> — our home base</h4><p>LA/OC, Central Valley, Bay Area &amp; San Diego. The highest facility density in the country, served from Bakersfield.</p></div>
+        </div>
+        <div class="phase" style="--c:var(--gold)">
+          <div class="num dark">2</div>
+          <div><h4><em>West Expansion</em></h4><p>Oregon, Washington, Nevada &amp; Arizona — adjacent markets, logistically close to California operations.</p></div>
+        </div>
+        <div class="phase" style="--c:var(--green-d)">
+          <div class="num">3</div>
+          <div><h4><em>High-Density States</em></h4><p>Texas, New York, Florida &amp; Illinois — the largest manufacturing bases in the nation.</p></div>
+        </div>
+        <div class="phase" style="--c:var(--navy-3)">
+          <div class="num">4</div>
+          <div><h4><em>Nationwide</em> — strategic accounts</h4><p>Multi-site and co-manufacturer support, anywhere in the U.S., through our cloud-based platform.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS ========== -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head centered reveal">
+      <span class="eyebrow centered">How the Growth Scale Works</span>
+      <h2>Four steps from stuck to scaling</h2>
+      <p>From locked out of the contracts you want, to a self-sufficient SQF program that wins them — here's exactly how the engagement moves.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="line"></div><div class="num">1</div><h4>Discovery Call</h4><p>We learn about your facility, your current program, and the accounts you're chasing. No pressure — just a conversation about where you are and where you want to grow.</p></div>
+      <div class="step reveal"><div class="line"></div><div class="num">2</div><h4>Gap Assessment</h4><p>We evaluate your facility against SQF requirements, identify what's missing, and build a customized roadmap with priorities and a standard work schedule.</p></div>
+      <div class="step reveal"><div class="line"></div><div class="num">3</div><h4>Build &amp; Get Certified</h4><p>MI comes on as your full-time corporate team — we build your SQF program, configure the digital platform, and get you audit-ready and in the door.</p></div>
+      <div class="step reveal"><div class="num">4</div><h4>Scale &amp; Step Down</h4><p>As your team grows into the work, you move down the Growth Scale to lower cost. You keep the certification, the capability, and the new business it unlocked.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== VALUE / WHY DIFFERENT ========== -->
+<section class="value">
+  <div class="wrap value-grid">
+    <div class="value-photos reveal">
+      <figure class="tall"><img src="assets/woman-smiling.jpg" alt="Confident food safety team member on the production floor"></figure>
+      <figure class="box"><img src="assets/two-women-tablet.jpg" alt="Two food safety professionals reviewing digital records on a tablet"></figure>
+      <figure class="wide"><img src="assets/lab-inspect.jpg" alt="Quality inspectors checking a beverage manufacturing line"></figure>
+    </div>
+    <div class="value-copy reveal">
+      <span class="eyebrow on-dark">Why We're Different</span>
+      <h2>We build your <em>growth team</em>, not your dependency.</h2>
+      <div class="value-list">
+        <div class="value-li">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><h4>Your cost falls as you grow</h4><p>An entire corporate team starting at $5,000/mo, scaling <em>down</em> to $1,500/mo as your people take the lead. The only model where success lowers your bill.</p></div>
+        </div>
+        <div class="value-li">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 14a4 4 0 100-8 4 4 0 000 8zM5 21c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><h4>The capability stays in-house</h4><p>Your long-term people know your facility best. We give them the training, coaching, and career path to lead — and it doesn't walk out the door.</p></div>
+        </div>
+        <div class="value-li">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+          <div><h4>We're always here</h4><p>Outside hires leave. We don't. Even at Stage 3, MI stays on as the safety net that protects every contract your certification opened.</p></div>
+        </div>
+        <div class="value-li">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><h4>SQF only — and we keep getting better</h4><p>100% of our work is SQF. While generalists spread thin across a dozen standards, we go deeper with every client — so you get certified faster.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== STATS BAND ========== -->
+<div class="statband">
+  <div class="wrap">
+    <div class="stat reveal"><b>300+</b><span>Manufacturers served</span></div>
+    <div class="stat reveal"><b>6–12 mo</b><span>Typical time to SQF certification</span></div>
+    <div class="stat reveal"><b>100%</b><span>SQF-focused — no split attention</span></div>
+    <div class="stat reveal"><b>Lower</b><span>Your cost drops as your team scales up</span></div>
+  </div>
+</div>
+
+<!-- ========== TESTIMONIAL ========== -->
+<section class="quote-sec">
+  <div class="wrap">
+    <div class="quote-card reveal">
+      <div class="portrait"><img src="assets/two-workers-tablet.jpg" alt="MI Consulting Group team supporting a manufacturing client"></div>
+      <div>
+        <div class="quote-mark">"</div>
+        <blockquote>MI didn't just get us certified — they built our food safety team from our own people. SQF opened doors we'd been knocked back from for years. It's the best growth investment we've made.</blockquote>
+        <div class="who">
+          <b>Scott Anderson</b>
+          <span>Quality Manager, Food &amp; Beverage Manufacturer</span>
+          <div class="stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== LEAD FORM ========== -->
+<section class="lead" id="lead">
+  <div class="wrap lead-grid">
+    <div class="lead-copy reveal">
+      <span class="eyebrow on-dark">Start Your Growth Scale</span>
+      <h2>Book your <em>free discovery call</em></h2>
+      <p class="lede">Tell us about your facility and the accounts you want to win. No pressure, no obligation — just an honest conversation about turning SQF into growth.</p>
+      <div class="lead-assure">
+        <div class="row"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>We respond within 1 business day</div>
+        <div class="row"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>No long-term contracts — ever</div>
+        <div class="row"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Bilingual support in English &amp; Spanish</div>
+        <div class="row"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Honest assessment of where you stand</div>
+      </div>
+      <div class="lead-contact">
+        <div><span>Email</span><b>sam@consultwithmi.com</b></div>
+        <div><span>Location</span><b>Bakersfield, CA · US Nationwide</b></div>
+      </div>
+    </div>
+
+    <div class="form-card reveal" id="assessment">
+      <span class="tagline"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" stroke="#15805F" stroke-width="2" stroke-linejoin="round"/></svg>Compliance as Confidence</span>
+      <h3>Start with a discovery call</h3>
+      <p class="fc-sub">Tell us where you are — and the growth you're after. We'll map your path on the Growth Scale.</p>
+      <form id="leadForm" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="fname">Full Name <span class="req">*</span></label>
+            <input type="text" id="fname" name="fname" placeholder="Jane Smith" required>
+          </div>
+          <div class="field">
+            <label for="company">Company <span class="req">*</span></label>
+            <input type="text" id="company" name="company" placeholder="Acme Foods Inc." required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="email">Email Address <span class="req">*</span></label>
+            <input type="email" id="email" name="email" placeholder="jane@acmefoods.com" required>
+          </div>
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+          </div>
+        </div>
+        <div class="field">
+          <label for="tier">Where would you start on the Growth Scale?</label>
+          <select id="tier" name="tier">
+            <option value="">Not sure yet — just exploring</option>
+            <option value="build">STAGE 1 · BUILD — $5,000/mo (Starting from scratch)</option>
+            <option value="growth">STAGE 2 · GROWTH — $2,500/mo (Have some foundation)</option>
+            <option value="sustain">STAGE 3 · SUSTAIN — $1,500/mo (Mostly in place, need backup)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="facility">Tell us about your facility &amp; growth goals <span class="req">*</span></label>
+          <textarea id="facility" name="facility" placeholder="What do you manufacture? What accounts or markets are you trying to win?" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Book My Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <p class="form-foot">We respond within 1 business day. No spam, ever.</p>
+      </form>
+      <div class="form-success" id="formSuccess">
+        <div class="check"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Message received!</h3>
+        <p>Thank you for reaching out. We'll be back in touch within one business day to schedule your discovery call.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FAQ ========== -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head centered reveal">
+      <span class="eyebrow centered">Answers Before You Have to Ask</span>
+      <h2>Common questions</h2>
+      <p>Real questions from manufacturers just like you — answered honestly.</p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item reveal">
+        <summary>We're a small operation — is SQF certification really worth it for us?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">For most small manufacturers, the question isn't whether you can afford to get SQF certified — it's whether you can afford not to. Major retailers, distributors, and co-manufacturing partners increasingly require SQF or an equivalent GFSI-recognized standard as a condition of doing business. Without it, you're locked out of accounts your competitors are winning.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>How is MI different from hiring a full-time food safety manager?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">A qualified SQF Practitioner costs $70K–$100K+ per year in salary alone — before benefits, turnover risk, or onboarding time. MI gives you that same corporate-level expertise at a fraction of the cost, with no hiring risk and no knowledge walking out the door. And our model develops your existing employees into food safety leaders at the same time — a single hire builds one person's knowledge; MI builds your whole team.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Do we need a food safety program already in place before working with you?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Not at all — that's exactly what Stage 1 (Build) is for. We start from wherever you are. If you have nothing in place, we build your entire SQF program from scratch: HACCP plan, prerequisite programs, SOPs, digital platform, and training. If you have some pieces in place, we assess what's there and fill the gaps.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>What happens to our SQF program if we stop working with MI?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">It keeps running — because it was built to run without us. From day one, we train your internal people to own the program. Everything lives in your cloud platform, everything is documented in your name, and your team develops the skills to maintain it independently. We're successful when you need us less.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Can you work with us if our floor team primarily speaks Spanish?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Yes — and this is one of the things that makes MI genuinely different. We're fully bilingual in English and Spanish. Your floor team won't just receive translated documents — they'll receive real training, in the language they actually work in, from someone who can answer their questions directly.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Is there a long-term contract?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">We work month-to-month. No long-term lock-ins, no cancellation penalties. Our model is built around making you less dependent on us over time — not trapping you in a retainer you can't exit. You stay because the engagement is delivering value, not because a contract says you have to.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FINAL CTA ========== -->
+<section class="final">
+  <div class="wrap">
+    <div class="final-card reveal">
+      <span class="eyebrow on-dark centered">Ready to Turn Compliance Into Growth?</span>
+      <h2>Stop being locked out. Start <em>scaling up.</em></h2>
+      <p>Build your SQF program, develop your own growth team, and turn certification into the contracts, exports, and pricing power that move your business forward.</p>
+      <div class="final-actions">
+        <a href="#lead" class="btn btn-primary">Book a Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#tiers" class="btn btn-ghost on-dark">See the Growth Scale</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo">
+          <span class="mark"><span>MI</span></span>
+          <span style="color:#fff">MI Consulting Group</span>
+        </div>
+        <p>Turn SQF certification into business growth. We build your program, develop your own food safety team, and scale support down as your capability grows. Based in Bakersfield, CA.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Services</h5>
+        <a href="#why">SQF Program Design</a>
+        <a href="#why">Digital Platform Build</a>
+        <a href="#why">People Development</a>
+        <a href="#how">Gap Assessments</a>
+        <a href="#why">Bilingual Support</a>
+      </div>
+      <div class="foot-col">
+        <h5>Get Certified</h5>
+        <a href="#tiers">SQF Certification</a>
+        <a href="#concept">HACCP Training</a>
+        <a href="#concept">PCQI Training</a>
+        <a href="#geo">FSMA 204 Readiness</a>
+        <a href="#assessment">SQF Readiness Quiz</a>
+      </div>
+      <div class="foot-col">
+        <h5>Connect</h5>
+        <a href="#lead">Book a Call</a>
+        <a href="mailto:sam@consultwithmi.com">Email Us</a>
+        <a href="#faq">FAQ</a>
+        <a href="#top">Back to Top</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 MI Consulting Group LLC. All rights reserved. Bakersfield, CA — Serving US Nationwide.</span>
+      <span>SQF Only · Tech Driven · People First</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // mobile nav
+  const burger=document.getElementById('burger');
+  const navlinks=document.getElementById('navlinks');
+  burger.addEventListener('click',()=>{burger.classList.toggle('x');navlinks.classList.toggle('open');});
+  navlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('x');navlinks.classList.remove('open');}));
+
+  // scroll reveal — robust: triggers early, staggers siblings, guaranteed fallback
+  const revealEls=document.querySelectorAll('.reveal');
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach((e)=>{
+      if(e.isIntersecting){
+        const sibs=[...e.target.parentElement.children].filter(c=>c.classList.contains('reveal'));
+        const idx=sibs.indexOf(e.target);
+        e.target.style.transitionDelay=(idx>=0?Math.min(idx,5)*0.07:0)+'s';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0,rootMargin:'0px 0px -8% 0px'});
+  revealEls.forEach(el=>io.observe(el));
+  // safety net: anything still hidden after a moment, or on fast scroll, gets revealed
+  function failsafe(){
+    revealEls.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.top < window.innerHeight*0.95){el.classList.add('in');io.unobserve(el);}
+    });
+  }
+  window.addEventListener('scroll',failsafe,{passive:true});
+  window.addEventListener('load',()=>{failsafe();setTimeout(failsafe,400);});
+  setTimeout(failsafe,1200);
+
+  // form handling (front-end demo — no backend)
+  const form=document.getElementById('leadForm');
+  const success=document.getElementById('formSuccess');
+  form.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    let ok=true;
+    ['fname','company','email','facility'].forEach(id=>{
+      const f=document.getElementById(id);
+      if(!f.value.trim()){f.style.borderColor='#D64A3B';ok=false;}
+      else{f.style.borderColor='';}
+    });
+    const email=document.getElementById('email');
+    if(email.value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)){email.style.borderColor='#D64A3B';ok=false;}
+    if(!ok)return;
+    form.classList.add('hide');
+    success.classList.add('show');
+    success.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+  // clear error border on input
+  form.querySelectorAll('input,textarea').forEach(f=>{
+    f.addEventListener('input',()=>{f.style.borderColor='';});
+  });
+</script>
+</body>
+</html>
