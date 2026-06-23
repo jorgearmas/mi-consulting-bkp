@@ -308,7 +308,11 @@
     .hero-copy{padding-bottom:32px}
     .hero h1{font-size:2rem;margin:16px 0 0}
     .hero .sub{margin:16px 0 20px;font-size:1rem}
-    .qual-form{padding:24px;position:static;margin-top:24px}
+    .wrap{padding:0 18px}
+    .qual-form{padding:20px;position:static;margin-top:24px}
+    .stepper-indicator{gap:4px;margin-bottom:28px}
+    .stepper-step{width:30px;height:30px;font-size:.78rem;border-width:2px}
+    .stepper-line{min-width:5px}
     .trust-row{margin-top:24px;gap:20px}
     .trust-item + .trust-item{padding-left:20px}
     .section-pad{padding:60px 0}
@@ -1201,8 +1205,10 @@
       timestamp: new Date().toISOString()
     });
 
-    // Show success message
+    // Show success message and bring it into view
     goToStep('success');
+    const card = document.querySelector('.qual-form');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   // Refresh form - reset to first step
