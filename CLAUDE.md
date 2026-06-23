@@ -34,7 +34,13 @@ The qualifying path is hardcoded: **Q1=YES, Q2=YES, Q3=NO, Q4=YES** routes to `s
 
 ### Form submission — IMPORTANT
 
-The contact form does **not** submit anywhere. On valid submit it only `console.log`s the lead payload (name/email/phone/company/city/state + `answers` + timestamp) and shows `step-success`. To actually capture leads, wire it to a backend / Zapier / FormSubmit.co — see `SETUP_GUIDE.md`.
+On valid submit, `submitContact()` POSTs the lead as JSON to the **FormSubmit.co AJAX endpoint** (`https://formsubmit.co/ajax/marketing@consultwithmi.com`) via `fetch`, then shows `step-success`. No `<form>` element / no page redirect — it's a manual `fetch`. The payload is built inline (Name/Email/Phone/Company/City/State + Best Time to Call + Consent + the four Q answers + timestamp), with FormSubmit control fields `_subject`, `_template:table`, `_captcha:false`.
+
+Gotchas:
+- **One-time activation:** FormSubmit holds leads until the recipient clicks the activation link emailed on the *first* real POST from the deployed domain. Until then, nothing is forwarded. Activation is per email address + domain.
+- **Won't work from `file://` or some local servers** — needs the deployed (real) origin.
+- To change the destination address, edit the URL in `submitContact()` (separate from the `mailto:` links).
+- On network failure it `alert`s and re-enables the button; success is no longer shown unconditionally.
 
 ## Common edits
 

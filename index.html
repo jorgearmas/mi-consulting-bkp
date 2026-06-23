@@ -304,6 +304,7 @@
 
   /* ---------- RESPONSIVE ---------- */
   @media(max-width:768px){
+    .hero{min-height:auto}
     .hero-grid{grid-template-columns:1fr;gap:32px;padding:40px 0 0}
     .hero-copy{padding-bottom:32px}
     .hero h1{font-size:2rem;margin:16px 0 0}
@@ -313,8 +314,8 @@
     .stepper-indicator{gap:4px;margin-bottom:28px}
     .stepper-step{width:30px;height:30px;font-size:.78rem;border-width:2px}
     .stepper-line{min-width:5px}
-    .trust-row{margin-top:24px;gap:20px}
-    .trust-item + .trust-item{padding-left:20px}
+    .trust-row{margin-top:24px;gap:16px 28px}
+    .trust-item + .trust-item{padding-left:0;border-left:none}
     .section-pad{padding:60px 0}
     .pillars-grid{grid-template-columns:1fr;gap:24px}
     .reasons-grid{grid-template-columns:1fr;gap:20px}
@@ -627,7 +628,7 @@
               <label for="cconsent">I agree to be contacted about my inquiry by phone call, email, text message, or messaging app (e.g. WhatsApp).</label>
             </div>
 
-            <button type="button" class="btn btn-primary btn-block" onclick="submitContact()" style="margin-top:14px">Submit & Book Call</button>
+            <button type="button" id="submitBtn" class="btn btn-primary btn-block" onclick="submitContact()" style="margin-top:14px">Submit & Book Call</button>
             <p style="font-size:.8rem;color:var(--ice);text-align:center;margin-top:16px">We'll email you a calendar link within 1 hour.</p>
           </div>
 
@@ -1198,17 +1199,45 @@
       return;
     }
 
-    // Here you would normally send this data to your backend
-    console.log({
-      name, email, phone, company, state, city, contactTime, consent,
-      answers,
-      timestamp: new Date().toISOString()
-    });
+    // Send the lead to FormSubmit.co (AJAX endpoint — no page redirect)
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
 
-    // Show success message and bring it into view
-    goToStep('success');
-    const card = document.querySelector('.qual-form');
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const payload = {
+      _subject: 'New SQF Lead — ' + company,
+      _template: 'table',
+      _captcha: 'false',
+      Name: name,
+      Email: email,
+      Phone: phone,
+      Company: company,
+      City: city,
+      State: state,
+      'Best Time to Call': contactTime,
+      'Consent to Contact': consent ? 'Yes' : 'No',
+      'Q1 Manufacturer': answers[1] ? 'Yes' : 'No',
+      'Q2 SQF Focus': answers[2] ? 'Yes' : 'No',
+      'Q3 Cannabis/THC': answers[3] ? 'Yes' : 'No',
+      'Q4 Budget $1.5k+': answers[4] ? 'Yes' : 'No',
+      Submitted: new Date().toLocaleString()
+    };
+
+    fetch('https://formsubmit.co/ajax/marketing@consultwithmi.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(() => {
+        goToStep('success');
+        const card = document.querySelector('.qual-form');
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+      .catch(err => {
+        console.error('Lead submission failed:', err);
+        alert('Sorry — something went wrong sending your details. Please email marketing@consultwithmi.com directly.');
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit & Book Call'; }
+      });
   }
 
   // Refresh form - reset to first step
