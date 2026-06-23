@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Qualification Form</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --green: #22c55e;
+  --green-dark: #16a34a;
+  --glass-bg: rgba(15, 23, 32, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --input-bg: rgba(255, 255, 255, 0.08);
+  --input-border: rgba(255, 255, 255, 0.16);
+  --text-primary: #f4f6f8;
+  --text-secondary: rgba(244, 246, 248, 0.68);
+  --text-placeholder: rgba(244, 246, 248, 0.38);
+  --serif: 'Fraunces', serif;
+  --sans: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--sans);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  /* Approximated blurred industrial-photo backdrop — swap for your real background-image */
+  background:
+    radial-gradient(circle at 20% 20%, rgba(34,90,80,0.55) 0%, transparent 55%),
+    radial-gradient(circle at 80% 10%, rgba(20,40,60,0.6) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(15,30,45,0.7) 0%, transparent 55%),
+    linear-gradient(160deg, #1b2a33 0%, #0e1620 100%);
+}
+
+.form-card {
+  width: 100%;
+  max-width: 430px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.5);
+  padding: 1.9rem 1.8rem 1.7rem;
+}
+
+.card-eyebrow {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0 0 0.35rem;
+}
+
+.card-sub {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.2rem;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.step-node {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-node svg { width: 14px; height: 14px; stroke: #fff; stroke-width: 3; fill: none; }
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--green);
+  opacity: 0.45;
+  margin: 0 4px;
+}
+
+/* Result heading */
+.result-heading {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  margin: 0 0 0.55rem;
+}
+
+.result-sub {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 1.4rem;
+}
+
+/* Form */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem 0.7rem;
+  margin-bottom: 0.9rem;
+}
+
+.field { display: flex; flex-direction: column; }
+.field-full { display: flex; flex-direction: column; margin-bottom: 0.9rem; }
+
+.field label, .field-full label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.field-hint {
+  font-weight: 400;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  margin-left: 0.3rem;
+}
+
+input, select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  appearance: none;
+}
+
+input::placeholder { color: var(--text-placeholder); }
+
+input:focus, select:focus {
+  border-color: rgba(34, 197, 94, 0.6);
+  background: rgba(255,255,255,0.1);
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(244,246,248,0.55)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 16px;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+select option { color: #1a1a1a; }
+
+/* Consent */
+.consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  padding: 0.1rem 0.1rem 0;
+}
+
+.consent-row input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+.consent-row label {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Submit */
+.submit-btn {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -8px rgba(34, 197, 94, 0.5);
+}
+
+.submit-btn:active { transform: translateY(0); }
+
+.microcopy {
+  text-align: center;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 420px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="form-card">
+  <p class="card-eyebrow">Quick Qualification</p>
+  <p class="card-sub">4 quick questions to confirm fit:</p>
+
+  <div class="stepper">
+    <div class="step-node">1</div>
+    <div class="step-line"></div>
+    <div class="step-node">2</div>
+    <div class="step-line"></div>
+    <div class="step-node">3</div>
+    <div class="step-line"></div>
+    <div class="step-node">4</div>
+    <div class="step-line"></div>
+    <div class="step-node"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+  </div>
+
+  <h2 class="result-heading">You Qualify! Let's Connect</h2>
+  <p class="result-sub">Tell us about your facility so we can prepare for your discovery call.</p>
+
+  <form id="qualForm">
+    <div class="form-grid">
+      <div class="field">
+        <label for="fullName">Your Name *</label>
+        <input type="text" id="fullName" placeholder="John Smith" required>
+      </div>
+      <div class="field">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" placeholder="john@company.com" required>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" placeholder="(555) 123-4567" required>
+      </div>
+      <div class="field">
+        <label for="company">Company Name *</label>
+        <input type="text" id="company" placeholder="Your Company" required>
+      </div>
+
+      <div class="field">
+        <label for="state">State *</label>
+        <select id="state" required>
+          <option value="" disabled selected>Select State</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="city">City *</label>
+        <select id="city" required disabled>
+          <option value="" disabled selected>Select state first</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-full">
+      <label for="contactTime">Best Time to Call * <span class="field-hint">(your local time)</span></label>
+      <select id="contactTime" required>
+        <option value="" disabled selected>Select a time window</option>
+        <option value="morning">Morning — 8:00 AM to 11:00 AM</option>
+        <option value="late-morning">Late Morning — 11:00 AM to 1:00 PM</option>
+        <option value="afternoon">Afternoon — 1:00 PM to 4:00 PM</option>
+        <option value="late-afternoon">Late Afternoon — 4:00 PM to 6:00 PM</option>
+        <option value="evening">Evening — 6:00 PM to 8:00 PM</option>
+      </select>
+    </div>
+
+    <div class="consent-row">
+      <input type="checkbox" id="consent" required>
+      <label for="consent">I agree to be contacted about my inquiry by phone call, email, text message, or messaging app (e.g. WhatsApp). Message and data rates may apply. *</label>
+    </div>
+
+    <button type="submit" class="submit-btn">Submit &amp; Book Call</button>
+    <p class="microcopy">We'll email you a calendar link within 1 hour.</p>
+  </form>
+</div>
+
+<script>
+const stateCities = {
+  "Alabama": ["Birmingham","Montgomery","Huntsville","Mobile","Tuscaloosa","Other"],
+  "Alaska": ["Anchorage","Fairbanks","Juneau","Other"],
+  "Arizona": ["Phoenix","Tucson","Mesa","Scottsdale","Chandler","Other"],
+  "Arkansas": ["Little Rock","Fort Smith","Fayetteville","Springdale","Other"],
+  "California": ["Los Angeles","San Diego","San Jose","San Francisco","Fresno","Sacramento","Bakersfield","Oakland","Other"],
+  "Colorado": ["Denver","Colorado Springs","Aurora","Fort Collins","Other"],
+  "Connecticut": ["Bridgeport","New Haven","Hartford","Stamford","Other"],
+  "Delaware": ["Wilmington","Dover","Newark","Other"],
+  "District of Columbia": ["Washington","Other"],
+  "Florida": ["Jacksonville","Miami","Tampa","Orlando","St. Petersburg","Other"],
+  "Georgia": ["Atlanta","Augusta","Columbus","Savannah","Other"],
+  "Hawaii": ["Honolulu","Hilo","Kailua","Other"],
+  "Idaho": ["Boise","Meridian","Nampa","Other"],
+  "Illinois": ["Chicago","Aurora","Naperville","Rockford","Other"],
+  "Indiana": ["Indianapolis","Fort Wayne","Evansville","Other"],
+  "Iowa": ["Des Moines","Cedar Rapids","Davenport","Other"],
+  "Kansas": ["Wichita","Overland Park","Kansas City","Other"],
+  "Kentucky": ["Louisville","Lexington","Bowling Green","Other"],
+  "Louisiana": ["New Orleans","Baton Rouge","Shreveport","Other"],
+  "Maine": ["Portland","Lewiston","Bangor","Other"],
+  "Maryland": ["Baltimore","Frederick","Rockville","Other"],
+  "Massachusetts": ["Boston","Worcester","Springfield","Other"],
+  "Michigan": ["Detroit","Grand Rapids","Ann Arbor","Other"],
+  "Minnesota": ["Minneapolis","St. Paul","Rochester","Other"],
+  "Mississippi": ["Jackson","Gulfport","Southaven","Other"],
+  "Missouri": ["Kansas City","St. Louis","Springfield","Other"],
+  "Montana": ["Billings","Missoula","Bozeman","Other"],
+  "Nebraska": ["Omaha","Lincoln","Bellevue","Other"],
+  "Nevada": ["Las Vegas","Henderson","Reno","Other"],
+  "New Hampshire": ["Manchester","Nashua","Concord","Other"],
+  "New Jersey": ["Newark","Jersey City","Paterson","Other"],
+  "New Mexico": ["Albuquerque","Las Cruces","Santa Fe","Other"],
+  "New York": ["New York City","Buffalo","Rochester","Albany","Other"],
+  "North Carolina": ["Charlotte","Raleigh","Greensboro","Other"],
+  "North Dakota": ["Fargo","Bismarck","Grand Forks","Other"],
+  "Ohio": ["Columbus","Cleveland","Cincinnati","Toledo","Other"],
+  "Oklahoma": ["Oklahoma City","Tulsa","Norman","Other"],
+  "Oregon": ["Portland","Salem","Eugene","Other"],
+  "Pennsylvania": ["Philadelphia","Pittsburgh","Allentown","Other"],
+  "Rhode Island": ["Providence","Cranston","Warwick","Other"],
+  "South Carolina": ["Columbia","Charleston","Greenville","Other"],
+  "South Dakota": ["Sioux Falls","Rapid City","Other"],
+  "Tennessee": ["Nashville","Memphis","Knoxville","Chattanooga","Other"],
+  "Texas": ["Houston","San Antonio","Dallas","Austin","Fort Worth","El Paso","Other"],
+  "Utah": ["Salt Lake City","West Valley City","Provo","Other"],
+  "Vermont": ["Burlington","South Burlington","Other"],
+  "Virginia": ["Virginia Beach","Norfolk","Richmond","Other"],
+  "Washington": ["Seattle","Spokane","Tacoma","Other"],
+  "West Virginia": ["Charleston","Huntington","Other"],
+  "Wisconsin": ["Milwaukee","Madison","Green Bay","Other"],
+  "Wyoming": ["Cheyenne","Casper","Other"]
+};
+
+const stateSelect = document.getElementById('state');
+const citySelect = document.getElementById('city');
+
+Object.keys(stateCities).sort().forEach(state => {
+  const opt = document.createElement('option');
+  opt.value = state;
+  opt.textContent = state;
+  stateSelect.appendChild(opt);
+});
+
+stateSelect.addEventListener('change', () => {
+  const cities = stateCities[stateSelect.value] || [];
+  citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+  cities.forEach(city => {
+    const opt = document.createElement('option');
+    opt.value = city;
+    opt.textContent = city;
+    citySelect.appendChild(opt);
+  });
+  citySelect.disabled = false;
+});
+
+document.getElementById('qualForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  // Hook this up to your CRM / booking endpoint
+  console.log('Form submitted — connect to backend.');
+});
+</script>
+
+</body>
+</html>
