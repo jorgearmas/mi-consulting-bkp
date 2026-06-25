@@ -268,8 +268,10 @@
   .tier-row.is-active .tier-row-name,.tier-row.is-active .tier-row-price{color:#fff}
   .tier-row.is-active .tier-row-sub,.tier-row.is-active .tier-row-price small{color:rgba(255,255,255,.85)}
   .tier-panels{position:relative}
-  .tier-panels .tier-card{display:none}
-  .tier-panels .tier-card.is-active{display:block;animation:tierFade .35s ease}
+  /* only the active card shows — works whether the card sits in .tier-panels
+     (desktop) or is moved beneath its price row (mobile) */
+  .tier-card{display:none}
+  .tier-card.is-active{display:block;animation:tierFade .35s ease}
   @keyframes tierFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .tier-card{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .3s,transform .3s}
   .tier-card:hover{box-shadow:var(--shadow-lg)}
