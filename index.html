@@ -249,11 +249,9 @@
 
   /* ---------- TIERS ---------- */
   .tiers-pin{position:relative}
-  .tiers-sticky{position:sticky;top:84px}
-  /* when scroll-pinned on desktop, the inner rows no longer need their own sticky */
-  .tiers-sticky .tier-rows{position:static;top:auto}
+  .tiers-sticky{position:static}
   .tiers-selector{display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:32px;margin-top:60px;align-items:start}
-  .tier-rows{display:flex;flex-direction:column;gap:16px;position:sticky;top:90px}
+  .tier-rows{display:flex;flex-direction:column;gap:16px}
   .tier-row-cap{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--green);padding-left:4px;margin-bottom:-4px}
   .tier-rows-arrow{display:flex;justify-content:center;color:var(--green);margin:-2px 0}
   .tier-rows-arrow svg{width:24px;height:24px;animation:tierFlagNudge 1.3s ease-in-out infinite}
@@ -338,10 +336,7 @@
     .section-pad{padding:60px 0}
     .pillars-grid{grid-template-columns:1fr;gap:24px}
     .reasons-grid{grid-template-columns:1fr;gap:20px}
-    .tiers-pin{height:auto !important}
-    .tiers-sticky{position:static;top:auto}
     .tiers-selector{grid-template-columns:1fr;gap:20px}
-    .tier-rows{position:static;top:auto}
     .tier-cols,.tier-cols.cols-3{grid-template-columns:1fr;gap:16px}
     .tier-body{padding:22px 20px 24px}
     .tier-bar{padding:14px 20px}
@@ -1472,143 +1467,60 @@
     }
   });
 
-  // Tier price selector: show the panel matching the clicked price row
-  // Tier panels, top (Tier 3) to bottom (Tier 1) — order the user scrolls through.
+  // Tier price selector: show the explanatory card matching the clicked price row.
   const TIER_ORDER = ['3', '2', '1'];
 
-  // Swap the active price row + explanatory card. No scrolling here — the caller
-  // (a click, or the scroll-pin controller) decides how the page itself moves.
+  // Swap the active price row + explanatory card.
   function setTierActive(tier) {
     document.querySelectorAll('.tier-row').forEach(r => {
       r.classList.toggle('is-active', r.dataset.tier === tier);
     });
-    document.querySelectorAll('.tier-panels .tier-card').forEach(p => {
+    document.querySelectorAll('.tier-card').forEach(p => {
       p.classList.toggle('is-active', p.dataset.panel === tier);
     });
   }
 
-  function currentTier() {
-    const active = document.querySelector('.tier-row.is-active');
-    return active ? active.dataset.tier : TIER_ORDER[0];
-  }
-
-  // ----- Scroll-pin controller (desktop only) -----
-  // The tiers block pins in place while a tall spacer (.tiers-pin) gives it scroll
-  // length; each tier owns one "stage" of that length, so scrolling advances
-  // Tier 3 -> 2 -> 1. Cards render at their FULL height and are never clipped or
-  // transformed. If the block is taller than the viewport, pinning is disabled and
-  // it falls back to plain click-to-swap so nothing can be cut off.
-  const tierPin = (function () {
-    const pin = document.querySelector('.tiers-pin');
-    const sticky = document.querySelector('.tiers-sticky');
+  // On desktop the explanatory cards live in the right-hand .tier-panels column.
+  // On mobile they're moved to sit directly beneath their own price row, so the
+  // selected card appears *between* the price tiers instead of below all of them.
+  let tierIsMobile = null;
+  function layoutTierCards() {
     const panels = document.querySelector('.tier-panels');
-    const STICKY_TOP = 84;   // must match .tiers-sticky top in CSS
-    const GAP = 24;          // breathing room below the pinned block
-    let enabled = false;
-    let perStage = 0;        // scroll px allotted to each tier
-    let distance = 0;        // total scroll px across all tiers
-
-    function isDesktop() {
-      return window.matchMedia('(min-width:769px)').matches;
-    }
-
-    // Natural height of a card even while it's display:none.
-    function cardHeight(card) {
-      const wasActive = card.classList.contains('is-active');
-      if (!wasActive) { card.style.display = 'block'; card.style.visibility = 'hidden'; }
-      const h = card.offsetHeight;
-      if (!wasActive) { card.style.display = ''; card.style.visibility = ''; }
-      return h;
-    }
-
-    function reset() {
-      pin.style.height = '';
-      panels.style.height = '';
-    }
-
-    function layout() {
-      if (!pin || !sticky || !panels) return;
-      reset();
-      if (!isDesktop()) { enabled = false; return; }
-      // Fix the panel to the tallest card so the block height stays constant as
-      // cards swap, and every card's footer sits fully inside it (no clipping).
-      let tallH = 0;
-      document.querySelectorAll('.tier-panels .tier-card').forEach(c => {
-        tallH = Math.max(tallH, cardHeight(c));
-      });
-      panels.style.height = tallH + 'px';
-      // Only pin if the whole block fits on screen; otherwise leave it in normal
-      // flow so a tall card can simply be scrolled (still swaps on click).
-      enabled = sticky.offsetHeight <= (window.innerHeight - STICKY_TOP - GAP);
-      if (!enabled) { reset(); return; }
-      perStage = Math.max(360, Math.round(window.innerHeight * 0.7));
-      distance = perStage * TIER_ORDER.length;
-      pin.style.height = (sticky.offsetHeight + distance) + 'px';
-    }
-
-    // Scroll px consumed within the pinned region, 0..distance.
-    function scrolled() {
-      return Math.min(Math.max(STICKY_TOP - pin.getBoundingClientRect().top, 0), distance);
-    }
-
-    function onScroll() {
-      if (!enabled || perStage <= 0) return;
-      let idx = Math.floor(scrolled() / perStage);
-      if (idx > TIER_ORDER.length - 1) idx = TIER_ORDER.length - 1;
-      const tier = TIER_ORDER[idx];
-      if (tier !== currentTier()) setTierActive(tier);
-    }
-
-    // Scroll the page so a clicked tier lands solidly within its stage.
-    function scrollToTier(tier) {
-      if (!enabled || perStage <= 0) return false;
-      const idx = TIER_ORDER.indexOf(tier);
-      if (idx < 0) return false;
-      const targetScrolled = idx * perStage + Math.round(perStage / 2);
-      const target = window.pageYOffset + pin.getBoundingClientRect().top - STICKY_TOP + targetScrolled;
-      window.scrollTo({ top: target, behavior: 'smooth' });
-      return true;
-    }
-
-    if (pin) {
-      let ticking = false;
-      window.addEventListener('scroll', () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => { onScroll(); ticking = false; });
-      }, { passive: true });
-      window.addEventListener('resize', () => { layout(); onScroll(); });
-      window.addEventListener('load', () => { layout(); onScroll(); });
-      // Web fonts settle after load and change card heights; re-measure once ready
-      // (plus a fallback tick) so the block height matches the real rendered cards.
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => { layout(); onScroll(); });
+    if (!panels) return;
+    const mobile = !window.matchMedia('(min-width:769px)').matches;
+    if (mobile === tierIsMobile) return;   // only re-arrange when crossing the breakpoint
+    tierIsMobile = mobile;
+    TIER_ORDER.forEach(tier => {
+      const card = document.querySelector('.tier-card[data-panel="' + tier + '"]');
+      if (!card) return;
+      if (mobile) {
+        const row = document.querySelector('.tier-row[data-tier="' + tier + '"]');
+        if (row) row.insertAdjacentElement('afterend', card);
+      } else {
+        panels.appendChild(card);          // restores 3 -> 2 -> 1 order in the panel
       }
-      setTimeout(() => { layout(); onScroll(); }, 400);
-    }
-
-    return {
-      layout: layout,
-      scrollToTier: scrollToTier,
-      get enabled() { return enabled; }
-    };
-  })();
-
-  // Click handler on the price rows. On desktop, drive the page scroll so the
-  // pinned state matches; on mobile, just swap the card in place.
-  function selectTier(tier) {
-    if (tierPin.enabled && tierPin.scrollToTier(tier)) return;
-    setTierActive(tier);
-    const active = document.querySelector('.tier-panels .tier-card.is-active');
-    if (active) {
-      const nav = document.querySelector('header.nav');
-      const offset = (nav ? nav.offsetHeight : 0) + 16;
-      const top = active.getBoundingClientRect().top + window.pageYOffset - offset;
-      if (window.pageYOffset > top) {
-        window.scrollTo({ top: top, behavior: 'smooth' });
-      }
-    }
+    });
   }
+
+  // Clicking a price row swaps the card and scrolls it to the top of the viewport.
+  function selectTier(tier) {
+    setTierActive(tier);
+    const mobile = !window.matchMedia('(min-width:769px)').matches;
+    // Desktop: the card sits at the top of the panel column, so scroll to it.
+    // Mobile: scroll to the clicked row so the card just beneath it comes into view.
+    const target = mobile
+      ? document.querySelector('.tier-row[data-tier="' + tier + '"]')
+      : document.querySelector('.tier-card[data-panel="' + tier + '"]');
+    if (!target) return;
+    const nav = document.querySelector('header.nav');
+    const offset = (nav ? nav.offsetHeight : 0) + 16;
+    const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  }
+
+  window.addEventListener('resize', layoutTierCards);
+  window.addEventListener('load', layoutTierCards);
+  layoutTierCards();
 
   // Stagger animation for individual cards
   function staggerCardAnimation(container, cardSelector) {
