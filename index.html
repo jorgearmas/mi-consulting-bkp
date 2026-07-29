@@ -58,6 +58,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Calendly -->
+<link rel="preconnect" href="https://assets.calendly.com" crossorigin>
+<link rel="preconnect" href="https://calendly.com" crossorigin>
+<link rel="dns-prefetch" href="https://calendly.com">
+<link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <style>
   :root{
     --navy:#0A2540;
@@ -371,6 +378,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .foot-col a:hover{color:var(--green-l)}
   .foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--navy-3);font-size:.8rem;color:var(--slate);flex-wrap:wrap;gap:20px}
 
+  /* Book a Call under the qualification form — mobile only */
+  .qual-book{display:none;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12)}
+  .qual-book p{font-size:.85rem;color:var(--ice);text-align:center;margin-bottom:12px}
+  .qual-book .btn{text-align:center;justify-content:center}
+
   /* ---------- RESPONSIVE ---------- */
   @media(max-width:768px){
     .hero{min-height:auto}
@@ -398,6 +410,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .final{padding:80px 0}
     .section-head h2{font-size:1.8rem}
     .nav-links{display:none}
+    #navlinks .js-calendly{display:none}
+    .qual-book{display:block}
     .burger{display:flex}
     .burger.x span:nth-child(1){transform:rotate(45deg) translateY(13px)}
     .burger.x span:nth-child(2){opacity:0}
@@ -472,6 +486,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   /* Text selection smooth */
   ::selection{background:var(--green-l);color:#fff;transition:all .2s ease}
+
+  /* Calendly popup — override the widget's 700px !important cap */
+  @media(min-width:976px){
+    html .calendly-overlay .calendly-popup{
+      width:min(1100px,92vw)!important;
+      max-width:92vw!important;
+      min-width:0!important;
+      height:96vh!important;
+      max-height:96vh!important;
+    }
+  }
+  @media(max-width:975px){
+    html .calendly-overlay .calendly-popup{top:0!important}
+  }
+  html .calendly-overlay .calendly-popup .calendly-popup-content{height:100%!important}
+  /* stop the page behind the modal from showing its scrollbar (Chrome draws it always) */
+  body.calendly-open{overflow:hidden!important;scrollbar-width:none}
+  body.calendly-open::-webkit-scrollbar{display:none}
+  html .calendly-overlay .calendly-popup-content::-webkit-scrollbar{display:none}
 </style>
 </head>
 <body>
@@ -490,7 +523,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="#lead">About</a>
       <a href="#tiers">Tiers</a>
       <a href="#faq">FAQ</a>
-      <a href="#lead" class="btn btn-primary btn-sm">Book a Call</a>
+      <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary btn-sm js-calendly">Book a Call</a>
     </nav>
     <button class="burger" id="burger">
       <span></span><span></span><span></span>
@@ -726,6 +759,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="form-actions" id="formActions">
             <button type="button" class="btn btn-ghost-green btn-sm" onclick="previousStep()" id="prevBtn" style="display:none">← Back</button>
             <button type="button" class="btn btn-ghost-green btn-sm" onclick="resetForm()" id="refreshBtn">↻ Refresh</button>
+          </div>
+
+          <!-- Mobile-only: Book a Call (moved out of the nav) -->
+          <div class="qual-book">
+            <p>Prefer to talk first?</p>
+            <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary btn-block js-calendly">Book a Call</a>
           </div>
         </div>
       </div>
@@ -1023,7 +1062,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div style="margin-top:60px;padding:40px;background:var(--cloud);border-radius:20px;text-align:center">
       <p style="font-size:1rem;color:var(--slate);margin-bottom:16px"><strong>No long-term contracts.</strong> Month-to-month, bilingual support, free cancelation. Our job is to make you less dependent on us, not trap you in a retainer.</p>
-      <a href="#lead" class="btn btn-primary">Book Your Consultation</a>
+      <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary js-calendly">Book Your Consultation</a>
     </div>
   </div>
 </section>
@@ -1079,7 +1118,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h2>Stop being locked out. <br> Start <em>scaling up.</em></h2>
       <p>Level up your existing team into SQF practitioners so you keep talent in house and become the preferred supplier for national and global customers.</p>
       <div class="final-actions">
-        <a href="#lead" class="btn btn-primary">Book a Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary js-calendly">Book a Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <a href="#tiers" class="btn btn-ghost on-dark">See the Growth Scale</a>
       </div>
     </div>
@@ -1114,7 +1153,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="foot-col">
         <h5>Connect</h5>
-        <a href="#lead">Book a Call</a>
+        <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="js-calendly">Book a Call</a>
         <a href="mailto:marketing@consultwithmi.com">Email Us</a>
         <a href="#faq">FAQ</a>
         <a href="/privacy.html">Privacy Policy</a>
@@ -1134,6 +1173,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   const navlinks=document.getElementById('navlinks');
   burger.addEventListener('click',()=>{burger.classList.toggle('x');navlinks.classList.toggle('open');});
   navlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('x');navlinks.classList.remove('open');}));
+
+  // Calendly popup — open embedded scheduler; href stays as a graceful fallback
+  const CALENDLY_URL='https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1';
+  document.querySelectorAll('.js-calendly').forEach(el=>{
+    el.addEventListener('click',(e)=>{
+      if(window.Calendly&&typeof window.Calendly.initPopupWidget==='function'){
+        e.preventDefault();
+        window.Calendly.initPopupWidget({url:CALENDLY_URL});
+      }
+    });
+  });
+  // lock page scroll while the Calendly overlay is mounted
+  new MutationObserver(()=>{
+    document.body.classList.toggle('calendly-open',!!document.querySelector('.calendly-overlay'));
+  }).observe(document.body,{childList:true});
 
   // scroll reveal — robust: triggers early, staggers siblings, guaranteed fallback
   const revealEls=document.querySelectorAll('.reveal');
