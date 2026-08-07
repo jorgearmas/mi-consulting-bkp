@@ -205,21 +205,51 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
   .burger span{width:24px;height:2.4px;background:var(--navy);border-radius:2px;transition:.3s}
 
-  /* ---------- HERO ---------- */
-  /* flex column + justify-content:flex-end drops the hero copy to the bottom of the 700px block */
-  .hero{position:relative;background:var(--navy);color:#fff;overflow:hidden;padding:56px 0 60px;isolation:isolate;min-height:700px;display:flex;flex-direction:column;justify-content:flex-end}
-  .hero-bg{position:fixed;inset:0;background:url('images/samHero.png') center/cover no-repeat;z-index:-1;pointer-events:none}
-  /* corner scrim, not a full-frame veil: anchored to the bottom-left where the headline
-     sits and fully transparent by 60% of the diagonal, so it never touches Sam's face */
-  .hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(to top right,rgba(10,37,64,.94) 0%,rgba(10,37,64,.72) 24%,rgba(10,37,64,.30) 44%,rgba(10,37,64,0) 60%)}
-  .hero::after{content:"";position:absolute;bottom:-160px;left:-180px;width:480px;height:480px;
-    background:radial-gradient(circle,rgba(224,168,46,.16),transparent 66%);pointer-events:none}
-  .hero-grid{display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:flex-start;position:relative;z-index:2;padding-top:40px}
-  .hero-copy{padding-bottom:0;order:1}
-  .hero h1{font-size:clamp(1.9rem,3.2vw,2.7rem);font-weight:600;margin:20px 0 0;color:#fff;line-height:1.2;text-shadow:0 2px 20px rgba(10,37,64,.55)}
-  .hero h1 .hl{color:var(--green-l);font-style:italic;font-weight:500;font-size:0.85em}
-  .hero .sub{font-size:1.08rem;color:var(--ice);margin:20px 0 24px;max-width:none;line-height:1.55}
+  /* Anchor targets must clear the 75px sticky nav. Without this the scroll-spy's
+     replaceState('#lead') makes Chrome scroll the hero's top 75px under the header,
+     clipping the booking card — and every nav anchor lands 75px too low. */
+  section[id]{scroll-margin-top:90px}
+
+  /* ---------- HERO ----------
+     Three layers, back to front:
+       1. .hero::before — the plant photo, blurred into pure texture
+       2. .hero::after  — a white gradient that whitens the left half so the navy copy reads
+       3. .hero-photo   — samHero.webp, a transparent cutout of Sam, sharp and bottom-anchored
+     The booking card sits in the grid above all three. */
+  .hero{position:relative;background:#F2F5F8;color:var(--ink);overflow:hidden;isolation:isolate;
+    min-height:600px;display:flex;align-items:center;padding:28px 0}
+  .hero::before{content:"";position:absolute;inset:-40px;z-index:0;pointer-events:none;
+    background:url('images/hero-manufacturing.png') center/cover no-repeat;filter:blur(24px) saturate(.7);opacity:.72}
+  /* heavy on the left where the navy copy lives, almost clear on the right so the plant reads */
+  .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(to right,rgba(242,245,248,.98) 0%,rgba(242,245,248,.93) 30%,rgba(242,245,248,.5) 48%,rgba(242,245,248,.2) 72%,rgba(242,245,248,.3) 100%)}
+  /* no position:relative here on purpose — .hero-photo must anchor to .hero's floor,
+     not to the wrap, whose height is only as tall as the grid. z-index still applies
+     because .wrap is a flex item. */
+  .hero .wrap{z-index:2;width:100%}
+  /* Sam is a cutout: no frame, no crop — just anchor him to the floor of the hero */
+  /* centred on the viewport, like the wrap, so the overlap with the booking card stays
+     constant at every width above --maxw instead of drifting. Sized by width, not by the
+     hero's height, so a taller card can't inflate him. */
+  .hero-photo{position:absolute;left:50%;transform:translateX(-40%);bottom:0;width:clamp(330px,31vw,470px);height:auto;max-width:none;
+    z-index:1;pointer-events:none;filter:drop-shadow(0 26px 46px rgba(10,37,64,.26))}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 362px;gap:40px;align-items:center;position:relative;z-index:2}
+  .hero-copy{order:1;max-width:560px}
+  .hero h1{font-size:clamp(1.95rem,2.85vw,2.45rem);font-weight:700;margin:0;color:var(--navy);line-height:1.14;letter-spacing:-.02em;max-width:11em}
+  .hero .hero-tag{font-family:'Montserrat',sans-serif;font-size:clamp(1.05rem,1.6vw,1.32rem);font-style:italic;font-weight:600;
+    color:var(--green);line-height:1.35;margin:16px 0 0;max-width:19em}
+  .hero .sub{font-size:.98rem;color:var(--slate);margin:20px 0 0;max-width:376px;line-height:1.6}
+  /* credentials, 2x2 with green check marks */
+  /* capped so the second column never lands on Sam's shoulder — his bounding box is
+     widest at the bottom (his elbows), which is exactly this band of the hero */
+  .hero-creds{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:26px 0 0;max-width:376px}
+  .hero-creds li{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start}
+  .hero-creds>li>svg{width:20px;height:20px;margin-top:1px;color:var(--green)}
+  .hero-creds b{display:block;font-family:'Archivo',sans-serif;font-size:.86rem;font-weight:700;color:var(--navy);line-height:1.3}
+  .hero-creds b+span{display:block;font-size:.76rem;color:var(--slate);margin-top:2px;line-height:1.4}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+  .hero-actions .btn{font-size:.86rem;padding:14px 20px;border-radius:12px;gap:9px}
+  .hero-actions .btn-ghost{background:rgba(255,255,255,.9);border-color:var(--line)}
 
   /* form in hero */
   .qual-form{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:28px;height:fit-content;position:sticky;top:80px;order:2}
@@ -285,32 +315,45 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .qual-form .consent-row label{font-size:.74rem;line-height:1.45;color:var(--ice);cursor:pointer;font-weight:400}
   @keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
-  /* hero visual */
-  .hero-visual{display:none}
-
   /* ---- Qualification form SHADOWED ----
      The form is disabled via the `hidden` attribute on #qualForm (see the hero markup).
-     While it is hidden the hero collapses to one column and the Calendly CTA below the
-     subheadline takes its place. Remove `hidden` from #qualForm to bring the form back —
-     nothing else needs to change. */
-  .hero-grid:has(#qualForm[hidden]){align-items:flex-end}
-  /* the About card and the form share the right column — never both at once */
-  .hero-grid:not(:has(#qualForm[hidden])) .hero-about{display:none}
+     While it is hidden the booking card owns the hero's right column. Remove `hidden`
+     from #qualForm to bring the form back — the card hides itself automatically. */
+  .hero-grid:not(:has(#qualForm[hidden])) .book-card{display:none}
 
-  /* ---- WHO WE ARE, in the hero's right column ---- */
-  /* solid navy at 92% instead of a white tint: the card now sets its own contrast
-     rather than inheriting whatever the photo happens to be doing behind it */
-  .hero-about{order:2;background:rgba(10,37,64,.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.14);border-top:3px solid var(--green);border-radius:24px;padding:30px 28px;height:fit-content;box-shadow:0 24px 60px rgba(0,0,0,.45)}
-  .hero-about-label{display:inline-block;font-family:'Archivo',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green-l);margin-bottom:12px}
-  .hero-about-name{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:#fff;line-height:1.1;margin:0 0 8px}
-  .hero-about-role{font-family:'Archivo',sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green-l);margin:0 0 18px;line-height:1.5}
-  .hero-about-bio{font-size:.88rem;line-height:1.65;color:var(--ice);margin:0}
-  .hero-creds{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0 0;padding:18px 0 0;border-top:1px solid rgba(255,255,255,.12)}
-  .hero-creds li{display:flex;flex-direction:column}
-  .hero-creds b{font-family:'Archivo',sans-serif;font-size:.82rem;font-weight:700;color:#fff;line-height:1.3}
-  .hero-creds span{font-size:.74rem;color:var(--ice);margin-top:3px;line-height:1.4}
-  .hero-about-cta{margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12)}
-  
+  /* ---- BOOKING CARD (hero, right column) ----
+     The column is 362px because Calendly renders its day grid at a fixed 312px no matter
+     how wide the frame is — the rest becomes side padding, (width - 312) / 2. At 420 that
+     was 55px a side; at 362 it is 24. Widening the frame and cropping the sides does not
+     help: the padding just grows to match. */
+  .book-card{order:2;background:linear-gradient(165deg,#123556 0%,var(--navy) 62%);border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;padding:22px 21px 18px;height:fit-content;box-shadow:0 30px 70px rgba(10,37,64,.34)}
+  .bc-title{font-family:'Montserrat',sans-serif;font-size:1.22rem;font-weight:700;color:#fff;line-height:1.2;margin:0;letter-spacing:-.01em}
+  .bc-meta{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:.82rem;font-weight:600;color:var(--green-l)}
+  .bc-meta svg{width:16px;height:16px;flex-shrink:0}
+  /* Full-bleed, so the iframe meets the card's rounded corners.
+     600px exactly: below it Calendly's day view scrolls inside the iframe and shows its
+     own scrollbar. Measured, not guessed — 580 scrolls, 600 does not. The card header is
+     kept minimal so that 600 still fits a laptop viewport under the sticky nav. */
+  /* Two heights. Calendly's day view only paints down to 502px, so we crop the frame to
+     510 and the card loses ~90px of dead navy. The time-slot list, though, runs well past
+     600px and scrolls inside its own panel — cropping there would bury the last slots, so
+     the frame goes back to its full 600 the moment the visitor interacts with it. */
+  .bc-embed{--bc-scale:1;margin:16px -21px -18px;border-radius:0 0 20px 20px;overflow:hidden;
+    background:var(--navy);height:calc(510px * var(--bc-scale));transition:height .35s cubic-bezier(.2,.8,.2,1)}
+  .bc-embed.is-open{height:calc(600px * var(--bc-scale))}
+  /* The iframe is always 600px tall — its real minimum — and we scale it down to whatever
+     the viewport can actually give us. Shrinking the iframe itself instead would make
+     Calendly render its own scrollbar; scaling keeps the day view whole. Clicks pass
+     through a transform correctly, so the widget stays fully interactive. */
+  .bc-embed .calendly-inline-widget{width:calc(100% / var(--bc-scale));height:600px;
+    transform:scale(var(--bc-scale));transform-origin:top left;border-radius:0 0 20px 20px}
+  /* Height-keyed, and only where the hero is the two-column layout — below 769px the page
+     stacks and scrolls normally, so a short phone must not shrink the calendar. */
+  @media (min-width:769px) and (max-height:759px){.bc-embed{--bc-scale:.92}}
+  @media (min-width:769px) and (max-height:699px){.bc-embed{--bc-scale:.84}}
+  @media (min-width:769px) and (max-height:639px){.bc-embed{--bc-scale:.76}}
+
   /* update form for right side */
 
   /* ---------- TRUST BADGES ---------- */
@@ -453,12 +496,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .qual-book .btn{text-align:center;justify-content:center}
 
   /* ---------- RESPONSIVE ---------- */
+  /* tablet: the wrap is narrower than --maxw here, so the card walks toward the centred
+     photo — shrink both to keep Sam's face out from behind the card */
+  @media(max-width:1080px) and (min-width:769px){
+    .hero-grid{grid-template-columns:minmax(0,1fr) 350px;gap:24px}
+    .hero-photo{height:92%;transform:translateX(-56%)}
+    .hero-copy{max-width:100%}
+    .hero-creds{grid-template-columns:1fr;gap:12px}
+  }
   @media(max-width:768px){
-    .hero{min-height:auto}
-    .hero-grid{grid-template-columns:1fr;gap:32px;padding:40px 0 0}
-    .hero-copy{padding-bottom:32px}
-    .hero h1{font-size:1.7rem;margin:16px 0 0}
-    .hero .sub{margin:16px 0 20px;font-size:1rem}
+    /* block, not flex: .hero-photo is a direct child of .hero and goes back in flow here,
+       so it must stack under .wrap instead of becoming a second flex column */
+    .hero{min-height:auto;padding:36px 0 0;display:block}
+    .hero::after{background:linear-gradient(to bottom,rgba(242,245,248,.97) 0%,rgba(242,245,248,.92) 60%,rgba(242,245,248,.98) 100%)}
+    .hero-grid{grid-template-columns:1fr;gap:28px}
+    .hero-copy{max-width:100%;padding:0}
+    .hero h1{font-size:1.72rem;max-width:none}
+    .hero .hero-tag{font-size:1.02rem;margin-top:12px}
+    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%}
+    .hero-creds{gap:14px 16px;max-width:100%}
+    .hero-actions{gap:10px;margin-top:24px}
+    .hero-actions .btn{width:100%;justify-content:center}
+    /* .wrap stops being a flex item once .hero is display:block, so z-index needs a
+       position to keep working — otherwise the ::after scrim paints over everything */
+    .hero .wrap{position:relative;z-index:2}
+    /* back in flow, closing the hero under the booking card */
+    .hero-photo{position:relative;z-index:2;transform:none;left:auto;bottom:auto;height:auto;
+      width:min(270px,66%);margin:20px auto -1px;display:block;filter:none}
+    .book-card{padding:22px 18px 18px}
+    .bc-embed{margin:16px -18px -18px}
     .wrap{padding:0 18px}
     .qual-form{padding:20px;position:static;margin-top:24px}
     .stepper-indicator{gap:4px;margin-bottom:28px}
@@ -475,8 +541,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .tier-body{padding:22px 20px 24px}
     .tier-bar{padding:14px 20px}
     .faq-grid{grid-template-columns:1fr}
-    .hero-about{padding:20px;margin-top:24px}
-    .hero-about-name{font-size:1.6rem}
     .foot-grid{grid-template-columns:1fr;gap:32px}
     .final{padding:80px 0}
     .section-head h2{font-size:1.8rem}
@@ -541,7 +605,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   /* Form animations */
   .qual-form{animation:slideInRight .6s ease-out .3s forwards;opacity:0}
-  .hero-about{animation:slideInRight .6s ease-out .3s forwards;opacity:0}
+  .book-card{animation:slideInRight .6s ease-out .3s forwards;opacity:0}
 
   /* Hero animations */
   .hero-copy h1{animation:slideInUp .7s ease-out .1s forwards;opacity:0}
@@ -637,28 +701,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ========== HERO ========== -->
 <section class="hero" id="lead">
-  <div class="hero-bg" aria-hidden="true"></div>
   <div class="wrap">
     <div class="hero-grid">
-      <div class="hero-copy">
-        <h1>Every Manufacturer Deserves a Corporate Food Safety Team. <span class="hl"><br>Now You Can Afford One.</span></h1>
-      </div>
+      <div class="hero-copy" id="about">
+        <h1>Every Manufacturer Deserves a Better Food Safety Partner.</h1>
+        <p class="hero-tag">Build a stronger system. Train your team. Stay audit-ready.</p>
+        <p class="sub">We help manufacturers build food safety systems that pass audits, strengthen operations, and empower internal teams.</p>
 
-      <!-- WHO WE ARE — occupies the hero's right column while the form is shadowed; auto-hides if the form returns -->
-      <aside class="hero-about" id="about">
-        <span class="hero-about-label">Who We Are</span>
-        <h2 class="hero-about-name">Sam Peña</h2>
-        <p class="hero-about-role">Founder &amp; SQF Consultant, MI Consulting Group LLC</p>
-        <p class="hero-about-bio">I started MI Consulting Group because small and mid-size manufacturers are let down by an industry built around dependency, not development. My goal is simple: build the program right, train your people to own it, and make myself less necessary over time.</p>
         <ul class="hero-creds">
-          <li><b>SQF Practitioner</b><span>Certified by SQFI</span></li>
-          <li><b>Six Sigma Black Belt</b><span>Process &amp; efficiency</span></li>
-          <li><b>PCQI Trained</b><span>FSMA compliant</span></li>
-          <li><b>Bilingual</b><span>English &amp; Spanish</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>SQF Practitioner</b><span>Certified by SQFI</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Six Sigma Black Belt</b><span>Process &amp; efficiency</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>PCQI Trained</b><span>FSMA compliant</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Bilingual</b><span>English &amp; Spanish</span></span></li>
         </ul>
 
-        <div class="hero-about-cta">
-          <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1" class="btn btn-primary btn-block js-calendly">Book a Call</a>
+        <div class="hero-actions">
+          <a href="https://www.linkedin.com/in/sam-pena-mi/" target="_blank" rel="noopener" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0"/></svg>
+            Connect with Sam on LinkedIn
+          </a>
+        </div>
+      </div>
+
+      <!-- BOOKING CARD — owns the right column while the form is shadowed; auto-hides if the form returns -->
+      <aside class="book-card" id="bookCard" aria-labelledby="bcTitle">
+        <h2 class="bc-title" id="bcTitle">Book a Free Consultation</h2>
+        <p class="bc-meta">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          30 min Consultation
+        </p>
+
+
+        <!-- The client's real Calendly, inline. Everything inside is an iframe: our CSS
+             cannot reach it. Colours are passed as URL params (background/text/primary) —
+             Calendly only honours those on a paid plan; on the free plan the scheduler
+             renders white, which is why the navy header above is a separate block that
+             looks deliberate either way. -->
+        <div class="bc-embed">
+          <div class="calendly-inline-widget"
+               data-url="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1&amp;hide_event_type_details=1&amp;background_color=0a2540&amp;text_color=ffffff&amp;primary_color=1b9e77"
+               style="min-width:320px;height:600px"></div>
+          <noscript><a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary btn-block">Book a Free Consultation</a></noscript>
         </div>
       </aside>
 
@@ -873,13 +956,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
       </div>
-
-      <div class="hero-visual">
-        <div class="photo">
-          <img src="images/hero-manufacturing.png" alt="Food manufacturing team with supervisor" width="1672" height="941">
-        </div>
-      </div>
     </div>
+
+    <!-- Sam, a transparent cutout. Absolute on desktop so he sits between the copy and the
+         card without occupying a grid track; back in normal flow below 768px. Last in the
+         DOM so the stacked mobile order reads copy → card → photo. -->
+    <img class="hero-photo" src="images/samHero.webp" alt="Sam Peña, SQF consultant" width="1400" height="1642" fetchpriority="high" decoding="async">
   </div>
 </section>
 
@@ -1313,10 +1395,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
     });
   });
+  /* The hero's Calendly frame is cropped to its day view (see .bc-embed). Give it the
+     full height back as soon as the visitor engages, before they can reach the time list.
+     Two triggers, because neither is guaranteed on its own: focus moving into the iframe
+     (a click inside a cross-origin frame blurs the parent window), and Calendly's late
+     postMessage events as a net. Both only grow the frame, so nothing can end up hidden. */
+  (function(){
+    const box=document.querySelector('.bc-embed');
+    if(!box)return;
+    const open=()=>box.classList.add('is-open');
+    window.addEventListener('blur',()=>{
+      const a=document.activeElement;
+      if(a&&a.tagName==='IFRAME'&&box.contains(a))open();
+    });
+    // Only the late events: calendly.event_type_viewed fires on load and would expand the
+    // frame before the visitor has done anything.
+    const LATE=['calendly.date_and_time_selected','calendly.event_scheduled'];
+    window.addEventListener('message',(e)=>{
+      if(typeof e.origin==='string'&&e.origin.indexOf('calendly.com')>-1
+         &&e.data&&LATE.indexOf(e.data.event)>-1)open();
+    });
+  })();
+
   // lock page scroll while the Calendly overlay is mounted
   new MutationObserver(()=>{
     document.body.classList.toggle('calendly-open',!!document.querySelector('.calendly-overlay'));
   }).observe(document.body,{childList:true});
+
 
   // scroll reveal — robust: triggers early, staggers siblings, guaranteed fallback
   const revealEls=document.querySelectorAll('.reveal');
@@ -1697,15 +1802,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         });
       }
     });
-  });
-
-  // Add subtle parallax effect to hero
-  window.addEventListener('scroll', () => {
-    const hero = document.querySelector('.hero');
-    if (hero) {
-      const scrolled = window.pageYOffset;
-      hero.style.backgroundPosition = `center ${scrolled * 0.5}px`;
-    }
   });
 
   // Tier price selector: show the explanatory card matching the clicked price row.
