@@ -399,7 +399,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .section-dark{background:var(--navy);color:#fff}
   .section-light{background:var(--cloud);color:var(--ink)}
   .section-white{background:#fff;color:var(--ink)}
-  
+
+  /* ---------- BRAND STRIP ---------- */
+  /* A slow left-drifting marquee under the hero. The track holds SIX copies of the four
+     logos: the animation ends at translateX(-50%), which only loops seamlessly if the
+     second half of the track is pixel-identical to the first, so the copies come in
+     pairs (3 + 3). Three copies per half is what it takes to keep the strip full on a
+     wide monitor — one set of four measures ~800px, so a half spans ~2400px. */
+  .brands{background:#fff;padding:44px 0 40px;border-bottom:1px solid var(--line)}
+  .brands-title{text-align:center;font-size:.82rem;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--slate);margin:0 0 30px}
+  /* the mask dissolves both ends so logos enter and leave instead of being chopped off
+     against the section edge */
+  .brands-viewport{overflow:hidden;
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%);
+    mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%)}
+  .brand-track{display:flex;width:max-content;animation:brand-scroll 55s linear infinite}
+  /* Pause on the hovered logo, not on the whole strip — :has lets the moving ancestor
+     react to a hover on one of its children. Browsers without :has fall back to pausing
+     whenever the pointer is over the strip at all. */
+  .brand-track:has(.brand:hover){animation-play-state:paused}
+  @supports not selector(:has(*)){
+    .brands-viewport:hover .brand-track{animation-play-state:paused}
+  }
+  @keyframes brand-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .brand-set{display:flex;align-items:center;gap:70px;padding-right:70px}
+  .brand{display:flex;align-items:center;justify-content:center;flex:none}
+  /* Resting state is desaturated and dimmed so the strip reads as one quiet band instead
+     of four competing brand palettes; hover restores the real colours. */
+  .brand img{height:var(--bh,54px);width:auto;display:block;
+    filter:grayscale(1);opacity:var(--bo,.55);
+    transition:filter .35s ease,opacity .35s ease,transform .35s ease}
+  .brand:hover img{filter:none;opacity:1;transform:scale(1.07)}
+  /* Per-logo heights, because matching raw heights does not match apparent size: a solid
+     square tile carries far more weight than a thin wordmark, and Brightland's mark is
+     mostly air inside its own box. These even out the optical mass across the row. */
+  /* --bo is the resting opacity, and it is not uniform either: a filled tile is still
+     legible at .5 while Brightland's hairline letters disappear there. */
+  .brand--brightland img{--bh:64px;--bo:.72}
+  .brand--sciabica img{--bh:48px;--bo:.7}
+  .brand--cult img{--bh:46px;--bo:.62}
+  /* the crest carries type small enough that it needs the extra height to stay readable */
+  .brand--journeyman img{--bh:64px;--bo:.6}
+  /* the two solid tiles are logos-on-a-block; the radius keeps them from reading as
+     screenshots pasted into the row */
+  .brand--patagonia img{--bh:58px;--bo:.5;border-radius:10px}
+  .brand--rancho img{--bh:58px;--bo:.5;border-radius:10px}
+  /* No drifting for anyone who asked for no motion: drop the five decorative copies and
+     centre the one real set. */
+  @media(prefers-reduced-motion:reduce){
+    .brand-track{animation:none;width:100%;justify-content:center}
+    .brand-set[aria-hidden="true"]{display:none}
+    .brand-set{flex-wrap:wrap;justify-content:center;gap:40px;padding-right:0}
+  }
+
   .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease-out,transform .6s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1;transform:translateY(0)}
 
@@ -597,6 +650,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .trust-row{margin-top:24px;gap:16px 28px}
     .trust-item + .trust-item{padding-left:0;border-left:none}
     .section-pad{padding:60px 0}
+    /* Tighter band and smaller logos on a phone, and the gap shrinks with them so the
+       strip still shows two or three marks at a time instead of one at a stretch. */
+    .brands{padding:32px 0 30px}
+    .brands-title{font-size:.72rem;letter-spacing:.1em;margin-bottom:22px;padding:0 18px}
+    .brand-set{gap:44px;padding-right:44px}
+    .brand--brightland img{--bh:48px}
+    .brand--sciabica img{--bh:36px}
+    .brand--cult img{--bh:34px}
+    .brand--journeyman img{--bh:48px}
+    .brand--patagonia img{--bh:44px}
+    .brand--rancho img{--bh:44px}
     .pillars-grid{grid-template-columns:1fr;gap:24px}
     .reasons-grid{grid-template-columns:1fr;gap:20px}
     .tiers-selector{grid-template-columns:1fr;gap:20px}
@@ -1037,6 +1101,50 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </section>
 
+<!-- ========== BRAND STRIP ========== -->
+<section class="brands" aria-label="Manufacturers we work with">
+  <p class="brands-title">Trusted by manufacturers who take food safety seriously</p>
+  <div class="brands-viewport">
+    <!-- Four identical sets: the marquee loops by sliding exactly half the track, so the
+         second half has to repeat the first, and two sets per half is what it takes to
+         keep a 1920px screen full. Only the first set is exposed to assistive tech; the
+         rest are decoration. -->
+    <div class="brand-track">
+      <div class="brand-set">
+        <div class="brand brand--brightland"><img src="images/brands/brightland.webp" alt="Brightland" width="399" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--patagonia"><img src="images/brands/patagonia.webp" alt="Patagonia Provisions" width="192" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--sciabica"><img src="images/brands/sciabica.webp" alt="Sciabica Family California Olive Oil" width="651" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--journeyman"><img src="images/brands/journeyman.webp" alt="Journeyman Meat Co" width="221" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--cult"><img src="images/brands/cultcrackers.webp" alt="Cult Crackers" width="660" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--rancho"><img src="images/brands/ranchogordo.webp" alt="Rancho Gordo" width="214" height="192" loading="lazy" decoding="async"></div>
+      </div>
+      <div class="brand-set" aria-hidden="true">
+        <div class="brand brand--brightland"><img src="images/brands/brightland.webp" alt="" width="399" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--patagonia"><img src="images/brands/patagonia.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--sciabica"><img src="images/brands/sciabica.webp" alt="" width="651" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--journeyman"><img src="images/brands/journeyman.webp" alt="" width="221" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--cult"><img src="images/brands/cultcrackers.webp" alt="" width="660" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--rancho"><img src="images/brands/ranchogordo.webp" alt="" width="214" height="192" loading="lazy" decoding="async"></div>
+      </div>
+      <div class="brand-set" aria-hidden="true">
+        <div class="brand brand--brightland"><img src="images/brands/brightland.webp" alt="" width="399" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--patagonia"><img src="images/brands/patagonia.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--sciabica"><img src="images/brands/sciabica.webp" alt="" width="651" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--journeyman"><img src="images/brands/journeyman.webp" alt="" width="221" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--cult"><img src="images/brands/cultcrackers.webp" alt="" width="660" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--rancho"><img src="images/brands/ranchogordo.webp" alt="" width="214" height="192" loading="lazy" decoding="async"></div>
+      </div>
+      <div class="brand-set" aria-hidden="true">
+        <div class="brand brand--brightland"><img src="images/brands/brightland.webp" alt="" width="399" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--patagonia"><img src="images/brands/patagonia.webp" alt="" width="192" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--sciabica"><img src="images/brands/sciabica.webp" alt="" width="651" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--journeyman"><img src="images/brands/journeyman.webp" alt="" width="221" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--cult"><img src="images/brands/cultcrackers.webp" alt="" width="660" height="192" loading="lazy" decoding="async"></div>
+        <div class="brand brand--rancho"><img src="images/brands/ranchogordo.webp" alt="" width="214" height="192" loading="lazy" decoding="async"></div>
+      </div>
+    </div>
+  </div>
+</section>
 <!-- ========== WHAT'S HOLDING YOU BACK ========== -->
 <section class="section-pad section-white" id="holding-back">
   <div class="wrap">
