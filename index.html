@@ -214,7 +214,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      Three layers, back to front:
        1. .hero::before — the plant photo, blurred into pure texture
        2. .hero::after  — a white gradient that whitens the left half so the navy copy reads
-       3. .hero-photo   — samHero1.webp, a transparent cutout of Sam, sharp and bottom-anchored
+       3. .hero-photo   — samHeroreal.webp, a transparent cutout of Sam, sharp and bottom-anchored
      The booking card sits in the grid above all three. */
   .hero{position:relative;background:#F2F5F8;color:var(--ink);overflow:hidden;isolation:isolate;
     min-height:600px;display:flex;align-items:center;padding:28px 0}
@@ -226,7 +226,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* no position:relative here on purpose — .hero-photo must anchor to .hero's floor,
      not to the wrap, whose height is only as tall as the grid. z-index still applies
      because .wrap is a flex item. */
-  .hero .wrap{z-index:2;width:100%}
+  /* 3, not 2: .hero-photo sits at 2 to clear the ::after scrim, and the wrap has to stay
+     above him or he paints over the booking card. */
+  .hero .wrap{z-index:3;width:100%}
   /* Giant watermark behind the copy. Absolute against .hero (the wrap is unpositioned on
      desktop, on purpose — see above), so it can bleed off the top edge and get cropped by
      the hero's overflow:hidden. z-index 0 puts it under .hero-photo (1) and .hero-grid (2),
@@ -239,8 +241,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* centred on the viewport, like the wrap, so the overlap with the booking card stays
      constant at every width above --maxw instead of drifting. Sized by width, not by the
      hero's height, so a taller card can't inflate him. */
-  .hero-photo{position:absolute;left:50%;transform:translateX(-40%);bottom:0;width:clamp(330px,31vw,470px);height:auto;max-width:none;
-    z-index:1;pointer-events:none;filter:drop-shadow(0 26px 46px rgba(10,37,64,.26))}
+  .hero-photo{position:absolute;left:50%;transform:translateX(-30%);bottom:0;width:clamp(300px,32vw,412px);height:auto;max-width:none;
+    z-index:2;pointer-events:none;filter:drop-shadow(0 26px 46px rgba(10,37,64,.26))}
   .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 362px;gap:40px;align-items:center;position:relative;z-index:2}
   /* Anchored to the top of the row, not centred in it, so the gap under the watermark is
      the same at every viewport height. Centred, the copy rode up as the row shrank — the
@@ -578,13 +580,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .qual-book .btn{text-align:center;justify-content:center}
 
   /* ---------- RESPONSIVE ---------- */
-  /* tablet: the wrap is narrower than --maxw here, so the card walks toward the centred
-     photo — shrink both to keep Sam's face out from behind the card */
+  /* Tablet. The card walks toward the centred photo here, so below 1000px Sam goes away:
+     this photo is a wide bust rather than a narrow standing figure, and at 800px the card
+     covers half his face while what is left crowds the credentials. There is no size that
+     fixes it — the copy column and a 350px card use the whole width between them. Above
+     1000px he clears the card and stays. (The old rule scaled him with height:92%, which
+     stretched him: height and width were both set on an img, and object-fit defaults to
+     fill. At this aspect that was a 2.5x vertical stretch.) */
   @media(max-width:1080px) and (min-width:769px){
     .hero-grid{grid-template-columns:minmax(0,1fr) 350px;gap:24px}
-    .hero-photo{height:92%;transform:translateX(-56%)}
+    .hero-photo{display:none}
     .hero-copy{max-width:100%}
     .hero-creds{grid-template-columns:1fr;gap:12px}
+  }
+  @media(min-width:1000px) and (max-width:1080px){
+    .hero-photo{display:block;transform:translateX(-52%)}
   }
   @media(max-width:768px){
     /* flex COLUMN, not the desktop row: .hero-photo is a direct child of .hero, so a column
@@ -598,28 +608,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        lost: .wrap already opens a stacking context above the ::after scrim. */
     .hero-grid{grid-template-columns:1fr;gap:28px;position:static}
     /* the desktop top-anchoring gap does not apply once the grid is a single column */
-    .hero-copy{max-width:100%;padding:0;margin-top:0}
-    .hero h1{font-size:1.72rem;max-width:none}
-    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%}
+    /* flex so `order` can lift the credentials above the headline without moving them in
+       the markup, where they belong after it */
+    .hero-copy{max-width:100%;padding:0;margin-top:0;display:flex;flex-direction:column}
+    .hero h1{font-size:1.72rem;max-width:none;order:2;margin-top:20px}
+    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%;order:3}
     /* Phones: the credentials fill the empty column beside Sam. Absolute against .hero
        because the photo is a flex item of .hero while this list lives three levels down
-       inside .wrap — there is no shared box to make them a row. Their band is the photo's:
-       it starts under the wordmark and has to end above his desk, which is why the type
-       steps down a notch. Out of flow, so the headline closes up underneath. */
-    .hero-creds{position:absolute;left:18px;top:78px;width:44%;max-width:200px;z-index:3;
-      grid-template-columns:1fr;gap:11px;margin:0}
-    .hero-creds li{gap:8px;grid-template-columns:18px 1fr}
-    .hero-creds>li>svg{width:18px;height:18px}
-    .hero-creds b{font-size:.8rem}
-    .hero-creds b+span{font-size:.7rem}
-    /* Under ~360px the column is narrow enough that "Six Sigma Black Belt" takes a second
-       line and the list outgrows the photo's band, landing on the headline. Tighten it. */
+       inside .wrap — there is no shared box to make them a row.
+
+       The width is derived, not picked: whatever the photo takes plus its 18px margin,
+       the 18px wrap padding on both sides and a 10px gutter is what the column cannot
+       have. Write it once and it tracks the photo at every width instead of needing a
+       breakpoint per phone. The type steps down because the column is ~146px at 390 and
+       the longest line, "Mind-Shift Intelligence Approach", has to fit in two. */
+    .hero-creds{position:absolute;left:18px;top:78px;z-index:3;margin:0;
+      width:calc(100% - min(180px,44%) - 46px);max-width:none;
+      grid-template-columns:1fr;gap:9px}
+    .hero-creds li{gap:8px;grid-template-columns:17px 1fr}
+    .hero-creds>li>svg{width:17px;height:17px}
+    .hero-creds b{font-size:.75rem;line-height:1.28}
+    .hero-creds b+span{font-size:.66rem;line-height:1.32}
+    /* Under 360px the column drops below 130px, every label breaks three deep and the list
+       runs past Sam onto the headline. Stop threading the needle: full width, in flow. */
     @media(max-width:359px){
-      .hero-creds{top:62px;gap:8px}
-      .hero-creds b{font-size:.76rem}
-      .hero-creds b+span{font-size:.66rem}
+      .hero-creds{position:static;order:1;width:auto;margin:2px 0 0;gap:10px}
+      .hero-creds b{font-size:.78rem}
+      .hero-creds b+span{font-size:.68rem}
     }
-    .hero-actions{gap:10px;margin-top:24px;max-width:100%}
+    /* order 4, explicitly: the default 0 would sort the buttons ABOVE every ordered
+       sibling and land them between Sam and the credentials */
+    .hero-actions{order:4;gap:10px;margin-top:24px;max-width:100%}
     .hero-actions .btn{width:100%;justify-content:center}
     /* the wrap is a flex item again, so z-index works without position:relative — and
        leaving it unpositioned is what lets .hero-mark anchor to the hero, same as desktop */
@@ -631,11 +650,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        z-index 2 beats the ::after scrim; he still paints over .hero-mark because he comes
        later in the DOM at the same level, which is the whole point of the overlap. */
     .hero-photo{order:-1;align-self:flex-end;position:relative;z-index:2;transform:none;left:auto;bottom:auto;
-      height:auto;width:min(230px,60%);margin:0 18px 10px 0;display:block;filter:none;
+      height:auto;width:min(180px,44%);margin:0 18px 16px 0;display:block;filter:none;
       /* On desktop he stands on the hero's floor, so the desk edge at the bottom of the
          cutout reads as a table. Mid-page it reads as a crop, so fade the last strip out. */
       -webkit-mask-image:linear-gradient(to bottom,#000 78%,transparent 100%);
       mask-image:linear-gradient(to bottom,#000 78%,transparent 100%)}
+    /* 360–389px: the column is narrow enough here that two labels take an extra line and
+       the list outgrows Sam's band. Hold the band open. Above 390 it fits on its own and
+       this would only read as dead space. Must follow the rule above, whose margin
+       shorthand would otherwise reset it. */
+    @media(min-width:360px) and (max-width:409px){
+      .hero-photo{margin-bottom:48px}
+    }
     /* No inline calendar on a phone: a 600px cross-origin iframe stacked under the copy is
        a lot of weight for something the visitor has to scroll past. The card goes and the
        .hero-book button takes over as the CTA — see the mobile guard in the script, which
@@ -839,10 +865,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="sub">Sam helps manufacturers build food safety systems, prepare for SQF certification, and develop teams that can confidently own the process.</p>
 
         <ul class="hero-creds">
-          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>SQF Practitioner</b><span>Certified by SQFI</span></span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Six Sigma Black Belt</b><span>Process &amp; efficiency</span></span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>PCQI Trained</b><span>FSMA compliant</span></span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Bilingual</b><span>English &amp; Spanish</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Certified SQF Consultant</b><span>Certified by SQFI</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Six Sigma Black Belt</b><span>Process &amp; Efficiency</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Masters in Psychology</b><span>Mind-Shift Intelligence Approach</span></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Bilingual</b><span>English and Spanish</span></span></li>
         </ul>
 
         <div class="hero-actions">
@@ -1097,7 +1123,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Sam, a transparent cutout. Absolute on desktop so he sits between the copy and the
          card without occupying a grid track; back in normal flow below 768px. Last in the
          DOM so the stacked mobile order reads copy → card → photo. -->
-    <img class="hero-photo" src="images/samHero1.webp" alt="Sam Peña, SQF consultant" width="1400" height="1641" fetchpriority="high" decoding="async">
+    <img class="hero-photo" src="images/samHeroreal.webp" alt="Sam Peña, SQF consultant" width="1103" height="1354" fetchpriority="high" decoding="async">
   </div>
 </section>
 
