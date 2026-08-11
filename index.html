@@ -216,7 +216,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        2. .hero::after  — a white gradient that whitens the left half so the navy copy reads
        3. .hero-photo   — samHeroreal.webp, a transparent cutout of Sam, sharp and bottom-anchored
      The booking card sits in the grid above all three. */
-  .hero{position:relative;background:#F2F5F8;color:var(--ink);overflow:hidden;isolation:isolate;
+  /* The hero runs 160px wider than the rest of the page, which is why it carries its own
+     width instead of using --maxw. It cannot go wider than 1360: Sam is positioned against
+     the VIEWPORT centre, not against the wrap, so widening the wrap slides the booking card
+     right while he stays put, and the card's left edge crosses his right arm at 1460. 1360
+     leaves 50px of him behind the card, which is what makes him read as standing in front of
+     it; by 1420 the overlap is down to 20px and a strip of background shows between them. */
+  .hero{--hero-maxw:1360px;
+    position:relative;background:#F2F5F8;color:var(--ink);overflow:hidden;isolation:isolate;
     min-height:600px;display:flex;align-items:center;padding:28px 0}
   .hero::before{content:"";position:absolute;inset:-40px;z-index:0;pointer-events:none;
     background:url('images/hero-manufacturing.png') center/cover no-repeat;filter:blur(24px) saturate(.7);opacity:.72}
@@ -228,20 +235,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      because .wrap is a flex item. */
   /* 3, not 2: .hero-photo sits at 2 to clear the ::after scrim, and the wrap has to stay
      above him or he paints over the booking card. */
-  .hero .wrap{z-index:3;width:100%}
+  .hero .wrap{z-index:3;width:100%;max-width:var(--hero-maxw)}
+  /* the <picture> around Sam must not become a box of its own — see the note on the markup */
+  .hero picture{display:contents}
   /* Giant watermark behind the copy. Absolute against .hero (the wrap is unpositioned on
      desktop, on purpose — see above), so it can bleed off the top edge and get cropped by
      the hero's overflow:hidden. z-index 0 puts it under .hero-photo (1) and .hero-grid (2),
-     so the M runs behind Sam's shoulder and the headline sits over the letters. */
-  .hero-mark{position:absolute;top:10px;left:50%;transform:translateX(-50%);
-    width:min(100%,var(--maxw));padding:0 28px;z-index:0;pointer-events:none;user-select:none;
-    font-family:'Montserrat',sans-serif;font-weight:800;font-size:clamp(5rem,12vw,11rem);
+     so "PEÑA" runs behind Sam's shoulder and the headline sits over the letters.
+     Sizing runs on two ladders. This one is desktop's, a taste call — the mark is texture,
+     not a headline. The phone ladder is in the 768 block and is NOT a taste call; see the
+     note there. The nbsp in the markup keeps the two words on one line: with a normal space
+     it would wrap to two on a phone and double the band it eats.
+     Width tracks --hero-maxw and not --maxw so the left edge stays flush with the headline's;
+     on the page's own 1200 it would start 80px to the right of it.
+     top is in em on purpose, so it tracks whatever font-size is set above. line-height .8
+     pulls the line box up over the glyphs and the Ñ's tilde paints about 0.2em above cap
+     height, so at the old flat 10px the tilde was cut by 11px on a wide monitor while the
+     capitals still cleared by 15. Measured the ratio it actually needs at four sizes: 0.164
+     to 0.173em. .21em covers all of them with 2 to 6px to spare and keeps covering them if
+     the size changes. Phones inherit it — no top of their own. */
+  .hero-mark{position:absolute;top:.30em;left:50%;transform:translateX(-50%);
+    width:min(100%,var(--hero-maxw));padding:0 28px;z-index:0;pointer-events:none;user-select:none;
+    font-family:'Montserrat',sans-serif;font-weight:800;font-size:min(8vw,8rem);
     line-height:.8;letter-spacing:-.045em;color:rgba(10,37,64,.07)}
   /* Sam is a cutout: no frame, no crop — just anchor him to the floor of the hero */
   /* centred on the viewport, like the wrap, so the overlap with the booking card stays
      constant at every width above --maxw instead of drifting. Sized by width, not by the
      hero's height, so a taller card can't inflate him. */
-  .hero-photo{position:absolute;left:50%;transform:translateX(-30%);bottom:0;width:clamp(300px,32vw,412px);height:auto;max-width:none;
+  /* -28% and 472px, not the -30%/clamp(300px,32vw,412px) the old bust-length photo used.
+     The source is cropped above his belt (see the note on the img), leaving a 0.835 figure.
+     The width is held at 472 rather than raised to compensate: he keeps his apparent size
+     and the crop lowers him instead, which puts the top of his head 134px under the section
+     edge. Raising it to ~507 would pull the head back up to 93px, at the cost of pushing
+     more of him under the booking card.
+     A flat width, not a clamp, because he only shows from 1081px up and 32vw already
+     saturates any sensible cap there — the clamp was dead code pretending to be responsive.
+     Flat also means that 134px is the same at every desktop width instead of swelling on
+     the narrow end.
+     Checked every 8px from 1081 to 1600 against the real ink edge of the alpha channel, per
+     line of copy: worst clearance 34px. Between 22% and 34% of him — his far arm and part of
+     that shoulder — passes behind the booking card, which is deliberate: it reads as depth.
+     His face and torso stay whole, which is the part that has to survive. */
+  .hero-photo{position:absolute;left:50%;transform:translateX(-28%);bottom:0;width:472px;height:auto;max-width:none;
     z-index:2;pointer-events:none;filter:drop-shadow(0 26px 46px rgba(10,37,64,.26))}
   .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 362px;gap:40px;align-items:center;position:relative;z-index:2}
   /* Anchored to the top of the row, not centred in it, so the gap under the watermark is
@@ -253,21 +288,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* uppercase lives in CSS, not in the markup, so the sentence stays readable to screen
      readers and to anything that reuses it (search snippets, social cards). max-width is
      what breaks it into the reference's three lines. */
-  /* 2.35rem is the ceiling, not a taste call: "THE FOOD SAFETY PARTNER" measures 549px at
-     that size and .hero-copy is 560 wide, so it holds the reference's first line whole.
-     One notch bigger and it wraps after "SAFETY" and the headline becomes four ragged
-     lines. No max-width here — the 560px column is what does the breaking. */
+  /* Swept every 8px from 1081 to 1600: two lines up to 1169 (the type is still small enough
+     that "EVERY MANUFACTURER DESERVES" fits on one), three from 1177 up — "EVERY
+     MANUFACTURER / DESERVES A BETTER FOOD / SAFETY PARTNER". Never four, never ragged.
+     Worst clearance to Sam's silhouette over the whole sweep is 34px, at 1081.
+     No max-width here: the 560px column of .hero-copy is what does the breaking. */
   .hero h1{font-size:clamp(1.9rem,2.6vw,2.35rem);font-weight:700;margin:0;color:var(--navy);line-height:1.14;
     letter-spacing:-.02em;text-transform:uppercase}
-  .hero .sub{font-size:.98rem;color:var(--slate);margin:20px 0 0;max-width:376px;line-height:1.6}
+  /* 420, not the 376 the old three-line paragraph used: the new line measures 402px here and
+     376 broke it in two. Still far left of Sam — the headline reaches 569px in the same
+     column and clears him by 34. */
+  .hero .sub{font-size:.98rem;color:var(--slate);margin:20px 0 0;max-width:420px;line-height:1.6}
   /* credentials, 2x2 with green check marks */
   /* capped so the second column never lands on Sam's shoulder — his bounding box is
      widest at the bottom (his elbows), which is exactly this band of the hero */
   .hero-creds{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:26px 0 0;max-width:376px}
   .hero-creds li{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start}
   .hero-creds>li>svg{width:20px;height:20px;margin-top:1px;color:var(--green)}
-  .hero-creds b{display:block;font-family:'Archivo',sans-serif;font-size:.86rem;font-weight:700;color:var(--navy);line-height:1.3}
+  .hero-creds b{display:block;font-family:'Archivo',sans-serif;font-size:.86rem;font-weight:700;color:var(--navy);line-height:1.3;
+    transition:color .18s ease}
   .hero-creds b+span{display:block;font-size:.76rem;color:var(--slate);margin-top:2px;line-height:1.4}
+  /* Hover picks up the whole row, not just the label, so the target is the full credential
+     and not a 120px string of text — but only the label changes colour; the line under it
+     stays slate. Behind @media(hover:hover) because these are not links: on a touch screen
+     :hover latches after a tap and the colour would stay stuck with nothing to undo it. */
+  @media(hover:hover){
+    .hero-creds li:hover b{color:var(--gold)}
+  }
   /* same 376px cap as .sub and .hero-creds, so the button centres against the visible
      text column instead of the full 560px copy track — centred in 560 it would drift
      right of the copy and land under Sam */
@@ -580,21 +627,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .qual-book .btn{text-align:center;justify-content:center}
 
   /* ---------- RESPONSIVE ---------- */
-  /* Tablet. The card walks toward the centred photo here, so below 1000px Sam goes away:
-     this photo is a wide bust rather than a narrow standing figure, and at 800px the card
-     covers half his face while what is left crowds the credentials. There is no size that
-     fixes it — the copy column and a 350px card use the whole width between them. Above
-     1000px he clears the card and stays. (The old rule scaled him with height:92%, which
-     stretched him: height and width were both set on an img, and object-fit defaults to
-     fill. At this aspect that was a 2.5x vertical stretch.) */
+  /* Tablet. Sam goes away entirely below 1081px. The copy column and a 350px card use the
+     whole width between them, and there is no room left for a standing figure: swept
+     translateX from -52% to 0 across 1000/1040/1080 and every value either ran him into the
+     headline (-52% overlaps by 94–138px) or hid him behind the card (0% clears the text but
+     buries 56–67% of him). The old rule kept him from 1000px up, which worked while the
+     photo was a bust; the full-length one is 29% taller at the same width and no longer
+     fits. (An older rule scaled him with height:92%, which stretched him: height and width
+     were both set on an img, and object-fit defaults to fill.) */
   @media(max-width:1080px) and (min-width:769px){
     .hero-grid{grid-template-columns:minmax(0,1fr) 350px;gap:24px}
     .hero-photo{display:none}
     .hero-copy{max-width:100%}
     .hero-creds{grid-template-columns:1fr;gap:12px}
-  }
-  @media(min-width:1000px) and (max-width:1080px){
-    .hero-photo{display:block;transform:translateX(-52%)}
   }
   @media(max-width:768px){
     /* flex COLUMN, not the desktop row: .hero-photo is a direct child of .hero, so a column
@@ -611,7 +656,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     /* flex so `order` can lift the credentials above the headline without moving them in
        the markup, where they belong after it */
     .hero-copy{max-width:100%;padding:0;margin-top:0;display:flex;flex-direction:column}
-    .hero h1{font-size:1.72rem;max-width:none;order:2;margin-top:20px}
+    /* 1.58rem, down from 1.72: "FOOD SAFETY PARTNER" is the longest unbreakable run and at
+       1.72 it measured 349px against the 324px column of a 360px phone, so the headline
+       collapsed into five ragged lines ("EVERY" and "PARTNER" each alone). 1.58 is the
+       largest step that holds three lines all the way down to 360. */
+    .hero h1{font-size:1.58rem;max-width:none;order:2;margin-top:20px}
     .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%;order:3}
     /* Phones: the credentials fill the empty column beside Sam. Absolute against .hero
        because the photo is a flex item of .hero while this list lives three levels down
@@ -621,9 +670,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        the 18px wrap padding on both sides and a 10px gutter is what the column cannot
        have. Write it once and it tracks the photo at every width instead of needing a
        breakpoint per phone. The type steps down because the column is ~146px at 390 and
-       the longest line, "Mind-Shift Intelligence Approach", has to fit in two. */
+       the longest line, "Mind-Shift Intelligence Approach", has to fit in two.
+
+       The height is derived the same way, and it is what spreads the four rows down the
+       column instead of stacking them at the top: with align-content the leftover space
+       goes between the rows, so the list closes level with Sam and the empty patch under
+       the last one is gone. The photo is min(180px,44%) wide on a 1:1.575 crop and starts
+       40px below this list's 78, so its bottom is that width times 1.575, less 18. A flat
+       gap cannot do this — the rows would have to sit 26px apart at 360 and 47 at 430,
+       because the labels stop wrapping as the column widens while Sam gets taller.
+       44vw and not the 44% the photo uses, even though both mean the same thing here: a
+       percentage in height resolves against the containing block's HEIGHT, so min(180px,44%)
+       came back a flat 180px and the list closed 34px past Sam at 360. */
     .hero-creds{position:absolute;left:18px;top:78px;z-index:3;margin:0;
       width:calc(100% - min(180px,44%) - 46px);max-width:none;
+      height:calc(min(180px,44vw) * 1.575 - 18px);align-content:space-between;
       grid-template-columns:1fr;gap:9px}
     .hero-creds li{gap:8px;grid-template-columns:17px 1fr}
     .hero-creds>li>svg{width:17px;height:17px}
@@ -644,24 +705,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        leaving it unpositioned is what lets .hero-mark anchor to the hero, same as desktop */
     .hero .wrap{z-index:2}
     /* anchored to the hero now, sitting in the same band as the photo above the copy */
-    .hero-mark{top:2px}
+    /* The phone ladder, kept off the desktop one so shrinking the mark on a wide monitor
+       cannot shrink it here. 3.4rem is a fit, not a preference: "SAM PEÑA" is 2.7x wider
+       than "SAM" was, the nbsp forbids a second line, and 3.4rem is what leaves the glyphs
+       18px clear of the 28px padding on a 360px phone. 10vw only takes over above 544.
+       No top here any more: the old flat 2px cut the Ñ's tilde by 7px, and the base rule's
+       .21em lands at 11px for this size. It costs nothing — the mark clears the headline by
+       245px on a phone. */
+    .hero-mark{font-size:clamp(3.4rem,10vw,9.5rem)}
     /* Lifted above the copy and pushed right, so Sam overlaps the wordmark the way he does
-       in the reference — his hairnet covers the M while the S stays clear on the left.
-       z-index 2 beats the ::after scrim; he still paints over .hero-mark because he comes
-       later in the DOM at the same level, which is the whole point of the overlap. */
+       in the reference. z-index 2 beats the ::after scrim; he still paints over .hero-mark
+       because he comes later in the DOM at the same level, which is the whole point.
+
+       The 40px on top was measured against the old short crop, whose edge sat at 188px from
+       the hero's top while the list beside him ran to 230 — the empty background between the
+       two read as a hole. The mobile source is the full figure now and 32% taller, so it
+       closes that gap on its own: his bottom clears the list by 50px at 360 and 113 at 430
+       even at margin-top 0. The 40 is kept because it was asked for, not because it is load
+       bearing. 16px tightens the hero by 24 and brings his head back onto the wordmark.
+
+       No mask. There used to be a linear-gradient fading his last 22% out, on the reasoning
+       that a cut at mid-thigh reads as a crop mid-page while on desktop it reads as the
+       hero's own floor. Gone by request; the bottom edge is a hard line. */
     .hero-photo{order:-1;align-self:flex-end;position:relative;z-index:2;transform:none;left:auto;bottom:auto;
-      height:auto;width:min(180px,44%);margin:0 18px 16px 0;display:block;filter:none;
-      /* On desktop he stands on the hero's floor, so the desk edge at the bottom of the
-         cutout reads as a table. Mid-page it reads as a crop, so fade the last strip out. */
-      -webkit-mask-image:linear-gradient(to bottom,#000 78%,transparent 100%);
-      mask-image:linear-gradient(to bottom,#000 78%,transparent 100%)}
-    /* 360–389px: the column is narrow enough here that two labels take an extra line and
-       the list outgrows Sam's band. Hold the band open. Above 390 it fits on its own and
-       this would only read as dead space. Must follow the rule above, whose margin
-       shorthand would otherwise reset it. */
-    @media(min-width:360px) and (max-width:409px){
-      .hero-photo{margin-bottom:48px}
-    }
+      height:auto;width:min(180px,44%);margin:40px 18px 0 0;display:block;filter:none}
+    /* There used to be a 360–399px rule reserving extra bottom margin here, because the
+       credentials outran the band of a short photo and crowded the headline. The full-figure
+       mobile crop is 32% taller and ends below the list at every width in the range, so the
+       reserve had nothing left to hold open. Deleted rather than left at a harmless value —
+       it would have read as a real constraint to whoever touched this next. */
     /* No inline calendar on a phone: a 600px cross-origin iframe stacked under the copy is
        a lot of weight for something the visitor has to scroll past. The card goes and the
        .hero-book button takes over as the CTA — see the mobile guard in the script, which
@@ -856,13 +928,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ========== HERO ========== -->
 <section class="hero" id="lead">
   <div class="wrap">
-    <!-- Decorative wordmark. aria-hidden because a screen reader announcing a stray "SAM"
-         before the headline is noise, not information. -->
-    <span class="hero-mark" aria-hidden="true">SAM</span>
+    <!-- Decorative wordmark. aria-hidden because a screen reader announcing a stray
+         "SAM PEÑA" before the headline is noise, not information. Non-breaking space so it
+         can never wrap into two lines — see the note on .hero-mark. -->
+    <span class="hero-mark" aria-hidden="true">SAM&nbsp;PEÑA</span>
     <div class="hero-grid">
       <div class="hero-copy" id="about">
-        <h1>The food safety partner manufacturers wish they had in-house.</h1>
-        <p class="sub">Sam helps manufacturers build food safety systems, prepare for SQF certification, and develop teams that can confidently own the process.</p>
+        <h1>Every Manufacturer Deserves a Better Food Safety Partner</h1>
+        <!-- Non-breaking hyphen (U+2011) in "audit‑ready": with a plain one the browser
+             treats it as a break opportunity and splits the word across lines on a phone. -->
+        <p class="sub">Build a stronger system. Train your team. Stay audit‑ready.</p>
 
         <ul class="hero-creds">
           <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Certified SQF Consultant</b><span>Certified by SQFI</span></span></li>
@@ -1123,7 +1198,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Sam, a transparent cutout. Absolute on desktop so he sits between the copy and the
          card without occupying a grid track; back in normal flow below 768px. Last in the
          DOM so the stacked mobile order reads copy → card → photo. -->
-    <img class="hero-photo" src="images/samHeroreal.webp" alt="Sam Peña, SQF consultant" width="1103" height="1354" fetchpriority="high" decoding="async">
+    <!-- Two crops of one cutout, both from images/samHeroreal.jpeg.
+
+         Desktop (the img) stops at 958/1264 of the cutout's height, above both his hands and
+         his belt: beside the booking card either one reads as a second focal point. The line
+         was detected, not eyeballed — a per-row skin test down the outer edge of the
+         silhouette, run separately over the left and right thirds because the brown belt
+         passes the same test and was taken for a hand on the first pass.
+
+         Mobile (the source) is the whole figure, hands and belt included, cut at mid-thigh
+         where the original frame cuts it. There is no card on a phone for him to compete
+         with, and at 172px wide he is too small for a hand to pull any attention. It has to
+         be a second file because the hands are not in the desktop one — that crop physically
+         removed them, so no amount of CSS brings them back.
+
+         picture{display:contents} keeps the img itself as the flex item on mobile, where
+         .hero-photo carries order/align-self/margin; wrapping it would hand those to the
+         picture instead and the photo would land in the wrong place. -->
+    <picture>
+      <source media="(max-width:768px)" srcset="images/samHeroreal-mobile.webp" width="400" height="630">
+      <img class="hero-photo" src="images/samHeroreal.webp" alt="Sam Peña, SQF consultant" width="800" height="958" fetchpriority="high" decoding="async">
+    </picture>
   </div>
 </section>
 
