@@ -268,10 +268,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      the hero's overflow:hidden. z-index 0 puts it under .hero-grid (2), so the headline sits
      over the letters. It used to also run behind the cutout's shoulder; with the cutout gone
      the whole wordmark is visible, which is why its ink is low enough to survive that.
-     Sizing runs on two ladders. This one is desktop's, a taste call — the mark is texture,
-     not a headline. The phone ladder is in the 768 block and is NOT a taste call; see the
-     note there. The nbsp in the markup keeps the two words on one line: with a normal space
-     it would wrap to two on a phone and double the band it eats.
+     Desktop only — the 768 block hides it, so there is one ladder here now where there used
+     to be two. The sizing is a taste call: the mark is texture, not a headline. The nbsp in
+     the markup is left in place; it stops the two words wrapping, which no longer matters at
+     these widths but costs nothing and would matter again the moment this shows on a narrow
+     viewport.
      Width tracks --hero-maxw and not --maxw so the left edge stays flush with the headline's;
      on the page's own 1200 it would start 80px to the right of it.
      top is in em on purpose, so it tracks whatever font-size is set above. line-height .8
@@ -279,7 +280,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      height, so at the old flat 10px the tilde was cut by 11px on a wide monitor while the
      capitals still cleared by 15. Measured the ratio it actually needs at four sizes: 0.164
      to 0.173em. .21em covers all of them with 2 to 6px to spare and keeps covering them if
-     the size changes. Phones inherit it — no top of their own. */
+     the size changes. */
   .hero-mark{position:absolute;top:.30em;left:50%;transform:translateX(-50%);
     width:min(100%,var(--hero-maxw));padding:0 28px;z-index:0;pointer-events:none;user-select:none;
     font-family:'Montserrat',sans-serif;font-weight:800;font-size:min(8vw,8rem);
@@ -711,31 +712,87 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero::after{background:linear-gradient(to right,rgba(242,245,248,.97) 0%,rgba(242,245,248,.95) 44%,rgba(242,245,248,.86) 66%,rgba(242,245,248,.62) 86%,rgba(242,245,248,.5) 100%)}
   }
   @media(max-width:768px){
-    /* Still a flex COLUMN, for a new reason: .hero-videobar is a direct child of .hero and
-       goes static here (see below), so the column is what stacks it above .wrap. It used to
-       be a column so `order` could lift the cutout above the copy. */
-    /* the bottom padding used to be 0 because the cutout closed the hero against its floor;
-       once it moved up top the last button landed flush on the next section's edge */
-    .hero{min-height:auto;padding:20px 0 40px;display:flex;flex-direction:column}
+    /* Still a flex COLUMN: .hero-videobar is a direct child of .hero and goes static here, so
+       the column is what orders it against .wrap — now after it rather than before.
+
+       --hero-band is the video's height, and nothing else reads it any more — the scrim went
+       flat and the video fades its own bottom edge with a mask. It no longer drives the top
+       padding either: the headline and its paragraph sit ON the band now rather than below it,
+       which is the point of the arrangement. The video is their background, the way it is on
+       desktop.
+
+       68px of top padding is the strip of open video above the headline. Without it the copy
+       starts at 36 and the scrim has to be at full strength by then, so the footage would be
+       a flat wash from the very first pixel and never read as footage at all.
+
+       The values below are measured, not chosen, and there are four because the copy has that
+       many line-count regimes between 320 and 768 and their gaps do not overlap — the band has
+       to end between the paragraph and the credentials in each. Swept at 1px, not at a coarse
+       step: a 16px sweep put two of these boundaries in the wrong place and the band overran
+       the credentials at 344 and 430.
+
+         width      h1   para   para ends   creds start   band
+         489-768    2L    1L        164         192        186
+         427-488    3L    1L        193         221        215
+         345-426    3L    2L        217         245        239
+         <=343      5L    2L        275         303        297
+
+       Each lands 6px above the credentials, so the video is gone before the list starts.
+
+       344 is a one-pixel regime of its own — the headline takes four lines there and nowhere
+       else — and it does not get a breakpoint. It falls into the 345-426 rule, where the band
+       ends 7px above the paragraph's last descender instead of below it. That is the gentle
+       failure of the two available; the alternative, folding it in with <=343, overshoots into
+       the credentials by 23px. No device is 344 CSS px wide.
+
+       (The 5-line collapse under 345 is not new and not from this work: .hero h1 is sized so
+       three lines hold "all the way down to 360", and 320 is below that floor.) */
+    .hero{--hero-band:186px;min-height:auto;display:flex;flex-direction:column;
+      padding:68px 0 40px}
+    @media(max-width:488px){.hero{--hero-band:215px}}
+    @media(max-width:426px){.hero{--hero-band:239px}}
+    @media(max-width:343px){.hero{--hero-band:297px}}
     /* The video stops being full-bleed here, and it has to. inset:0 over a portrait hero asks
        object-fit:cover to fill 360x790 from a 1280x740 source: it scales to the height, and
        1007 of the 1280 columns fall off the sides. What survives is a 26% slice of the middle
        — Sam's cheek at four times life size, unrecognisable as a face. Pinning the height to
        the band inverts which axis binds. At 360x240 the same source scales to 415 wide and
        loses 55px, so 87% of the frame is on screen and the shot reads as the shot.
-       240 rather than the band's own ~207 so the bottom edge finishes under the scrim's
-       opaque stop instead of ending on a visible seam. */
-    .hero-video{height:240px;object-position:center 30%}
+       The mask is what ends the band. It used to be the scrim's job, closing to opaque over
+       the last 34px, but that only works while the scrim is a vertical ramp — and the scrim is
+       flat now, because the copy sits on the band and needs the same veil at the top of the
+       paragraph as at the bottom. So the video dissolves its own bottom edge instead. It also
+       means the fade tracks --hero-band for free: 100% is whatever the band is at this width,
+       across all four of them, with no fifth value to keep in sync. */
+    .hero-video{height:var(--hero-band);object-position:center 30%;
+      -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 46px),transparent 100%);
+      mask-image:linear-gradient(to bottom,#000 calc(100% - 46px),transparent 100%)}
     /* Rotated 90° from the desktop idea: instead of copy left / video right, it is video top
-       / copy below. The stops are in px, not percentages, because they are placed against
-       that 240px band, while the hero's own height swings by 200px between a 360 phone and a
-       430 one — a percentage stop would slide right through the headline. .20 at the top
-       rather than 0: the wordmark is 7% navy ink and vanishes completely against raw video,
-       and this is the least veil that keeps it. It reaches a full 1 — not .97 — by the video's
-       own bottom edge at 240: at .97 three percent of that hard edge still showed as a seam
-       across the hero on a 430 screen. Past 240 an opaque #F2F5F8 is exactly the hero's own
-       background, so the tail of the gradient changes nothing and cannot be seen. */
-    .hero::after{background:linear-gradient(to bottom,rgba(242,245,248,.20) 0,rgba(242,245,248,.26) 120px,rgba(242,245,248,.60) 180px,rgba(242,245,248,.92) 214px,rgba(242,245,248,1) 240px,rgba(242,245,248,1) 100%)}
+       / copy below. Px stops, not percentages, because they are placed against the 240px band
+       while the hero's own height swings by 200px between a 360 phone and a 430 one — a
+       percentage stop would slide right through the headline.
+
+       Two zones, and only the second is a judgement call. It no longer closes to opaque at the
+       bottom — the video's own mask does that now — so past the band this is .80 of #F2F5F8
+       over #F2F5F8, which is nothing.
+
+       0–30px is open video at .12, the strip above the headline. .12 rather than 0 for the
+       same reason the desktop scrim keeps a floor on its right: the brightest b-roll frames
+       flare against the white header directly above.
+
+       30–66px ramps to .68, reaching it two pixels before the headline starts at 68, and holds
+       flat from there. Flat and not a ramp because the paragraph is the last line of copy on
+       the band and needs the same ground as the first — a ramp would give the headline more
+       veil than the text below it, which is backwards.
+
+       .68 is the lowest veil the copy survives, and it is only that low because the paragraph
+       was darkened to --ink (see .hero .sub). At --slate the same measurement demanded .94.
+       The binding case is a dark b-roll frame, not a bright one: both text colours are dark,
+       so it is shadow in the footage that closes the gap. Sampled at eighteen points across
+       both segments, the worst frame leaves the paragraph at 6.20:1 and the headline at
+       6.38:1 — both clear of AA with room to spare. Push past .80 and the footage stops
+       reading as footage, which would make the whole arrangement pointless. */
+    .hero::after{background:linear-gradient(to bottom,rgba(242,245,248,.12) 0,rgba(242,245,248,.12) 30px,rgba(242,245,248,.68) 66px,rgba(242,245,248,.68) 100%)}
     .hero-grid{grid-template-columns:1fr;gap:28px;position:static}
     /* the desktop top-anchoring gap does not apply once the grid is a single column */
     .hero-copy{max-width:100%;padding:0;margin-top:0}
@@ -744,15 +801,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        collapsed into five ragged lines ("EVERY" and "PARTNER" each alone). 1.58 is the
        largest step that holds three lines all the way down to 360. */
     .hero h1{font-size:1.58rem;max-width:none;margin-top:0}
-    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%}
+    /* --ink, not the --slate it keeps on desktop, and this is a contrast fix rather than a
+       taste one. The paragraph is the only body-size text on the page sitting over footage.
+       Sampled against the composited background across both loop segments, #5A6B82 bottoms out
+       at 3.11:1 — under the 4.5 AA needs for normal text — and the veil that would rescue it
+       is .94, which is an opaque panel with a video behind it nobody can see. #16273B holds
+       6.20:1 at the .68 the scrim actually runs, which is what buys the veil down that far and
+       lets the footage through. The headline was never at risk: navy at 1.58rem bold measured
+       8.90:1 even at the .80 this started from. */
+    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%;color:var(--ink)}
     /* Back in normal flow, full width, one column. This block used to be an absolutely
        positioned side column whose width AND height were derived from the cutout's, so the
        four rows would spread down beside him and close level with his feet. All of it existed
        to fill the empty half of a band the cutout occupied; with the video full-bleed there is
        no empty half and no figure to close level with, so the list simply reads down the page.
        The whole ladder of derived calc()s, and the sub-360 escape hatch that caught the
-       widths where the derivation broke down, went with it. */
-    .hero-creds{position:static;margin:18px 0 0;width:auto;max-width:none;height:auto;
+       widths where the derivation broke down, went with it.
+
+       28px on top, up from 18: this gap is where the video band's bottom edge lands, and the
+       scrim needs room to close from .80 to opaque without the ramp crossing a line of type. */
+    .hero-creds{position:static;margin:28px 0 0;width:auto;max-width:none;height:auto;
       grid-template-columns:1fr;gap:12px}
     .hero-creds li{gap:9px;grid-template-columns:18px 1fr}
     .hero-creds>li>svg{width:18px;height:18px}
@@ -760,35 +828,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-creds b+span{font-size:.7rem;line-height:1.35}
     .hero-actions{gap:10px;margin-top:24px;max-width:100%}
     .hero-actions .btn{width:100%;justify-content:center}
-    /* the wrap is a flex item again, so z-index works without position:relative — and
-       leaving it unpositioned is what lets .hero-mark anchor to the hero, same as desktop */
+    /* the wrap is a flex item again, so z-index works without position:relative */
     .hero .wrap{z-index:2}
-    /* anchored to the hero now, sitting in the same band as the photo above the copy */
-    /* The phone ladder, kept off the desktop one so shrinking the mark on a wide monitor
-       cannot shrink it here. 3.4rem is a fit, not a preference: "SAM PEÑA" is 2.7x wider
-       than "SAM" was, the nbsp forbids a second line, and 3.4rem is what leaves the glyphs
-       18px clear of the 28px padding on a 360px phone. 10vw only takes over above 544.
-       No top here any more: the old flat 2px cut the Ñ's tilde by 7px, and the base rule's
-       .21em lands at 11px for this size. It costs nothing — the mark clears the headline by
-       245px on a phone. */
-    .hero-mark{font-size:clamp(3.4rem,10vw,9.5rem)}
-    /* The founder button leaves the top-right corner and joins the flex column, because on a
-       phone the corner is already taken: "SAM PEÑA" runs to roughly 268px of a 390px screen
-       and the button is ~215px wide, so at top:20px the two overlap by 90px. Sitting it under
-       the wordmark instead needs to clear a mark whose size is a clamp, so the margin is
-       computed from that same clamp rather than guessed — 1.05em covers the .30em top offset
-       plus the .8 line box, and it keeps covering them at 768px where 10vw has taken over and
-       the mark is 61px tall instead of 43.
-
-       The padding-bottom is the video band. Nothing else reserves it: the wordmark and button
-       together only fill ~120px, which is too thin for the video to read as anything. 90px
-       takes the band to ~210, which is what the scrim stops above are written against. */
-    .hero-videobar{position:static;order:-1;align-self:stretch;transform:none;left:auto;
-      width:auto;padding:0 18px 90px;margin-top:calc(clamp(3.4rem,10vw,9.5rem) * 1.05)}
-    /* Back to content width. --bc-w is the booking card's column and the card is display:none
-       from here down, so there is nothing left for the button to match — and 362px would
-       overrun the 324px of usable width on a 360 phone. */
-    .hero-vbtn{width:auto}
+    /* Phones do not get the wordmark. It is decoration and it was the only thing standing
+       between the visitor and the video in the top band; desktop keeps it because there it
+       sits on the scrim's opaque side, beside the copy rather than on top of the footage.
+       This replaces a whole phone type ladder — a clamp(3.4rem,10vw,9.5rem) fitted so "SAM
+       PEÑA" cleared the 28px padding on a 360 screen without wrapping — which now has nothing
+       to size. aria-hidden already kept it out of the accessibility tree, so display:none
+       costs nothing there. */
+    .hero-mark{display:none}
+    /* The founder button leaves the corner entirely and joins the flex column AFTER .wrap, so
+       it lands under "Connect with Sam on LinkedIn" — the last thing in .hero-actions. order:1
+       against .wrap's default 0 is the whole mechanism; the two videos are absolute and take
+       no part in the ordering. The 18px padding is the wrap's, so the button's edges line up
+       with the two buttons above it, and the 10px margin is .hero-actions' own gap, so the
+       three read as one stack rather than as two things and a straggler. */
+    .hero-videobar{position:static;order:1;align-self:stretch;transform:none;left:auto;
+      width:auto;padding:0 18px;margin-top:10px}
+    /* Restyled, not just moved. The dark translucent pill was built to survive raw video in a
+       corner where the scrim had let go; down here it sits on flat #F2F5F8, where
+       rgba(10,37,64,.42) composites to a mid grey and the white label falls to about 2.4:1 —
+       unreadable. So it takes the ghost button's treatment instead, and its metrics: full
+       width, 12px radius, .86rem, the same padding. The green play disc stays as the one thing
+       that marks it as the video. --bc-w is not used here — the booking card it was matching
+       is display:none from this breakpoint down. */
+    .hero-vbtn{width:100%;background:rgba(255,255,255,.9);border-color:var(--line);
+      color:var(--navy);backdrop-filter:none;-webkit-backdrop-filter:none;
+      font-size:.86rem;padding:14px 20px;border-radius:12px;gap:9px}
+    .hero-vbtn:hover{background:#fff;border-color:var(--line);transform:none}
+    .hero-vbtn:focus-visible{outline-color:var(--navy)}
     /* No inline calendar on a phone: a 600px cross-origin iframe stacked under the copy is
        a lot of weight for something the visitor has to scroll past. The card goes and the
        .hero-book button takes over as the CTA — see the mobile guard in the script, which
