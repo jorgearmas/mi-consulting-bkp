@@ -211,68 +211,45 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   section[id]{scroll-margin-top:90px}
 
   /* ---------- HERO ----------
-     Three layers, back to front:
-       1. .hero-video   — Sam's founder video on mute, sharp, full-bleed
-       2. .hero::after  — a gradient that whitens the left half so the navy copy reads
-       3. .wrap         — wordmark, copy and the booking card
-     There used to be a fourth: .hero-photo, a cutout of Sam anchored to the floor. It is
-     gone — the video shows the real Sam, and a still of him in front of a moving one of him
-     was two of the same person in one band. Every width in this block that was capped to
-     clear his silhouette has been reopened; each says so where it happens. */
+     Four layers, back to front:
+       1. .hero::before — the plant photo, blurred into pure texture
+       2. .hero::after  — a white gradient that whitens the left half so the navy copy reads
+       3. .hero-photo   — samHeroreal.webp, a transparent cutout of Sam, sharp and bottom-anchored
+       4. .wrap         — wordmark, copy and the booking card
+     The hero carried a full-bleed <video> of Sam for one revision and the cutout was deleted
+     to make room for it. Both of those are undone here: the still is the hero again, and the
+     footage moved out of the section entirely into .fvp, the player that opens over the page
+     on load. Nothing in this block measures against the video any more. */
   /* The hero runs 160px wider than the rest of the page, which is why it carries its own
-     width instead of using --maxw. The old note here justified the 1360 cap by where the
-     booking card crossed the cutout's arm; with the cutout gone nothing measures against it
-     any more. 1360 stays because it is the band the rest of the hero was tuned against, not
-     because it is load bearing — it can move now, and nothing will collide if it does. */
-  /* --bc-w is the booking card's column, and the founder button's width. They are one
-     variable because the button is meant to sit flush over the card — hardcoding 362 in two
-     places would let them drift the first time the column moves. The tablet block below
-     changes it once and both follow. */
-  .hero{--hero-maxw:1360px;--bc-w:362px;
+     width instead of using --maxw. It cannot go wider than 1360: Sam is positioned against
+     the VIEWPORT centre, not against the wrap, so widening the wrap slides the booking card
+     right while he stays put, and the card's left edge crosses his right arm at 1460. 1360
+     leaves 50px of him behind the card, which is what makes him read as standing in front of
+     it; by 1420 the overlap is down to 20px and a strip of background shows between them. */
+  .hero{--hero-maxw:1360px;
     position:relative;background:#F2F5F8;color:var(--ink);overflow:hidden;isolation:isolate;
     min-height:600px;display:flex;align-items:center;padding:28px 0}
-  /* object-position pulls the frame up off centre. cover on a 1440x700 band scales the
-     1080x626 source to 1440x834 and drops 134px, and splitting that evenly took the crop
-     into Sam's headroom; 42% leaves the cut mostly below him. Horizontal is centre and stays
-     there — at 1440 the source fills the width exactly, so there is nothing to slide. */
-  /* Both segments occupy the same box; only .is-on is visible. The 420ms fade is not
-     decoration — a hard cut would expose whatever the incoming element has decoded at the
-     moment of the handoff, and the fade covers that first frame. It reads as a dissolve
-     between shots, which is the same language the source cut uses anyway. */
-  .hero-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;
-    object-fit:cover;object-position:center 42%;pointer-events:none;background:#F2F5F8;
-    opacity:0;transition:opacity .42s ease}
-  .hero-video.is-on{opacity:1}
-  /* No dissolve for anyone who asked for no motion — the script freezes the pair on the
-     first segment, and a fade running against that would be the one moving thing left. */
-  @media(prefers-reduced-motion:reduce){.hero-video{transition:none}}
-  /* Heavy on the left where the navy copy lives, releasing through the middle so the video
-     is genuinely visible on the right — this is the one thing the old blurred still could
-     not do. The stops are placed against the copy, not by eye: at 1440 the wrap's content
-     starts at 68px and .hero-copy is 560 wide, so the text occupies 5%–44% and the scrim has
-     to hold its strength to 42 before it can let go. Sam's face begins at 47%. The floor of
-     .08 on the right is deliberate — pure 0 let the video's brightest frames flare against
-     the section edge below. */
+  .hero::before{content:"";position:absolute;inset:-40px;z-index:0;pointer-events:none;
+    background:url('images/hero-manufacturing.png') center/cover no-repeat;filter:blur(24px) saturate(.7);opacity:.72}
+  /* heavy on the left where the navy copy lives, almost clear on the right so the plant reads */
   .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(to right,rgba(242,245,248,.97) 0%,rgba(242,245,248,.94) 28%,rgba(242,245,248,.80) 42%,rgba(242,245,248,.34) 58%,rgba(242,245,248,.12) 78%,rgba(242,245,248,.08) 100%)}
-  /* Still no position:relative here, though the reason changed. It used to be so the cutout
-     could anchor to .hero's floor instead of the wrap's; now it is so .hero-mark can, which
-     is what lets the wordmark bleed off the top edge. z-index applies without it because
-     .wrap is a flex item — and it is that z-index which opens the stacking context the
-     wordmark's own 0 resolves inside. */
-  /* 3 clears both the scrim (1) and the video (0). It was 3 before to also clear the cutout
-     at 2; the extra step costs nothing and leaves room if anything returns between them. */
+    background:linear-gradient(to right,rgba(242,245,248,.98) 0%,rgba(242,245,248,.93) 30%,rgba(242,245,248,.5) 48%,rgba(242,245,248,.2) 72%,rgba(242,245,248,.3) 100%)}
+  /* no position:relative here on purpose — .hero-photo must anchor to .hero's floor,
+     not to the wrap, whose height is only as tall as the grid. z-index still applies
+     because .wrap is a flex item. */
+  /* 3, not 2: .hero-photo sits at 2 to clear the ::after scrim, and the wrap has to stay
+     above him or he paints over the booking card. */
   .hero .wrap{z-index:3;width:100%;max-width:var(--hero-maxw)}
+  /* the <picture> around Sam must not become a box of its own — see the note on the markup */
+  .hero picture{display:contents}
   /* Giant watermark behind the copy. Absolute against .hero (the wrap is unpositioned on
      desktop, on purpose — see above), so it can bleed off the top edge and get cropped by
-     the hero's overflow:hidden. z-index 0 puts it under .hero-grid (2), so the headline sits
-     over the letters. It used to also run behind the cutout's shoulder; with the cutout gone
-     the whole wordmark is visible, which is why its ink is low enough to survive that.
-     Desktop only — the 768 block hides it, so there is one ladder here now where there used
-     to be two. The sizing is a taste call: the mark is texture, not a headline. The nbsp in
-     the markup is left in place; it stops the two words wrapping, which no longer matters at
-     these widths but costs nothing and would matter again the moment this shows on a narrow
-     viewport.
+     the hero's overflow:hidden. z-index 0 puts it under .hero-photo (2) and .hero-grid (2),
+     so "PEÑA" runs behind Sam's shoulder and the headline sits over the letters.
+     Desktop only — the 768 block hides it, so there is one ladder here and not two. The
+     sizing is a taste call: the mark is texture, not a headline. The nbsp in the markup is
+     left in place; it stops the two words wrapping, which no longer matters at these widths
+     but costs nothing and would matter again the moment this shows on a narrow viewport.
      Width tracks --hero-maxw and not --maxw so the left edge stays flush with the headline's;
      on the page's own 1200 it would start 80px to the right of it.
      top is in em on purpose, so it tracks whatever font-size is set above. line-height .8
@@ -285,7 +262,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     width:min(100%,var(--hero-maxw));padding:0 28px;z-index:0;pointer-events:none;user-select:none;
     font-family:'Montserrat',sans-serif;font-weight:800;font-size:min(8vw,8rem);
     line-height:.8;letter-spacing:-.045em;color:rgba(10,37,64,.07)}
-  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) var(--bc-w);gap:40px;align-items:center;position:relative;z-index:2}
+  /* Sam is a cutout: no frame, no crop — just anchor him to the floor of the hero */
+  /* centred on the viewport, like the wrap, so the overlap with the booking card stays
+     constant at every width above --maxw instead of drifting. Sized by width, not by the
+     hero's height, so a taller card can't inflate him. */
+  /* -28% and 472px, not the -30%/clamp(300px,32vw,412px) the old bust-length photo used.
+     The source is cropped above his belt (see the note on the img), leaving a 0.835 figure.
+     The width is held at 472 rather than raised to compensate: he keeps his apparent size
+     and the crop lowers him instead, which puts the top of his head 134px under the section
+     edge. Raising it to ~507 would pull the head back up to 93px, at the cost of pushing
+     more of him under the booking card.
+     A flat width, not a clamp, because he only shows from 1081px up and 32vw already
+     saturates any sensible cap there — the clamp was dead code pretending to be responsive.
+     Flat also means that 134px is the same at every desktop width instead of swelling on
+     the narrow end.
+     Checked every 8px from 1081 to 1600 against the real ink edge of the alpha channel, per
+     line of copy: worst clearance 34px. Between 22% and 34% of him — his far arm and part of
+     that shoulder — passes behind the booking card, which is deliberate: it reads as depth.
+     His face and torso stay whole, which is the part that has to survive. */
+  .hero-photo{position:absolute;left:50%;transform:translateX(-28%);bottom:0;width:472px;height:auto;max-width:none;
+    z-index:2;pointer-events:none;filter:drop-shadow(0 26px 46px rgba(10,37,64,.26))}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 362px;gap:40px;align-items:center;position:relative;z-index:2}
   /* Anchored to the top of the row, not centred in it, so the gap under the watermark is
      the same at every viewport height. Centred, the copy rode up as the row shrank — the
      row's height follows the card, and the card scales down on short screens (see
@@ -298,24 +295,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* Swept every 8px from 1081 to 1600: two lines up to 1169 (the type is still small enough
      that "EVERY MANUFACTURER DESERVES" fits on one), three from 1177 up — "EVERY
      MANUFACTURER / DESERVES A BETTER FOOD / SAFETY PARTNER". Never four, never ragged.
-     The sweep used to also report clearance to the cutout's silhouette (34px at its worst).
-     That constraint is retired; the three-line break is kept because it is the right shape
-     for the headline, not because something was in the way.
+     Worst clearance to Sam's silhouette over the whole sweep is 34px, at 1081.
      No max-width here: the 560px column of .hero-copy is what does the breaking. */
   .hero h1{font-size:clamp(1.9rem,2.6vw,2.35rem);font-weight:700;margin:0;color:var(--navy);line-height:1.14;
     letter-spacing:-.02em;text-transform:uppercase}
   /* 420, not the 376 the old three-line paragraph used: the new line measures 402px here and
-     376 broke it in two. It stays at 420 now that the cutout is gone — this cap is about the
-     length of the sentence, not about clearing anyone. */
+     376 broke it in two. Still far left of Sam — the headline reaches 569px in the same
+     column and clears him by 34. */
   .hero .sub{font-size:.98rem;color:var(--slate);margin:20px 0 0;max-width:420px;line-height:1.6}
   /* credentials, 2x2 with green check marks */
-  /* 500, up from the 376 that kept the second column off the cutout's shoulder. That was the
-     only reason for the cap and the cutout is gone, so it reopens to nearly the full 560 copy
-     track. It is worth the change rather than just cosmetic: at 376 each column had 158px for
-     text and "Mind-Shift Intelligence Approach" broke three deep; at 500 it has 220 and the
-     longest label fits in one line. Not the full 560 — that would push the right column past
-     the paragraph above it and the block would stop reading as one column of copy. */
-  .hero-creds{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:26px 0 0;max-width:500px}
+  /* capped so the second column never lands on Sam's shoulder — his bounding box is
+     widest at the bottom (his elbows), which is exactly this band of the hero */
+  .hero-creds{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;margin:26px 0 0;max-width:376px}
   .hero-creds li{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start}
   .hero-creds>li>svg{width:20px;height:20px;margin-top:1px;color:var(--green)}
   .hero-creds b{display:block;font-family:'Archivo',sans-serif;font-size:.86rem;font-weight:700;color:var(--navy);line-height:1.3;
@@ -328,70 +319,129 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @media(hover:hover){
     .hero-creds li:hover b{color:var(--gold)}
   }
-  /* Left-aligned and uncapped. The old rule centred the button inside a 376px box, which was
-     a workaround: centred in the real 560 track it drifted right and landed under the cutout,
-     so the box was narrowed until the centre happened to fall under the copy. With nothing to
-     avoid, the honest version is to start it at the copy's left edge like everything above
-     it. On phones the 768 block overrides both back to full-width buttons. */
-  .hero-actions{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:12px;margin-top:28px}
+  /* same 376px cap as .sub and .hero-creds, so the button centres against the visible
+     text column instead of the full 560px copy track — centred in 560 it would drift
+     right of the copy and land under Sam */
+  .hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:28px;max-width:376px}
   .hero-actions .btn{font-size:.86rem;padding:14px 20px;border-radius:12px;gap:9px}
   /* the booking card is the desktop CTA; this button only exists where the card does not */
   .hero-book{display:none}
   .hero-actions .btn-ghost{background:rgba(255,255,255,.9);border-color:var(--line)}
 
-  /* ---- FOUNDER VIDEO: the button, and the modal it opens ----
-     The bar exists only to put the button on the wrap's right edge. It repeats .hero-mark's
-     centring trick (left:50% + translateX(-50%) + the same width and padding) rather than
-     using right: on .hero, because .hero is viewport-wide while the wrap is capped at 1360 —
-     anchoring to the section would float the button away from the content on a wide monitor.
-     pointer-events:none on the bar so its full-width box never eats clicks aimed at the hero;
-     the button turns them back on for itself. z-index 4 clears the wrap. */
-  .hero-videobar{position:absolute;top:20px;left:50%;transform:translateX(-50%);
-    width:min(100%,var(--hero-maxw));padding:0 28px;z-index:4;
-    display:flex;justify-content:flex-end;pointer-events:none}
-  /* Dark translucent, not the light glass the rest of the hero uses. It sits top-right, which
-     is the one corner where the scrim has released almost completely, so whatever is behind it
-     is raw video — and that frame is sometimes a bright wall and sometimes dark b-roll. Navy
-     text would survive the first and vanish into the second; white on a dark veil survives
-     both. The blur is what keeps it legible over a moving image rather than the opacity. */
-  /* Width is the card's, so the two stack as one right-hand column instead of a pill floating
-     over a wider box. Once it is 362 wide the content has to be centred — left-hugged inside
-     that much space it read as a mis-sized button rather than a deliberate one. The bar it
-     sits in is still justify-content:flex-end, which is what puts this flush to the card's
-     right edge rather than the hero's. */
-  .hero-vbtn{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;
-    gap:9px;width:var(--bc-w);
-    padding:10px 16px 10px 12px;border-radius:999px;cursor:pointer;
-    background:rgba(10,37,64,.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,.28);color:#fff;
-    font-family:'Archivo',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.01em;
-    transition:background .18s ease,border-color .18s ease,transform .18s ease}
-  .hero-vbtn:hover{background:rgba(10,37,64,.62);border-color:rgba(255,255,255,.5);transform:translateY(-1px)}
-  .hero-vbtn:focus-visible{outline:2px solid #fff;outline-offset:3px}
-  .hero-vbtn .vbtn-play{width:22px;height:22px;flex:0 0 22px;border-radius:50%;
-    background:var(--green);display:grid;place-items:center}
-  .hero-vbtn .vbtn-play svg{width:9px;height:9px;margin-left:1px}
+  /* ---- FOUNDER VIDEO PLAYER (.fvp) ----
+     One element with two shapes, switched by data-state on the root:
 
-  /* The modal. hidden until opened, so it costs nothing but markup until then — and the
-     <video> inside carries no src at all until the first click (see the script), which is
-     what keeps the full 74s file off the page for visitors who never ask for it. */
-  .vmodal[hidden]{display:none}
-  .vmodal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;
+       stage — centred over a dark backdrop, the size of a modal. This is what the page opens
+               with: the video is already playing, muted, because muted is the only autoplay
+               a browser will grant without a gesture. The yellow pill is the gesture's
+               invitation; it is deliberately the loudest thing on screen.
+       mini  — a small square pinned to the bottom-right corner, still playing, silent, with
+               the page fully usable behind it.
+
+     It is one element and not two players so that minimising never reloads or restarts
+     anything: the <video> keeps its buffer and its playhead, and only its box moves.
+
+     The root is inset:0 with pointer-events:none, and only the pieces that need clicks turn
+     them back on. In mini state that matters — the root still covers the viewport, and
+     without this it would swallow every click on the page behind it. */
+  .fvp[hidden]{display:none}
+  .fvp{position:fixed;inset:0;z-index:9999;pointer-events:none}
+  .fvp-backdrop{position:absolute;inset:0;pointer-events:none;opacity:0;
     background:rgba(6,18,32,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-    animation:vmodalIn .22s ease-out}
-  @keyframes vmodalIn{from{opacity:0}to{opacity:1}}
+    transition:opacity .28s ease}
+  .fvp[data-state="stage"] .fvp-backdrop{opacity:1;pointer-events:auto}
+
   /* The source is 1:1, so the box is squared off the smaller axis and never letterboxes.
-     86vh rather than 90 leaves room for the close button to sit clear above it on a short
-     laptop instead of overlapping the frame. */
-  .vmodal-box{position:relative;width:min(88vw,86vh,760px)}
-  .vmodal-box video{display:block;width:100%;aspect-ratio:1/1;border-radius:18px;
-    background:#000;box-shadow:0 30px 80px rgba(0,0,0,.5)}
-  .vmodal-close{position:absolute;top:-46px;right:0;width:36px;height:36px;border-radius:50%;
+     84vh rather than 90 leaves room for the minimise button to sit clear above it on a short
+     laptop instead of overlapping the frame.
+     No transition between the two boxes: stage is centred with left/top:50% and mini is
+     pinned with right/bottom, and those are different properties — there is nothing for the
+     browser to interpolate. Each state runs its own short keyframe instead, which fires on
+     the state change because that is when the selector starts matching. */
+  .fvp-box{position:absolute;pointer-events:auto}
+  .fvp[data-state="stage"] .fvp-box{left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(88vw,84vh,620px);animation:fvpStage .26s ease-out}
+  .fvp[data-state="mini"] .fvp-box{right:18px;bottom:18px;width:clamp(150px,22vw,208px);
+    animation:fvpMini .26s cubic-bezier(.2,.8,.3,1)}
+  @keyframes fvpStage{from{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
+  @keyframes fvpMini{from{opacity:0;transform:translateY(14px) scale(.8)}}
+  .fvp-video{display:block;width:100%;aspect-ratio:1/1;background:#000;
+    border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  /* Clickable in mini, where the whole square is the expand target — there is no room for a
+     labelled control at 150px and native controls are switched off there. */
+  .fvp[data-state="mini"] .fvp-video{border-radius:14px;
+    box-shadow:0 18px 44px rgba(10,37,64,.38)}
+  /* Draggable in mini. The corner it defaults to is over the booking calendar on a desktop
+     hero, and the whole point of the mini is that the page stays usable behind it, so the
+     visitor gets to move it out of the way.
+     grab, not pointer, because that is what the square now is: a thing you pick up. It is
+     still a click target — the script tells a tap from a drag by distance (see fvpDrag).
+     touch-action:none is what makes this work on a phone at all; without it the browser
+     claims the gesture for scrolling and pointermove never fires.
+     `will-change` is deliberately absent: the box moves by left/top on a fixed element and
+     promoting it to its own layer for the few seconds of a drag costs more than it saves. */
+  .fvp[data-state="mini"] .fvp-box{cursor:grab;touch-action:none}
+  .fvp[data-state="mini"] .fvp-box.is-dragging{cursor:grabbing;
+    /* the drop shadow lifts while it is in the air, so the square reads as picked up */
+    filter:drop-shadow(0 26px 46px rgba(10,37,64,.34))}
+
+  /* The unmute invitation. Gold, because the video autoplays silent and nothing else on the
+     page is this colour — the point is that it cannot be mistaken for decoration. It sits top
+     centre rather than bottom, where the native controls (stage only) already live.
+     Navy on gold, not white: #0A2540 on #E0A82E is 7.4:1, white on the same is 2.2:1. */
+  .fvp-sound{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    padding:9px 15px;border-radius:999px;border:1px solid rgba(255,255,255,.55);
+    background:var(--gold);color:var(--navy);
+    font-family:'Archivo',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.01em;
+    animation:fvpPulse 1.9s ease-in-out infinite}
+  .fvp-sound svg{width:15px;height:15px;flex:0 0 15px}
+  @keyframes fvpPulse{
+    0%,100%{box-shadow:0 4px 16px rgba(224,168,46,.45),0 0 0 0 rgba(224,168,46,.55)}
+    70%    {box-shadow:0 4px 16px rgba(224,168,46,.45),0 0 0 12px rgba(224,168,46,0)}}
+  /* Once the sound is on the pill has done its job: it drops the label and the pulse and
+     becomes an ordinary mute toggle, dark enough to stop competing with the video. */
+  .fvp-sound.is-live{background:rgba(6,18,32,.6);border-color:rgba(255,255,255,.3);color:#fff;
+    animation:none;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .fvp-sound.is-live .fvp-sound-txt{display:none}
+  .fvp-sound:focus-visible{outline:2px solid #fff;outline-offset:3px}
+  /* No pill in mini: mini is the state the visitor chose in order to be left alone, and a
+     pulsing gold badge in the corner of the page is the opposite of that. */
+  .fvp[data-state="mini"] .fvp-sound{display:none}
+  @media(prefers-reduced-motion:reduce){
+    .fvp-sound{animation:none}
+    .fvp[data-state="stage"] .fvp-box,.fvp[data-state="mini"] .fvp-box{animation:none}
+    .fvp-backdrop{transition:none}
+  }
+
+  /* Minimise / expand / close. In stage they sit ABOVE the frame, on the backdrop, where
+     white on rgba(6,18,32,.82) reads. In mini there is no backdrop to sit on — the page
+     behind is white — so they move inside the frame and carry their own dark chip. */
+  .fvp-tools{position:absolute;display:flex;gap:8px;z-index:2}
+  .fvp[data-state="stage"] .fvp-tools{top:-46px;right:0}
+  .fvp[data-state="mini"] .fvp-tools{top:6px;right:6px;gap:5px}
+  .fvp-tool{width:36px;height:36px;border-radius:50%;cursor:pointer;display:grid;place-items:center;
     background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;
-    cursor:pointer;display:grid;place-items:center;transition:background .18s ease}
-  .vmodal-close:hover{background:rgba(255,255,255,.28)}
-  .vmodal-close:focus-visible{outline:2px solid #fff;outline-offset:3px}
-  body.vmodal-open{overflow:hidden}
+    transition:background .18s ease}
+  .fvp-tool:hover{background:rgba(255,255,255,.28)}
+  .fvp-tool:focus-visible{outline:2px solid #fff;outline-offset:3px}
+  .fvp-tool svg{width:15px;height:15px}
+  .fvp[data-state="mini"] .fvp-tool{width:26px;height:26px;background:rgba(6,18,32,.62);
+    border-color:rgba(255,255,255,.34)}
+  .fvp[data-state="mini"] .fvp-tool svg{width:12px;height:12px}
+  /* Each state shows the way out of itself and hides the other's. Stage cannot be closed
+     outright on purpose — minimise is its exit, and from mini the close is one more click.
+     A visitor who closes has said no twice, which is when it is fair to take it away for
+     good; a single stray click on a full-screen overlay is not that. */
+  .fvp[data-state="stage"] .fvp-expand,.fvp[data-state="stage"] .fvp-close{display:none}
+  .fvp[data-state="mini"] .fvp-min{display:none}
+  /* Only the stage locks the page. Mini is meant to be watched while scrolling. */
+  body.fvp-stage{overflow:hidden}
+  @media(max-width:768px){
+    .fvp[data-state="stage"] .fvp-box{width:min(92vw,72vh,560px)}
+    .fvp[data-state="mini"] .fvp-box{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));
+      width:min(38vw,150px)}
+  }
 
   /* form in hero */
   .qual-form{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:28px;height:fit-content;position:sticky;top:80px;order:2}
@@ -696,168 +746,108 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .qual-book .btn{text-align:center;justify-content:center}
 
   /* ---------- RESPONSIVE ---------- */
-  /* Tablet. This block used to exist to delete the cutout below 1081px, where a copy column
-     and a 350px card left no room for a standing figure. The cutout is gone at every width
-     now, so what remains is the honest part: the two columns are tight here and the
-     credentials cannot hold a 2x2. */
+  /* Tablet. Sam goes away entirely below 1081px. The copy column and a 350px card use the
+     whole width between them, and there is no room left for a standing figure: swept
+     translateX from -52% to 0 across 1000/1040/1080 and every value either ran him into the
+     headline (-52% overlaps by 94–138px) or hid him behind the card (0% clears the text but
+     buries 56–67% of him). The old rule kept him from 1000px up, which worked while the
+     photo was a bust; the full-length one is 29% taller at the same width and no longer
+     fits. (An older rule scaled him with height:92%, which stretched him: height and width
+     were both set on an img, and object-fit defaults to fill.) */
   @media(max-width:1080px) and (min-width:769px){
-    .hero{--bc-w:350px}
-    .hero-grid{gap:24px}
+    .hero-grid{grid-template-columns:minmax(0,1fr) 350px;gap:24px}
+    .hero-photo{display:none}
     .hero-copy{max-width:100%}
-    .hero-creds{grid-template-columns:1fr;gap:12px;max-width:none}
-    /* The copy now runs the full width, so the scrim has to hold much further right than the
-       desktop stops allow — at 1024 the headline reaches into what desktop treats as open
-       video. The video survives as a wash behind the text rather than a picture; there is no
-       width in this range where both can win. */
-    .hero::after{background:linear-gradient(to right,rgba(242,245,248,.97) 0%,rgba(242,245,248,.95) 44%,rgba(242,245,248,.86) 66%,rgba(242,245,248,.62) 86%,rgba(242,245,248,.5) 100%)}
+    .hero-creds{grid-template-columns:1fr;gap:12px}
   }
   @media(max-width:768px){
-    /* Still a flex COLUMN: .hero-videobar is a direct child of .hero and goes static here, so
-       the column is what orders it against .wrap — now after it rather than before.
-
-       --hero-band is the video's height, and nothing else reads it any more — the scrim went
-       flat and the video fades its own bottom edge with a mask. It no longer drives the top
-       padding either: the headline and its paragraph sit ON the band now rather than below it,
-       which is the point of the arrangement. The video is their background, the way it is on
-       desktop.
-
-       68px of top padding is the strip of open video above the headline. Without it the copy
-       starts at 36 and the scrim has to be at full strength by then, so the footage would be
-       a flat wash from the very first pixel and never read as footage at all.
-
-       The values below are measured, not chosen, and there are four because the copy has that
-       many line-count regimes between 320 and 768 and their gaps do not overlap — the band has
-       to end between the paragraph and the credentials in each. Swept at 1px, not at a coarse
-       step: a 16px sweep put two of these boundaries in the wrong place and the band overran
-       the credentials at 344 and 430.
-
-         width      h1   para   para ends   creds start   band
-         489-768    2L    1L        164         192        186
-         427-488    3L    1L        193         221        215
-         345-426    3L    2L        217         245        239
-         <=343      5L    2L        275         303        297
-
-       Each lands 6px above the credentials, so the video is gone before the list starts.
-
-       344 is a one-pixel regime of its own — the headline takes four lines there and nowhere
-       else — and it does not get a breakpoint. It falls into the 345-426 rule, where the band
-       ends 7px above the paragraph's last descender instead of below it. That is the gentle
-       failure of the two available; the alternative, folding it in with <=343, overshoots into
-       the credentials by 23px. No device is 344 CSS px wide.
-
-       (The 5-line collapse under 345 is not new and not from this work: .hero h1 is sized so
-       three lines hold "all the way down to 360", and 320 is below that floor.) */
-    .hero{--hero-band:186px;min-height:auto;display:flex;flex-direction:column;
-      padding:68px 0 40px}
-    @media(max-width:488px){.hero{--hero-band:215px}}
-    @media(max-width:426px){.hero{--hero-band:239px}}
-    @media(max-width:343px){.hero{--hero-band:297px}}
-    /* The video stops being full-bleed here, and it has to. inset:0 over a portrait hero asks
-       object-fit:cover to fill 360x790 from a 1280x740 source: it scales to the height, and
-       1007 of the 1280 columns fall off the sides. What survives is a 26% slice of the middle
-       — Sam's cheek at four times life size, unrecognisable as a face. Pinning the height to
-       the band inverts which axis binds. At 360x240 the same source scales to 415 wide and
-       loses 55px, so 87% of the frame is on screen and the shot reads as the shot.
-       The mask is what ends the band. It used to be the scrim's job, closing to opaque over
-       the last 34px, but that only works while the scrim is a vertical ramp — and the scrim is
-       flat now, because the copy sits on the band and needs the same veil at the top of the
-       paragraph as at the bottom. So the video dissolves its own bottom edge instead. It also
-       means the fade tracks --hero-band for free: 100% is whatever the band is at this width,
-       across all four of them, with no fifth value to keep in sync. */
-    .hero-video{height:var(--hero-band);object-position:center 30%;
-      -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 46px),transparent 100%);
-      mask-image:linear-gradient(to bottom,#000 calc(100% - 46px),transparent 100%)}
-    /* Rotated 90° from the desktop idea: instead of copy left / video right, it is video top
-       / copy below. Px stops, not percentages, because they are placed against the 240px band
-       while the hero's own height swings by 200px between a 360 phone and a 430 one — a
-       percentage stop would slide right through the headline.
-
-       Two zones, and only the second is a judgement call. It no longer closes to opaque at the
-       bottom — the video's own mask does that now — so past the band this is .80 of #F2F5F8
-       over #F2F5F8, which is nothing.
-
-       0–30px is open video at .12, the strip above the headline. .12 rather than 0 for the
-       same reason the desktop scrim keeps a floor on its right: the brightest b-roll frames
-       flare against the white header directly above.
-
-       30–66px ramps to .68, reaching it two pixels before the headline starts at 68, and holds
-       flat from there. Flat and not a ramp because the paragraph is the last line of copy on
-       the band and needs the same ground as the first — a ramp would give the headline more
-       veil than the text below it, which is backwards.
-
-       .68 is the lowest veil the copy survives, and it is only that low because the paragraph
-       was darkened to --ink (see .hero .sub). At --slate the same measurement demanded .94.
-       The binding case is a dark b-roll frame, not a bright one: both text colours are dark,
-       so it is shadow in the footage that closes the gap. Sampled at eighteen points across
-       both segments, the worst frame leaves the paragraph at 6.20:1 and the headline at
-       6.38:1 — both clear of AA with room to spare. Push past .80 and the footage stops
-       reading as footage, which would make the whole arrangement pointless. */
-    .hero::after{background:linear-gradient(to bottom,rgba(242,245,248,.12) 0,rgba(242,245,248,.12) 30px,rgba(242,245,248,.68) 66px,rgba(242,245,248,.68) 100%)}
+    /* flex COLUMN, not the desktop row: .hero-photo is a direct child of .hero, so a column
+       lets `order` lift it above the copy without touching the markup. (It used to be
+       display:block here for the same reason — to stop it becoming a second column.) */
+    /* the bottom padding used to be 0 because Sam closed the hero against its floor; now
+       that he is up top, the last button was landing flush on the next section's edge */
+    .hero{min-height:auto;padding:20px 0 40px;display:flex;flex-direction:column}
+    .hero::after{background:linear-gradient(to bottom,rgba(242,245,248,.97) 0%,rgba(242,245,248,.92) 60%,rgba(242,245,248,.98) 100%)}
+    /* static so .hero-creds below can anchor to .hero instead of to this box. Nothing is
+       lost: .wrap already opens a stacking context above the ::after scrim. */
     .hero-grid{grid-template-columns:1fr;gap:28px;position:static}
     /* the desktop top-anchoring gap does not apply once the grid is a single column */
-    .hero-copy{max-width:100%;padding:0;margin-top:0}
+    /* flex so `order` can lift the credentials above the headline without moving them in
+       the markup, where they belong after it */
+    .hero-copy{max-width:100%;padding:0;margin-top:0;display:flex;flex-direction:column}
     /* 1.58rem, down from 1.72: "FOOD SAFETY PARTNER" is the longest unbreakable run and at
        1.72 it measured 349px against the 324px column of a 360px phone, so the headline
        collapsed into five ragged lines ("EVERY" and "PARTNER" each alone). 1.58 is the
        largest step that holds three lines all the way down to 360. */
-    .hero h1{font-size:1.58rem;max-width:none;margin-top:0}
-    /* --ink, not the --slate it keeps on desktop, and this is a contrast fix rather than a
-       taste one. The paragraph is the only body-size text on the page sitting over footage.
-       Sampled against the composited background across both loop segments, #5A6B82 bottoms out
-       at 3.11:1 — under the 4.5 AA needs for normal text — and the veil that would rescue it
-       is .94, which is an opaque panel with a video behind it nobody can see. #16273B holds
-       6.20:1 at the .68 the scrim actually runs, which is what buys the veil down that far and
-       lets the footage through. The headline was never at risk: navy at 1.58rem bold measured
-       8.90:1 even at the .80 this started from. */
-    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%;color:var(--ink)}
-    /* Back in normal flow, full width, one column. This block used to be an absolutely
-       positioned side column whose width AND height were derived from the cutout's, so the
-       four rows would spread down beside him and close level with his feet. All of it existed
-       to fill the empty half of a band the cutout occupied; with the video full-bleed there is
-       no empty half and no figure to close level with, so the list simply reads down the page.
-       The whole ladder of derived calc()s, and the sub-360 escape hatch that caught the
-       widths where the derivation broke down, went with it.
+    .hero h1{font-size:1.58rem;max-width:none;order:2;margin-top:20px}
+    .hero .sub{margin:14px 0 0;font-size:.95rem;max-width:100%;order:3}
+    /* Phones: the credentials fill the empty column beside Sam. Absolute against .hero
+       because the photo is a flex item of .hero while this list lives three levels down
+       inside .wrap — there is no shared box to make them a row.
 
-       28px on top, up from 18: this gap is where the video band's bottom edge lands, and the
-       scrim needs room to close from .80 to opaque without the ramp crossing a line of type. */
-    .hero-creds{position:static;margin:28px 0 0;width:auto;max-width:none;height:auto;
-      grid-template-columns:1fr;gap:12px}
-    .hero-creds li{gap:9px;grid-template-columns:18px 1fr}
-    .hero-creds>li>svg{width:18px;height:18px}
-    .hero-creds b{font-size:.8rem;line-height:1.3}
-    .hero-creds b+span{font-size:.7rem;line-height:1.35}
-    .hero-actions{gap:10px;margin-top:24px;max-width:100%}
+       The width is derived, not picked: whatever the photo takes plus its 18px margin,
+       the 18px wrap padding on both sides and a 10px gutter is what the column cannot
+       have. Write it once and it tracks the photo at every width instead of needing a
+       breakpoint per phone. The type steps down because the column is ~146px at 390 and
+       the longest line, "Mind-Shift Intelligence Approach", has to fit in two.
+
+       The height is derived the same way, and it is what spreads the four rows down the
+       column instead of stacking them at the top: with align-content the leftover space
+       goes between the rows, so the list closes level with Sam and the empty patch under
+       the last one is gone. The photo is min(180px,44%) wide on a 1:1.575 crop and starts
+       40px below this list's 78, so its bottom is that width times 1.575, less 18. A flat
+       gap cannot do this — the rows would have to sit 26px apart at 360 and 47 at 430,
+       because the labels stop wrapping as the column widens while Sam gets taller.
+       44vw and not the 44% the photo uses, even though both mean the same thing here: a
+       percentage in height resolves against the containing block's HEIGHT, so min(180px,44%)
+       came back a flat 180px and the list closed 34px past Sam at 360. */
+    .hero-creds{position:absolute;left:18px;top:78px;z-index:3;margin:0;
+      width:calc(100% - min(180px,44%) - 46px);max-width:none;
+      height:calc(min(180px,44vw) * 1.575 - 18px);align-content:space-between;
+      grid-template-columns:1fr;gap:9px}
+    .hero-creds li{gap:8px;grid-template-columns:17px 1fr}
+    .hero-creds>li>svg{width:17px;height:17px}
+    .hero-creds b{font-size:.75rem;line-height:1.28}
+    .hero-creds b+span{font-size:.66rem;line-height:1.32}
+    /* Under 360px the column drops below 130px, every label breaks three deep and the list
+       runs past Sam onto the headline. Stop threading the needle: full width, in flow. */
+    @media(max-width:359px){
+      .hero-creds{position:static;order:1;width:auto;margin:2px 0 0;gap:10px}
+      .hero-creds b{font-size:.78rem}
+      .hero-creds b+span{font-size:.68rem}
+    }
+    /* order 4, explicitly: the default 0 would sort the buttons ABOVE every ordered
+       sibling and land them between Sam and the credentials */
+    .hero-actions{order:4;gap:10px;margin-top:24px;max-width:100%}
     .hero-actions .btn{width:100%;justify-content:center}
-    /* the wrap is a flex item again, so z-index works without position:relative */
+    /* the wrap is a flex item again, so z-index works without position:relative — and
+       leaving it unpositioned is what lets .hero-mark anchor to the hero, same as desktop */
     .hero .wrap{z-index:2}
-    /* Phones do not get the wordmark. It is decoration and it was the only thing standing
-       between the visitor and the video in the top band; desktop keeps it because there it
-       sits on the scrim's opaque side, beside the copy rather than on top of the footage.
-       This replaces a whole phone type ladder — a clamp(3.4rem,10vw,9.5rem) fitted so "SAM
-       PEÑA" cleared the 28px padding on a 360 screen without wrapping — which now has nothing
-       to size. aria-hidden already kept it out of the accessibility tree, so display:none
-       costs nothing there. */
-    .hero-mark{display:none}
-    /* The founder button leaves the corner entirely and joins the flex column AFTER .wrap, so
-       it lands under "Connect with Sam on LinkedIn" — the last thing in .hero-actions. order:1
-       against .wrap's default 0 is the whole mechanism; the two videos are absolute and take
-       no part in the ordering. The 18px padding is the wrap's, so the button's edges line up
-       with the two buttons above it, and the 10px margin is .hero-actions' own gap, so the
-       three read as one stack rather than as two things and a straggler. */
-    .hero-videobar{position:static;order:1;align-self:stretch;transform:none;left:auto;
-      width:auto;padding:0 18px;margin-top:10px}
-    /* Restyled, not just moved. The dark translucent pill was built to survive raw video in a
-       corner where the scrim had let go; down here it sits on flat #F2F5F8, where
-       rgba(10,37,64,.42) composites to a mid grey and the white label falls to about 2.4:1 —
-       unreadable. So it takes the ghost button's treatment instead, and its metrics: full
-       width, 12px radius, .86rem, the same padding. The green play disc stays as the one thing
-       that marks it as the video. --bc-w is not used here — the booking card it was matching
-       is display:none from this breakpoint down. */
-    .hero-vbtn{width:100%;background:rgba(255,255,255,.9);border-color:var(--line);
-      color:var(--navy);backdrop-filter:none;-webkit-backdrop-filter:none;
-      font-size:.86rem;padding:14px 20px;border-radius:12px;gap:9px}
-    .hero-vbtn:hover{background:#fff;border-color:var(--line);transform:none}
-    .hero-vbtn:focus-visible{outline-color:var(--navy)}
+    /* anchored to the hero now, sitting in the same band as the photo above the copy */
+    /* The phone ladder, kept off the desktop one so shrinking the mark on a wide monitor
+       cannot shrink it here. 3.4rem is a fit, not a preference: "SAM PEÑA" is 2.7x wider
+       than "SAM" was, the nbsp forbids a second line, and 3.4rem is what leaves the glyphs
+       18px clear of the 28px padding on a 360px phone. 10vw only takes over above 544.
+       No top here any more: the old flat 2px cut the Ñ's tilde by 7px, and the base rule's
+       .21em lands at 11px for this size. It costs nothing — the mark clears the headline by
+       245px on a phone. */
+    .hero-mark{font-size:clamp(3.4rem,10vw,9.5rem)}
+    /* Lifted above the copy and pushed right, so Sam overlaps the wordmark the way he does
+       in the reference. z-index 2 beats the ::after scrim; he still paints over .hero-mark
+       because he comes later in the DOM at the same level, which is the whole point.
+
+       The 40px on top was measured against the old short crop, whose edge sat at 188px from
+       the hero's top while the list beside him ran to 230 — the empty background between the
+       two read as a hole. The mobile source is the full figure now and 32% taller, so it
+       closes that gap on its own: his bottom clears the list by 50px at 360 and 113 at 430
+       even at margin-top 0. The 40 is kept because it was asked for, not because it is load
+       bearing. 16px tightens the hero by 24 and brings his head up higher.
+
+       No mask. There used to be a linear-gradient fading his last 22% out, on the reasoning
+       that a cut at mid-thigh reads as a crop mid-page while on desktop it reads as the
+       hero's own floor. Gone by request; the bottom edge is a hard line. */
+    .hero-photo{order:-1;align-self:flex-end;position:relative;z-index:2;transform:none;left:auto;bottom:auto;
+      height:auto;width:min(180px,44%);margin:40px 18px 0 0;display:block;filter:none}
     /* No inline calendar on a phone: a 600px cross-origin iframe stacked under the copy is
        a lot of weight for something the visitor has to scroll past. The card goes and the
        .hero-book button takes over as the CTA — see the mobile guard in the script, which
@@ -1051,58 +1041,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ========== HERO ========== -->
 <section class="hero" id="lead">
-  <!-- Background: two segments of Sam's founder video, muted, chained into a loop —
-       0:06–0:12 and 0:18–0:21 of the source, both plant b-roll.
-
-       TWO elements, not one file. Cloudinary can normally concatenate with l_video + fl_splice
-       and that is what this should be; on this cloud the flag is silently ignored and every
-       spliced URL comes back as the first segment alone (verified against four syntaxes, all
-       6.19s). The other single-file route is to deliver 0:06–0:21 whole and have the script
-       seek over the 0:12–0:18 gap, which costs 790KB against 549 for the two pieces and puts
-       a seek stall in the middle of the loop. So: two videos stacked, one visible, the script
-       hands off at `ended`. Keep them in this DOM order — the CSS stacks by z-index, not by
-       order, but the script reads A then B.
-
-       Every parameter in these URLs is doing a job, so read before trimming one:
-
-       c_crop,g_north,h_0.58 — the source is a finished social cut with burned-in captions
-       animating across the 62–80% band and a "Sam Peña / CEO" lower third at 88–100%. Behind
-       a headline that is a second block of text flashing under the first, so the delivered
-       file keeps only the top 58% and the captions do not exist in it. Cropping at the CDN
-       rather than with object-position because the visible window depends on the hero's
-       aspect ratio: at 1440x700 CSS would hide the captions, at 1100x700 it would not.
-
-       ac_none — strips the audio track outright. `muted` is what makes autoplay legal, but a
-       file that physically cannot make noise is a stronger guarantee than an attribute, and
-       it is smaller.
-
-       vp9 first: Chrome, Firefox and Edge take the webm pair at 549KB, Safari falls through to
-       the h264 pair at 1.06MB. The original asset is HEVC and plays in neither Firefox nor
-       most Chrome installs, which is why no source points at it directly.
-
-       preload="auto" on both, unusually: B has to be decoded and ready to paint the instant A
-       ends six seconds in, and "metadata" would leave it fetching mid-handoff. It is 200KB.
-       Each carries the poster of its own first frame so neither can flash empty. -->
-  <video class="hero-video is-on" id="heroVidA" autoplay muted playsinline preload="auto"
-         aria-hidden="true" tabindex="-1" disablepictureinpicture
-         poster="https://res.cloudinary.com/dpi6oudmk/video/upload/c_crop,g_north,h_0.58,w_1.0/so_6,w_1280,f_jpg,q_auto/v1787360427/Sam_Video_Hero_r3rjsu.jpg">
-    <source src="https://res.cloudinary.com/dpi6oudmk/video/upload/c_crop,g_north,h_0.58,w_1.0/so_6,du_6,vc_vp9,q_auto:eco,w_1280,ac_none/v1787360427/Sam_Video_Hero_r3rjsu.webm" type="video/webm">
-    <source src="https://res.cloudinary.com/dpi6oudmk/video/upload/c_crop,g_north,h_0.58,w_1.0/so_6,du_6,vc_h264,q_auto:eco,w_1280,ac_none/v1787360427/Sam_Video_Hero_r3rjsu.mp4" type="video/mp4">
-  </video>
-  <video class="hero-video" id="heroVidB" muted playsinline preload="auto"
-         aria-hidden="true" tabindex="-1" disablepictureinpicture
-         poster="https://res.cloudinary.com/dpi6oudmk/video/upload/c_crop,g_north,h_0.58,w_1.0/so_18,w_1280,f_jpg,q_auto/v1787360427/Sam_Video_Hero_r3rjsu.jpg">
-    <source src="https://res.cloudinary.com/dpi6oudmk/video/upload/c_crop,g_north,h_0.58,w_1.0/so_18,du_3,vc_vp9,q_auto:eco,w_1280,ac_none/v1787360427/Sam_Video_Hero_r3rjsu.webm" type="video/webm">
-    <source src="https://res.cloudinary.com/dpi6oudmk/video/upload/c_crop,g_north,h_0.58,w_1.0/so_18,du_3,vc_h264,q_auto:eco,w_1280,ac_none/v1787360427/Sam_Video_Hero_r3rjsu.mp4" type="video/mp4">
-  </video>
-
-  <div class="hero-videobar">
-    <button type="button" class="hero-vbtn" id="founderBtn">
-      <span class="vbtn-play" aria-hidden="true"><svg viewBox="0 0 10 10" fill="currentColor" style="color:#fff"><path d="M0 0l10 5-10 5z"/></svg></span>
-      Message from our founder
-    </button>
-  </div>
-
   <div class="wrap">
     <!-- Decorative wordmark. aria-hidden because a screen reader announcing a stray
          "SAM PEÑA" before the headline is noise, not information. Non-breaking space so it
@@ -1371,22 +1309,77 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
+    <!-- Sam, a transparent cutout. Absolute on desktop so he sits between the copy and the
+         card without occupying a grid track; back in normal flow below 768px. Last in the
+         DOM so the stacked mobile order reads copy → card → photo. -->
+    <!-- Two crops of one cutout, both from images/samHeroreal.jpeg.
+
+         Desktop (the img) stops at 958/1264 of the cutout's height, above both his hands and
+         his belt: beside the booking card either one reads as a second focal point. The line
+         was detected, not eyeballed — a per-row skin test down the outer edge of the
+         silhouette, run separately over the left and right thirds because the brown belt
+         passes the same test and was taken for a hand on the first pass.
+
+         Mobile (the source) is the whole figure, hands and belt included, cut at mid-thigh
+         where the original frame cuts it. There is no card on a phone for him to compete
+         with, and at 172px wide he is too small for a hand to pull any attention. It has to
+         be a second file because the hands are not in the desktop one — that crop physically
+         removed them, so no amount of CSS brings them back.
+
+         picture{display:contents} keeps the img itself as the flex item on mobile, where
+         .hero-photo carries order/align-self/margin; wrapping it would hand those to the
+         picture instead and the photo would land in the wrong place. -->
+    <picture>
+      <source media="(max-width:768px)" srcset="images/samHeroreal-mobile.webp" width="400" height="630">
+      <img class="hero-photo" src="images/samHeroreal.webp" alt="Sam Peña, SQF consultant" width="800" height="958" fetchpriority="high" decoding="async">
+    </picture>
   </div>
 </section>
 
-<!-- Founder video, sound on. Separate from the hero and from the background <video> on
-     purpose: this one is the full 74s cut, uncropped, with its captions and its audio, which
-     is what someone who clicked "message from our founder" actually asked for. The background
-     copy is a silent 15s texture and cannot stand in for it.
+<!-- Founder video. It opens over the page on load, playing, muted — muted is the only
+     autoplay a browser grants without a gesture, so the gold pill is there to ask for the
+     one click that turns the sound on. Minimising sends the same element to the corner of
+     the screen; it never reloads, so the playhead survives the move.
 
-     No src anywhere in the markup — the script injects the <source> elements on the first
-     open, so the 4MB file is never fetched for the visitors who never click. -->
-<div class="vmodal" id="founderModal" role="dialog" aria-modal="true" aria-label="Message from our founder" hidden>
-  <div class="vmodal-box">
-    <button type="button" class="vmodal-close" id="founderClose" aria-label="Close video">
-      <svg viewBox="0 0 24 24" fill="none" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+     The full 74s cut, uncropped: the captions and the "Sam Peña / CEO" lower third are part
+     of the piece here, unlike the hero background this replaces, which had to crop them off.
+
+     w_720, q_auto:eco. The box tops out at 620 CSS px, and this file is now fetched by every
+     visitor rather than by the few who asked for it, so it is worth the smaller ladder:
+     3.3MB webm against 4.2 at plain q_auto, 5.6MB mp4 against 7.7. vp9 first — the original
+     asset is HEVC and plays in neither Firefox nor most Chrome installs, which is why no
+     source points at it directly. Safari takes the mp4.
+
+     The poster is the frame at 0:01, so the box is never a black square while the first
+     bytes arrive. -->
+<div class="fvp" id="founderPlayer" data-state="stage" role="dialog" aria-modal="true" aria-label="Message from Sam Peña, founder">
+  <div class="fvp-backdrop" id="fvpBackdrop"></div>
+  <div class="fvp-box">
+    <video id="founderVideo" class="fvp-video" autoplay muted playsinline controls preload="auto"
+           poster="https://res.cloudinary.com/dpi6oudmk/video/upload/so_1,w_720,f_jpg,q_auto/v1787360427/Sam_Video_Hero_r3rjsu.jpg">
+      <source src="https://res.cloudinary.com/dpi6oudmk/video/upload/vc_vp9,q_auto:eco,w_720/v1787360427/Sam_Video_Hero_r3rjsu.webm" type="video/webm">
+      <source src="https://res.cloudinary.com/dpi6oudmk/video/upload/vc_h264,q_auto:eco,w_720/v1787360427/Sam_Video_Hero_r3rjsu.mp4" type="video/mp4">
+    </video>
+
+    <button type="button" class="fvp-sound" id="fvpSound" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none"/>
+        <path d="M17 8.5a5 5 0 0 1 0 7M20 6a9 9 0 0 1 0 12"/>
+      </svg>
+      <span class="fvp-sound-txt">Tap for sound</span>
     </button>
-    <video id="founderVideo" controls playsinline preload="none"></video>
+
+    <div class="fvp-tools">
+      <button type="button" class="fvp-tool fvp-min" id="fvpMin" aria-label="Minimize video">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M12 4v9m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="fvp-tool fvp-expand" id="fvpExpand" aria-label="Expand video">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4H4v5M15 20h5v-5M4 4l6 6M20 20l-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="fvp-tool fvp-close" id="fvpClose" aria-label="Close video">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2443,125 +2436,207 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     sections.forEach((s)=>spy.observe(s));
   })();
 
-  /* ---- HERO BACKGROUND: the two segments, chained ----
-     A is 0:06–0:12 of the source and B is 0:18–0:21; they hand off to each other on `ended`,
-     and that handoff is what stands in for the `loop` attribute a single file would have
-     carried. Neither element may have `loop` — it would trap whichever one is playing and
-     `ended` would never fire again.
+  /* ---- FOUNDER VIDEO PLAYER ----
+     Two states on one element (see the .fvp CSS): the stage it opens in and the mini it
+     minimises to. Everything here is a state change plus mute/unmute — the <video> is never
+     reloaded, moved in the DOM, or given a new src, which is what keeps the playhead and the
+     buffer intact across a minimise.
 
-     Exposed as an object because the founder modal has to silence this while it runs and the
-     reduced-motion listener has to stop it for good, and neither should have to know that
-     "the background" is two elements taking turns. */
-  const heroLoop=(function(){
-    const a=document.getElementById('heroVidA');
-    const b=document.getElementById('heroVidB');
-    if(!a||!b) return null;
-    let active=a, frozen=false;
-    // play() rejects on its own if autoplay is refused; there is no fallback worth running,
-    // the poster is already painted and stays
-    const go=(v)=>{const p=v.play(); if(p&&p.catch) p.catch(()=>{});};
-
-    function handOff(from,to){
-      if(frozen) return;
-      to.currentTime=0;
-      go(to);
-      to.classList.add('is-on');
-      from.classList.remove('is-on');
-      active=to;
-    }
-    a.addEventListener('ended',()=>handOff(a,b));
-    b.addEventListener('ended',()=>handOff(b,a));
-
-    return {
-      pause(){a.pause();b.pause();},
-      // resume only what was interrupted, and never against a freeze
-      resume(){if(!frozen) go(active);},
-      /* Reduced motion: park the pair on A's first frame. Dropping `autoplay` matters as well
-         as pausing — without it a later load in the same session starts playing again before
-         this listener has run. */
-      freeze(){frozen=true;a.pause();b.pause();a.removeAttribute('autoplay');
-               a.classList.add('is-on');b.classList.remove('is-on');active=a;
-               try{a.currentTime=0;}catch(e){}},
-      thaw(){frozen=false;go(active);}
-    };
-  })();
-
-  /* ---- FOUNDER VIDEO ----
-     The hero's background segments and the modal are different files (see the markup); this
-     wires the button between them. */
+     Autoplay: the markup carries muted+autoplay+playsinline, which is the combination every
+     current browser allows without a gesture. If it is refused anyway the element still has
+     native controls and its poster, so the visitor gets a play button rather than a dead
+     square, and this script leaves it alone. */
   (function(){
-    const btn=document.getElementById('founderBtn');
-    const modal=document.getElementById('founderModal');
+    const root=document.getElementById('founderPlayer');
     const vid=document.getElementById('founderVideo');
-    const closeBtn=document.getElementById('founderClose');
-    if(!btn||!modal||!vid) return;
+    if(!root||!vid) return;
+    const backdrop=document.getElementById('fvpBackdrop');
+    const box=root.querySelector('.fvp-box');
+    const sound=document.getElementById('fvpSound');
+    const minBtn=document.getElementById('fvpMin');
+    const expandBtn=document.getElementById('fvpExpand');
+    const closeBtn=document.getElementById('fvpClose');
 
-    const BASE='https://res.cloudinary.com/dpi6oudmk/video/upload/';
-    const ASSET='/v1787360427/Sam_Video_Hero_r3rjsu';
-    /* 720 wide, not the source's 1080: .vmodal-box caps at 760px and is usually smaller, so
-       the extra pixels are never resolved on screen. vp9 first for the same reason as the
-       background — and the same fallback, since the original is HEVC. */
-    const SOURCES=[
-      ['vc_vp9,q_auto,w_720' +ASSET+'.webm','video/webm'],
-      ['vc_h264,q_auto,w_720'+ASSET+'.mp4' ,'video/mp4' ]
-    ];
+    const play=()=>{const p=vid.play(); if(p&&p.catch) p.catch(()=>{});};
 
-    /* Autoplay rules only permit sound because this runs inside a click. If the promise is
-       rejected anyway the modal stays open with the controls showing, so the visitor can
-       start it by hand rather than facing a dead black square. */
-    let loaded=false, lastFocus=null;
+    /* ---- where the mini sits ----
+       null means "wherever the CSS puts it", which is the bottom-right corner. Once the
+       visitor drags it, this holds the top-left corner they chose, in viewport pixels, and
+       the box is positioned with left/top instead of right/bottom. It survives an
+       expand/minimise round trip on purpose: having moved the square off the calendar once,
+       nobody wants to do it again the next time they minimise. */
+    let miniPos=null;
+    const EDGE=12;   // how close to the viewport edge the square may be parked
 
-    function open(){
-      if(!loaded){
-        SOURCES.forEach(([path,type])=>{
-          const s=document.createElement('source');
-          s.src=BASE+path; s.type=type;
-          vid.appendChild(s);
-        });
-        vid.load();
-        loaded=true;
+    // Clamp first, then write. A position that was legal at 1440 is off-screen at 900, and
+    // resize is not the only way to get there — so every write goes through this.
+    function placeMini(){
+      if(root.dataset.state!=='mini'||!miniPos){
+        // back to the CSS corner: stage needs its own left/top:50%, so these must go
+        box.style.left=box.style.top=box.style.right=box.style.bottom='';
+        return;
       }
-      lastFocus=document.activeElement;
-      modal.hidden=false;
-      document.body.classList.add('vmodal-open');
-      // the background is silent, but leaving it decoding behind a modal nobody can see
-      // through is wasted work on a phone
-      if(heroLoop) heroLoop.pause();
-      vid.currentTime=0;
-      vid.muted=false;
-      const p=vid.play();
-      if(p&&p.catch) p.catch(()=>{});
-      closeBtn.focus();
+      const w=box.offsetWidth, h=box.offsetHeight;
+      miniPos.x=Math.min(Math.max(miniPos.x,EDGE),Math.max(EDGE,innerWidth -w-EDGE));
+      miniPos.y=Math.min(Math.max(miniPos.y,EDGE),Math.max(EDGE,innerHeight-h-EDGE));
+      box.style.left=miniPos.x+'px';
+      box.style.top =miniPos.y+'px';
+      box.style.right=box.style.bottom='auto';
+    }
+
+    /* aria-modal is toggled rather than left on: in mini the player is a corner widget and
+       the page behind it is meant to be read, and a permanent aria-modal would hide all of
+       it from a screen reader. */
+    function setState(s){
+      root.dataset.state=s;
+      const stage = s==='stage';
+      root.setAttribute('aria-modal', stage?'true':'false');
+      document.body.classList.toggle('fvp-stage', stage);
+      // native controls are unusable at 150px and would cover a third of the mini
+      if(stage) vid.setAttribute('controls',''); else vid.removeAttribute('controls');
+      placeMini();   // clears the inline left/top on the way into stage, restores it on the way out
+    }
+
+    function syncSound(){
+      const on = !vid.muted && vid.volume>0;
+      sound.classList.toggle('is-live', on);
+      sound.setAttribute('aria-pressed', on?'true':'false');
+      sound.setAttribute('aria-label', on?'Mute video':'Unmute video');
+    }
+
+    /* Focus follows the box on every state change, and it is deliberate on load too: this
+       opens as a modal over the whole page, so a keyboard visitor has to land inside it or
+       they are tabbing through a page they cannot see. It always lands on the control that
+       gets them OUT of the state they are in. preventScroll because the player is fixed and
+       focusing it must not move the page underneath. */
+    const focus=(el)=>{ try{el.focus({preventScroll:true});}catch(e){el.focus();} };
+
+    function minimize(){
+      setState('mini');
+      vid.muted=true;          // asked for: the corner player is always silent
+      syncSound();
+      play();                  // it keeps playing down there, which is the point of minimising
+      focus(closeBtn);
+    }
+
+    function expand(){
+      setState('stage');
+      play();
+      focus(minBtn);
     }
 
     function close(){
       vid.pause();
-      modal.hidden=true;
-      document.body.classList.remove('vmodal-open');
-      // resume() is frozen-aware: if reduced motion stopped the pair, it stays stopped
-      if(heroLoop) heroLoop.resume();
-      if(lastFocus&&lastFocus.focus) lastFocus.focus();
+      setState('mini');        // drop the body lock and the backdrop before hiding
+      root.hidden=true;
     }
 
-    btn.addEventListener('click',open);
+    sound.addEventListener('click',()=>{
+      vid.muted=!vid.muted;
+      // a click IS a gesture, so this is the moment an autoplay that was refused can start
+      if(!vid.muted) play();
+      syncSound();
+    });
+    minBtn.addEventListener('click',minimize);
+    expandBtn.addEventListener('click',expand);
     closeBtn.addEventListener('click',close);
-    // backdrop only — a click that started inside .vmodal-box (dragging the scrubber past
-    // the edge, for one) must not count as a click outside it
-    modal.addEventListener('mousedown',(e)=>{ if(e.target===modal) close(); });
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'&&!modal.hidden) close(); });
+    /* The whole mini square is the expand target, and the listener is on the box rather than
+       on the video because a drag captures the pointer and Chrome then retargets the click
+       that follows to the capturing element — a listener on the <video> simply stops firing
+       once the square has been moved. The tools are excluded: they have their own clicks. */
+    box.addEventListener('click',(e)=>{
+      if(root.dataset.state!=='mini'||dragged) return;
+      if(e.target.closest('.fvp-tool')) return;
+      expand();
+    });
+    // backdrop only, and mousedown so a drag that ends outside the frame is not a click on it
+    backdrop.addEventListener('mousedown',(e)=>{ if(e.target===backdrop) minimize(); });
 
-    /* Reduced motion: hold the first segment's first frame instead of cycling. The hero still
-       has its image — it just stops moving, and the dissolve is switched off in CSS so the
-       handoff cannot flash either. The modal is unaffected: it plays only when someone
-       deliberately asks it to, which is not ambient motion. */
-    const noMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
-    const applyMotion=()=>{
-      if(!heroLoop) return;
-      if(noMotion.matches) heroLoop.freeze();
-      else if(modal.hidden) heroLoop.thaw();
+    /* ---- fvpDrag: the mini is movable ----
+       It parks over the booking calendar in the hero, and the mini's whole premise is that
+       the page behind it stays usable, so the square has to be movable off whatever it
+       covers. Pointer events, not mouse+touch: one code path covers mouse, touch and pen,
+       and setPointerCapture keeps the drag alive when the pointer outruns the box — which it
+       will, because a 150px square moved quickly leaves the cursor behind.
+
+       The whole square is the handle, which means the drag and the tap-to-expand share a
+       target. `dragged` is what tells them apart: a pointer that travelled more than 4px is
+       a drag, and the click that follows it is swallowed. 4px and not 0 because a tap on a
+       touch screen always drifts a pixel or two, and demanding a perfectly still finger
+       would make the square impossible to expand by tapping. */
+    let dragged=false, grab=null;
+    const DRAG_MIN=4;
+
+    box.addEventListener('pointerdown',(e)=>{
+      if(root.dataset.state!=='mini') return;
+      // the three tool buttons are controls, not handles — let them have their clicks
+      if(e.target.closest('.fvp-tool')) return;
+      if(e.button!==undefined && e.button!==0) return;
+      const r=box.getBoundingClientRect();
+      grab={dx:e.clientX-r.left, dy:e.clientY-r.top, x0:e.clientX, y0:e.clientY, id:e.pointerId};
+      dragged=false;
+      miniPos=miniPos||{x:r.left,y:r.top};   // first drag: adopt wherever the CSS had parked it
+      /* Capture here, on the press, and not later when the pointer has travelled. Waiting
+         looks tidier and does not work: a fast first movement over a <video> starts the
+         browser's own drag gesture, which fires pointercancel and kills the drag before it
+         begins. Measured — a drag whose first step was 85px never moved the box, while the
+         same drag with a 7px step first did. Taking the capture up front is what stops the
+         native gesture. It also retargets the click that follows to the box, which is why
+         the tap-to-expand listener is bound there and not on the video. */
+      try{box.setPointerCapture(e.pointerId);}catch(err){}
+    });
+
+    box.addEventListener('pointermove',(e)=>{
+      if(!grab) return;
+      if(!dragged &&
+         Math.abs(e.clientX-grab.x0)+Math.abs(e.clientY-grab.y0) < DRAG_MIN) return;
+      dragged=true;
+      box.classList.add('is-dragging');
+      miniPos={x:e.clientX-grab.dx, y:e.clientY-grab.dy};
+      placeMini();
+    });
+
+    const endDrag=(e)=>{
+      if(!grab) return;
+      grab=null;
+      box.classList.remove('is-dragging');
+      try{box.releasePointerCapture(e.pointerId);}catch(err){}
+      // let the click that follows this pointerup see `dragged`, then forget it
+      setTimeout(()=>{dragged=false;},0);
     };
-    applyMotion();
-    noMotion.addEventListener('change',applyMotion);
+    box.addEventListener('pointerup',endDrag);
+    box.addEventListener('pointercancel',endDrag);
+
+    // A spot that was legal on a wide window is off-screen on a narrow one. Re-clamping on
+    // resize is also what catches a phone rotating and the mobile URL bar collapsing.
+    addEventListener('resize',placeMini);
+    document.addEventListener('keydown',(e)=>{
+      if(e.key!=='Escape'||root.hidden) return;
+      if(root.dataset.state==='stage') minimize(); else close();
+    });
+    // volume moved on the native controls, so the pill has to follow it
+    vid.addEventListener('volumechange',syncSound);
+
+    /* Reduced motion. A video that starts by itself over the whole page is exactly what that
+       setting asks not to happen, so it opens paused on its poster instead — still on the
+       stage, still with its controls, waiting to be asked. */
+    const noMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
+    if(noMotion.matches){
+      vid.removeAttribute('autoplay');
+      vid.pause();
+    }
+
+    setState('stage');
+    syncSound();
+    focus(minBtn);
+    /* Again on load, and only if nothing else has taken focus in the meantime. The Calendly
+       iframe in the booking card mounts after this script runs and blurs whatever had focus
+       when it does — measured: focus lands on the minimise button, then leaves it for null a
+       moment later. One more pass once the page has finished loading puts it back. */
+    window.addEventListener('load',()=>{
+      if(root.dataset.state==='stage' && !root.hidden &&
+         (document.activeElement===document.body || !document.activeElement)) focus(minBtn);
+    });
   })();
 </script>
 </body>
