@@ -405,9 +405,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     animation:none;padding:9px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
   .fvp-sound.is-live .fvp-sound-txt{display:none}
   .fvp-sound:focus-visible{outline:2px solid #fff;outline-offset:3px}
-  /* No pill in mini: mini is the state the visitor chose in order to be left alone, and a
-     pulsing gold badge in the corner of the page is the opposite of that. */
+  /* No gold pill in mini: mini is the state the visitor chose in order to be left alone, and
+     a pulsing gold badge in the corner of the page is the opposite of that. The live (muted-
+     toggle) form does survive down there, because a corner player that is talking has to be
+     silenceable without expanding it first. Parked left so it clears the tool buttons. */
   .fvp[data-state="mini"] .fvp-sound{display:none}
+  /* ...unless the visitor has used the sound at some point. Then the toggle rides along into
+     the corner in its small dark form — in BOTH directions, so muting down there is not a
+     one-way door — parked left of the tool buttons. */
+  .fvp[data-state="mini"][data-sound-used] .fvp-sound{display:inline-flex;
+    top:6px;left:6px;transform:none;padding:6px;animation:none;
+    background:rgba(6,18,32,.62);border-color:rgba(255,255,255,.34);color:#fff}
+  .fvp[data-state="mini"][data-sound-used] .fvp-sound-txt{display:none}
+  .fvp[data-state="mini"][data-sound-used] .fvp-sound svg{width:14px;height:14px}
   @media(prefers-reduced-motion:reduce){
     .fvp-sound{animation:none}
     .fvp[data-state="stage"] .fvp-box,.fvp[data-state="mini"] .fvp-box{animation:none}
@@ -2498,6 +2508,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function syncSound(){
+      /* Sticky: the corner keeps a mute toggle only for someone who has actually used the
+         sound. A visitor who never touched it gets a clean square, as before. */
+      if(!vid.muted) root.dataset.soundUsed='';
       const on = !vid.muted && vid.volume>0;
       sound.classList.toggle('is-live', on);
       sound.setAttribute('aria-pressed', on?'true':'false');
@@ -2513,7 +2526,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     function minimize(){
       setState('mini');
-      vid.muted=true;          // asked for: the corner player is always silent
+      /* Whatever the sound was doing, it keeps doing. Minimising is a request for less
+         screen, not for silence: someone who turned Sam on and then shrank him wants to
+         go on listening while they scroll. The mute toggle rides along into the corner
+         (see .fvp-sound.is-live in mini) so they can still stop him without expanding. */
       syncSound();
       play();                  // it keeps playing down there, which is the point of minimising
       focus(closeBtn);
@@ -2543,10 +2559,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     /* The whole mini square is the expand target, and the listener is on the box rather than
        on the video because a drag captures the pointer and Chrome then retargets the click
        that follows to the capturing element — a listener on the <video> simply stops firing
-       once the square has been moved. The tools are excluded: they have their own clicks. */
+       once the square has been moved. The buttons are excluded: they have their own clicks. */
     box.addEventListener('click',(e)=>{
       if(root.dataset.state!=='mini'||dragged) return;
-      if(e.target.closest('.fvp-tool')) return;
+      if(e.target.closest('.fvp-tool,.fvp-sound')) return;
       expand();
     });
     // backdrop only, and mousedown so a drag that ends outside the frame is not a click on it
@@ -2569,8 +2585,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     box.addEventListener('pointerdown',(e)=>{
       if(root.dataset.state!=='mini') return;
-      // the three tool buttons are controls, not handles — let them have their clicks
-      if(e.target.closest('.fvp-tool')) return;
+      // the buttons are controls, not handles — let them have their clicks
+      if(e.target.closest('.fvp-tool,.fvp-sound')) return;
       if(e.button!==undefined && e.button!==0) return;
       const r=box.getBoundingClientRect();
       grab={dx:e.clientX-r.left, dy:e.clientY-r.top, x0:e.clientX, y0:e.clientY, id:e.pointerId};
