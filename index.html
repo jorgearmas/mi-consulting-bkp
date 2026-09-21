@@ -68,13 +68,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png?v=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Not render-blocking. The fonts are display=swap, so text was always going to appear in the
+     fallback face first and swap when the woff2 lands — blocking on this CSS only held the first
+     paint back ~300ms for nothing. It also held back every inline <script> below it (a classic
+     script waits for the stylesheets before it), which is what kept the hero's Calendly iframe
+     from starting early. -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
 <!-- Calendly -->
+<!-- calendly.com without `crossorigin`: the hero's iframe is a navigation, and a navigation
+     never reuses a connection opened in the anonymous (crossorigin) pool — the old hint was
+     warming a socket nobody picked up. assets.calendly.com gets both, since the booking page
+     loads its bundles either way. -->
+<link rel="preconnect" href="https://calendly.com">
+<link rel="preconnect" href="https://assets.calendly.com">
 <link rel="preconnect" href="https://assets.calendly.com" crossorigin>
-<link rel="preconnect" href="https://calendly.com" crossorigin>
-<link rel="dns-prefetch" href="https://calendly.com">
-<link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
+<!-- widget.css is only the popup's styling (and the spinner). It no longer blocks the first
+     paint: it is fetched as print and switched on when it lands, long before anyone clicks. -->
+<link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" media="print" onload="this.media='all'">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <style>
   :root{
@@ -553,7 +565,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      the viewport can actually give us. Shrinking the iframe itself instead would make
      Calendly render its own scrollbar; scaling keeps the day view whole. Clicks pass
      through a transform correctly, so the widget stays fully interactive. */
-  .bc-embed .calendly-inline-widget{width:calc(100% / var(--bc-scale));height:600px;
+  .bc-embed .bc-cal{position:relative;width:calc(100% / var(--bc-scale));height:600px;
     transform:scale(var(--bc-scale));transform-origin:top left;border-radius:0 0 20px 20px}
   /* Height-keyed, and only where the hero is the two-column layout — below 769px the page
      stacks and scrolls normally, so a short phone must not shrink the calendar. */
@@ -1099,9 +1111,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
              renders white, which is why the navy header above is a separate block that
              looks deliberate either way. -->
         <div class="bc-embed">
-          <div class="calendly-inline-widget"
+          <div class="bc-cal" id="bcCal"
                data-url="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1&amp;hide_event_type_details=1&amp;background_color=0a2540&amp;text_color=ffffff&amp;primary_color=1b9e77"
-               style="min-width:320px;height:600px"></div>
+               style="min-width:320px;height:600px"><div class="calendly-spinner"><div class="calendly-bounce1"></div><div class="calendly-bounce2"></div><div class="calendly-bounce3"></div></div></div>
+          <!-- The iframe is built HERE, while the document is still parsing, instead of by
+               widget.js — which only looks for inline widgets once DOMContentLoaded fires, and
+               that waits on the font CSS, every image decode ahead of it and widget.js itself.
+               Measured: the iframe request moved from ~650–880ms to ~60ms (with the font CSS no
+               longer render-blocking — see the <head>). It is the
+               same iframe widget.js would build (same URL params, so Calendly still posts its
+               calendly.* messages to this page), and the host deliberately does NOT carry the
+               .calendly-inline-widget class, or widget.js would build a second one.
+               Mobile: the card is display:none below 769px, so the frame is only built if the
+               viewport ever crosses the breakpoint (a phone turned landscape, a window widened). -->
+          <script>
+          (function(){
+            var host=document.getElementById('bcCal');
+            var mq=window.matchMedia('(max-width:768px)');
+            var build=function(){
+              if(mq.matches||host.querySelector('iframe'))return;
+              if(mq.removeEventListener)mq.removeEventListener('change',build);
+              var f=document.createElement('iframe');
+              f.src=host.dataset.url.replace('?','?embed_domain='+encodeURIComponent(location.host)+'&embed_type=Inline&');
+              f.width='100%';f.height='100%';f.setAttribute('frameborder','0');
+              f.title='Select a Date & Time - Calendly';
+              host.appendChild(f);
+            };
+            if(mq.matches){ if(mq.addEventListener)mq.addEventListener('change',build); }
+            else build();
+          })();
+          </script>
           <noscript><a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary btn-block">Book a Free Consultation</a></noscript>
         </div>
       </aside>
@@ -1361,8 +1400,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      source points at it directly. Safari takes the mp4.
 
      The poster is the frame at 0:01, so the box is never a black square while the first
-     bytes arrive. -->
-<div class="fvp" id="founderPlayer" data-state="stage" role="dialog" aria-modal="true" aria-label="Message from Sam Peña, founder">
+     bytes arrive.
+
+     DISABLED (Sep 2026): the `hidden` attribute below switches the whole player off — no
+     stage on load, no mini in the corner, no video download (the script sees `hidden` and
+     stands down). Everything else is intact; delete `hidden` to bring it back as it was. -->
+<div class="fvp" id="founderPlayer" hidden data-state="stage" role="dialog" aria-modal="true" aria-label="Message from Sam Peña, founder">
   <div class="fvp-backdrop" id="fvpBackdrop"></div>
   <div class="fvp-box">
     <video id="founderVideo" class="fvp-video" autoplay muted playsinline controls preload="auto"
@@ -1859,31 +1902,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape')document.querySelectorAll('.nav-drop.open').forEach(closeDrop);
   });
-
-  /* MOBILE: never build the hero's inline calendar. The card is display:none below 769px
-     and .hero-book replaces it, so fetching the widget would cost a phone a 600px
-     cross-origin iframe it can never see. widget.js builds inline widgets by scanning for
-     the .calendly-inline-widget class when the DOM is ready — this runs while the document
-     is still parsing, so dropping the class here means it is never found. If the viewport
-     later crosses the breakpoint (a phone turned landscape, a narrow window widened) the
-     widget is built on demand with Calendly's own API. */
-  (function(){
-    const host=document.querySelector('.bc-embed .calendly-inline-widget');
-    if(!host)return;
-    const mq=window.matchMedia('(max-width:768px)');
-    const url=host.dataset.url;
-    if(!mq.matches)return;               // desktop: leave it to widget.js
-    host.classList.remove('calendly-inline-widget');
-    const build=()=>{
-      if(mq.matches)return;
-      mq.removeEventListener('change',build);
-      host.classList.add('calendly-inline-widget');
-      if(window.Calendly&&typeof window.Calendly.initInlineWidget==='function'){
-        window.Calendly.initInlineWidget({url:url,parentElement:host});
-      }
-    };
-    mq.addEventListener('change',build);
-  })();
 
   // Calendly — popup on desktop, new tab on mobile; href stays as a graceful fallback
   const CALENDLY_URL='https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1';
@@ -2460,6 +2478,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const root=document.getElementById('founderPlayer');
     const vid=document.getElementById('founderVideo');
     if(!root||!vid) return;
+    /* Switched off in the markup (see the `hidden` on #founderPlayer). The parser has already
+       started fetching because of autoplay+preload, so pull the sources off this live element
+       and reload it empty: that aborts the ~3MB download. The HTML itself is untouched. */
+    if(root.hidden){
+      vid.removeAttribute('autoplay');
+      vid.pause();
+      vid.querySelectorAll('source').forEach((s)=>s.remove());
+      vid.load();
+      return;
+    }
     const backdrop=document.getElementById('fvpBackdrop');
     const box=root.querySelector('.fvp-box');
     const sound=document.getElementById('fvpSound');
