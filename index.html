@@ -71,23 +71,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- Not render-blocking. The fonts are display=swap, so text was always going to appear in the
      fallback face first and swap when the woff2 lands — blocking on this CSS only held the first
      paint back ~300ms for nothing. It also held back every inline <script> below it (a classic
-     script waits for the stylesheets before it), which is what kept the hero's Calendly iframe
-     from starting early. -->
+     script waits for the stylesheets before it). -->
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Archivo:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
-<!-- Calendly -->
-<!-- calendly.com without `crossorigin`: the hero's iframe is a navigation, and a navigation
-     never reuses a connection opened in the anonymous (crossorigin) pool — the old hint was
-     warming a socket nobody picked up. assets.calendly.com gets both, since the booking page
-     loads its bundles either way. -->
-<link rel="preconnect" href="https://calendly.com">
-<link rel="preconnect" href="https://assets.calendly.com">
-<link rel="preconnect" href="https://assets.calendly.com" crossorigin>
-<!-- widget.css is only the popup's styling (and the spinner). It no longer blocks the first
-     paint: it is fetched as print and switched on when it lands, long before anyone clicks. -->
-<link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" media="print" onload="this.media='all'">
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<!-- Calendly: nothing is loaded from it any more (Sep 2026). The inline iframe, the popup
+     widget, widget.js and widget.css are all gone — booking happens in a new tab, and only
+     after the visitor qualifies through the hero's stepper. The preconnects went with them:
+     there is no Calendly request on this page to warm a socket for. -->
 <style>
   :root{
     --navy:#0A2540;
@@ -257,23 +248,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* Giant watermark behind the copy. Absolute against .hero (the wrap is unpositioned on
      desktop, on purpose — see above), so it can bleed off the top edge and get cropped by
      the hero's overflow:hidden. z-index 0 puts it under .hero-photo (2) and .hero-grid (2),
-     so "PEÑA" runs behind Sam's shoulder and the headline sits over the letters.
+     so the mark runs behind Sam's shoulder and the headline sits over the letters.
      Desktop only — the 768 block hides it, so there is one ladder here and not two. The
-     sizing is a taste call: the mark is texture, not a headline. The nbsp in the markup is
-     left in place; it stops the two words wrapping, which no longer matters at these widths
-     but costs nothing and would matter again the moment this shows on a narrow viewport.
+     sizing is a taste call: the mark is texture, not a headline.
      Width tracks --hero-maxw and not --maxw so the left edge stays flush with the headline's;
      on the page's own 1200 it would start 80px to the right of it.
-     top is in em on purpose, so it tracks whatever font-size is set above. line-height .8
-     pulls the line box up over the glyphs and the Ñ's tilde paints about 0.2em above cap
-     height, so at the old flat 10px the tilde was cut by 11px on a wide monitor while the
-     capitals still cleared by 15. Measured the ratio it actually needs at four sizes: 0.164
-     to 0.173em. .21em covers all of them with 2 to 6px to spare and keeps covering them if
-     the size changes. */
+     5.2vw/4.5rem, down from the 8vw/8rem "SAM PEÑA" used (Sep 2026). The mark is two
+     stacked lines now (the <br> in the markup), so the ceiling is height, not width: the
+     block runs 0.3em + 1.6em from the top of the hero, and this ladder bottoms it out at
+     212px on a wide monitor, 27px above the headline. Width is not close — the longer
+     line only reaches 594px of the 1304 available at 1440.
+     top is in em on purpose, so it tracks whatever font-size is set above.
+     Alpha .13, up from the .07 the old "SAM PEÑA" carried: the mark names the offer now,
+     so it is meant to be read, not just felt. Contrast against the hero's #F2F5F8 is
+     1.5:1, still clearly a watermark and still under the headline in the hierarchy. */
   .hero-mark{position:absolute;top:.30em;left:50%;transform:translateX(-50%);
     width:min(100%,var(--hero-maxw));padding:0 28px;z-index:0;pointer-events:none;user-select:none;
-    font-family:'Montserrat',sans-serif;font-weight:800;font-size:min(8vw,8rem);
-    line-height:.8;letter-spacing:-.045em;color:rgba(10,37,64,.07)}
+    font-family:'Montserrat',sans-serif;font-weight:800;font-size:min(5.2vw,4.5rem);
+    line-height:.8;letter-spacing:-.045em;color:rgba(10,37,64,.13)}
   /* Sam is a cutout: no frame, no crop — just anchor him to the floor of the hero */
   /* centred on the viewport, like the wrap, so the overlap with the booking card stays
      constant at every width above --maxw instead of drifting. Sized by width, not by the
@@ -304,13 +296,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* uppercase lives in CSS, not in the markup, so the sentence stays readable to screen
      readers and to anything that reuses it (search snippets, social cards). max-width is
      what breaks it into the reference's three lines. */
-  /* Swept every 8px from 1081 to 1600: two lines up to 1169 (the type is still small enough
-     that "EVERY MANUFACTURER DESERVES" fits on one), three from 1177 up — "EVERY
-     MANUFACTURER / DESERVES A BETTER FOOD / SAFETY PARTNER". Never four, never ragged.
-     Worst clearance to Sam's silhouette over the whole sweep is 34px, at 1081.
-     No max-width here: the 560px column of .hero-copy is what does the breaking. */
+  /* No max-width here: the 560px column of .hero-copy is what does the breaking — two
+     lines from 1081 up, three on a phone. No text-transform either: the headline is
+     written in sentence case on purpose (Sep 2026) and the rule would undo that. The
+     non-breaking space in the markup keeps "Sam Peña" whole. */
   .hero h1{font-size:clamp(1.9rem,2.6vw,2.35rem);font-weight:700;margin:0;color:var(--navy);line-height:1.14;
-    letter-spacing:-.02em;text-transform:uppercase}
+    letter-spacing:-.02em}
   /* 420, not the 376 the old three-line paragraph used: the new line measures 402px here and
      376 broke it in two. Still far left of Sam — the headline reaches 569px in the same
      column and clears him by 34. */
@@ -331,14 +322,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   @media(hover:hover){
     .hero-creds li:hover b{color:var(--gold)}
   }
-  /* same 376px cap as .sub and .hero-creds, so the button centres against the visible
-     text column instead of the full 560px copy track — centred in 560 it would drift
-     right of the copy and land under Sam */
-  .hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:28px;max-width:376px}
-  .hero-actions .btn{font-size:.86rem;padding:14px 20px;border-radius:12px;gap:9px}
-  /* the booking card is the desktop CTA; this button only exists where the card does not */
-  .hero-book{display:none}
-  .hero-actions .btn-ghost{background:rgba(255,255,255,.9);border-color:var(--line)}
+  /* Same 376px cap as .sub and .hero-creds, so both centre against the visible text column
+     instead of the full 560px copy track — centred in 560 they would drift right of the
+     copy and land under Sam. */
+  .hero-note{max-width:376px;margin:26px 0 0;font-size:.78rem;line-height:1.5;color:var(--slate);text-align:center}
+  /* Deliberately not a .btn: slate, no chrome, one step smaller than the note above it, so
+     nothing in this column competes with the stepper's buttons. The icon is 14px for the
+     same reason — the 18px one read as a badge. */
+  .hero-linkedin{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    width:376px;max-width:100%;margin-top:14px;font-size:.8rem;font-weight:600;
+    color:var(--slate);text-decoration:none}
+  .hero-linkedin svg{opacity:.75}
+  .hero-linkedin:hover{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+  .hero-linkedin:hover svg{opacity:1}
 
   /* ---- FOUNDER VIDEO PLAYER (.fvp) ----
      One element with two shapes, switched by data-state on the root:
@@ -466,33 +462,61 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
 
   /* form in hero */
-  .qual-form{background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:28px;height:fit-content;position:sticky;top:80px;order:2}
+  /* Opaque navy, not the old translucent glass. The form was built for a dark hero; this
+     one is light, and every label inside it is white or --ice, so a see-through panel left
+     the copy unreadable over the photo. The gradient and shadow are the ones the booking
+     card used to carry, so the column looks the same as it did before the card went.
+     z-index 3 puts it over Sam, who paints at 2 and would otherwise cover its left edge. */
+  .qual-form{background:linear-gradient(165deg,#123556 0%,var(--navy) 62%);
+    border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:26px 24px;
+    box-shadow:0 30px 70px rgba(10,37,64,.34);height:fit-content;
+    position:relative;z-index:3;align-self:start;order:2}
+  /* .btn is white-space:nowrap with 30px of side padding, so "Book Your Free 30-Minute
+     Session" had a min-content width of 349px — wider than this card's 362px column can
+     hold once its own padding is taken off, and wider than a 360px phone. A grid item
+     cannot shrink below its content, so the card itself was being propped open and ran off
+     the screen. Inside the form a full-width button wraps and carries less side padding;
+     min-width:0 stops any other long child doing the same thing. */
+  .qual-form{min-width:0}
+  .qual-form .btn-block{white-space:normal;padding-left:18px;padding-right:18px;text-align:center;
+    line-height:1.3;font-size:.92rem}
   .qual-form h3{font-size:1.1rem;color:#fff;margin-bottom:8px;font-weight:600}
   .qual-form h4{font-size:1.05rem;color:#fff;margin-bottom:24px;font-weight:600;line-height:1.4}
 
-  /* stepper indicator */
-  .stepper-indicator{display:flex;align-items:center;margin-bottom:36px;gap:8px}
-  .stepper-step{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);display:grid;place-items:center;color:var(--ice);font-size:.85rem;font-weight:700;transition:all .3s;flex-shrink:0}
-  .stepper-step.active{background:var(--green-l);border-color:var(--green-l);color:#fff;box-shadow:0 0 20px rgba(39,185,140,.4)}
-  .stepper-step.completed{background:var(--green);border-color:var(--green);color:#fff}
-  .stepper-line{height:2px;background:rgba(255,255,255,.1);flex:1;transition:background .3s;min-width:12px}
-  .stepper-line.active{background:var(--green)}
+  /* progress: a bar and a counter. The old row of numbered circles was built for four
+     questions; seven of them do not fit the 362px column. */
+  .qf-sub{font-size:.9rem;color:var(--ice);margin:0 0 18px}
+  .qf-progress{height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+  .qf-bar{height:100%;width:16.6%;border-radius:2px;background:var(--green-l);
+    transition:width .35s cubic-bezier(.2,.8,.2,1)}
+  .qf-count{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ice);
+    margin:10px 0 22px;font-weight:600}
 
   /* form steps */
   .form-step{display:none;animation:fadeIn .3s ease-out}
   .form-step.active{display:block}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-  .button-group{display:flex;gap:12px;margin-top:20px}
-  .btn-answer{
-    flex:1;padding:14px 20px;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:12px;font-weight:600;cursor:pointer;transition:all .2s;font-size:.95rem;
-  }
-  .btn-answer:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.05)}
-  .btn-answer.yes:hover{border-color:var(--green-l);background:rgba(27,158,119,.2)}
-  .btn-answer.no:hover{border-color:#FFB3A8;background:rgba(208,74,59,.15)}
-  .btn-answer.selected{font-weight:700;}
-  .btn-answer.yes.selected{border-color:var(--green-l);background:rgba(27,158,119,.3);color:var(--green-l)}
-  .btn-answer.no.selected{border-color:#FFB3A8;background:rgba(208,74,59,.2);color:#FFB3A8}
+  /* One tappable row per option, stacked: the answers here are sentences, not Yes/No, so
+     the old two-across button group cannot hold them. */
+  .qf-choices{display:flex;flex-direction:column;gap:10px}
+  .qf-opt{width:100%;text-align:left;padding:13px 16px;border:1.5px solid rgba(255,255,255,.3);
+    background:transparent;color:#fff;border-radius:12px;font-family:'Archivo',sans-serif;
+    font-weight:600;font-size:.92rem;line-height:1.35;cursor:pointer;transition:all .2s}
+  .qf-opt:hover{border-color:var(--green-l);background:rgba(27,158,119,.2)}
+  .qf-opt.selected{border-color:var(--green-l);background:rgba(27,158,119,.3);color:var(--green-l)}
+
+  .qf-hint{font-size:.82rem;color:var(--ice);margin:-14px 0 16px}
+  .qf-checks{display:flex;flex-direction:column;gap:8px}
+  .qf-check{display:flex;align-items:flex-start;gap:10px;cursor:pointer;
+    font-size:.9rem;line-height:1.4;color:#fff;font-weight:500}
+  .qf-check input{width:17px;height:17px;flex-shrink:0;margin-top:1px;accent-color:var(--green-l);cursor:pointer}
+
+  /* Shown only when its question needs it: "Other" on Q3, "I know it" on Q4. */
+  .qf-reveal{display:none;margin-top:12px}
+  .qf-reveal.show{display:block}
+
+  .qf-error{min-height:18px;margin:12px 0 0;font-size:.82rem;color:#FFB3A8}
 
   /* form inputs */
   .form-input-group{margin-bottom:10px}
@@ -513,65 +537,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .form-input-group select{cursor:pointer}
   .form-input-group select option{background:var(--navy);color:#fff}
   
-  /* Two column form layout */
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
-  
-  /* Contact form in hero */
-  .contact-form-hero{max-width:100%}
+  /* Back on the left, Continue / Start over on the right. gap + auto margin so the row
+     still reads correctly when only one of the three is shown. */
+  .form-actions{display:flex;gap:12px;margin-top:22px;align-items:center}
+  .form-actions .btn{flex:0 0 auto}
+  #nextBtn,#refreshBtn{margin-left:auto}
 
-  .form-actions{display:flex;gap:12px;margin-top:28px;flex-direction:row;justify-content:space-between}
-  .form-actions .btn{flex:0}
-
-  /* contact step: hint + consent */
-  .qual-form .field-hint{font-weight:400;color:var(--ice);font-size:.78rem}
-  .qual-form .consent-row{display:flex;align-items:flex-start;gap:10px;margin:2px 0 4px}
-  .qual-form .consent-row input[type="checkbox"]{width:17px;height:17px;flex-shrink:0;margin-top:2px;accent-color:var(--green-l);cursor:pointer}
-  .qual-form .consent-row label{font-size:.74rem;line-height:1.45;color:var(--ice);cursor:pointer;font-weight:400}
   @keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ---- Qualification form SHADOWED ----
-     The form is disabled via the `hidden` attribute on #qualForm (see the hero markup).
-     While it is hidden the booking card owns the hero's right column. Remove `hidden`
-     from #qualForm to bring the form back — the card hides itself automatically. */
-  .hero-grid:not(:has(#qualForm[hidden])) .book-card{display:none}
-
-  /* ---- BOOKING CARD (hero, right column) ----
-     The column is 362px because Calendly renders its day grid at a fixed 312px no matter
-     how wide the frame is — the rest becomes side padding, (width - 312) / 2. At 420 that
-     was 55px a side; at 362 it is 24. Widening the frame and cropping the sides does not
-     help: the padding just grows to match. */
-  .book-card{order:2;background:linear-gradient(165deg,#123556 0%,var(--navy) 62%);border:1px solid rgba(255,255,255,.1);
-    border-radius:20px;padding:22px 21px 18px;height:fit-content;box-shadow:0 30px 70px rgba(10,37,64,.34);
-    /* Drop the card without resizing it. The iframe inside is sized to the pixel (see
-       .bc-embed) so anything touching the card's height changes how Calendly renders —
-       align-self:start pulls it out of the row's centring and margin-top is the only knob.
-       The hero grows to match; it does not clip, and the card's box is untouched. */
-    align-self:start;margin-top:40px}
-  .bc-title{font-family:'Montserrat',sans-serif;font-size:1.22rem;font-weight:700;color:#fff;line-height:1.2;margin:0;letter-spacing:-.01em}
-  .bc-meta{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:.82rem;font-weight:600;color:var(--green-l)}
-  .bc-meta svg{width:16px;height:16px;flex-shrink:0}
-  /* Full-bleed, so the iframe meets the card's rounded corners.
-     600px exactly: below it Calendly's day view scrolls inside the iframe and shows its
-     own scrollbar. Measured, not guessed — 580 scrolls, 600 does not. The card header is
-     kept minimal so that 600 still fits a laptop viewport under the sticky nav. */
-  /* Two heights. Calendly's day view only paints down to 502px, so we crop the frame to
-     510 and the card loses ~90px of dead navy. The time-slot list, though, runs well past
-     600px and scrolls inside its own panel — cropping there would bury the last slots, so
-     the frame goes back to its full 600 the moment the visitor interacts with it. */
-  .bc-embed{--bc-scale:1;margin:16px -21px -18px;border-radius:0 0 20px 20px;overflow:hidden;
-    background:var(--navy);height:calc(510px * var(--bc-scale));transition:height .35s cubic-bezier(.2,.8,.2,1)}
-  .bc-embed.is-open{height:calc(600px * var(--bc-scale))}
-  /* The iframe is always 600px tall — its real minimum — and we scale it down to whatever
-     the viewport can actually give us. Shrinking the iframe itself instead would make
-     Calendly render its own scrollbar; scaling keeps the day view whole. Clicks pass
-     through a transform correctly, so the widget stays fully interactive. */
-  .bc-embed .bc-cal{position:relative;width:calc(100% / var(--bc-scale));height:600px;
-    transform:scale(var(--bc-scale));transform-origin:top left;border-radius:0 0 20px 20px}
-  /* Height-keyed, and only where the hero is the two-column layout — below 769px the page
-     stacks and scrolls normally, so a short phone must not shrink the calendar. */
-  @media (min-width:769px) and (max-height:759px){.bc-embed{--bc-scale:.92}}
-  @media (min-width:769px) and (max-height:699px){.bc-embed{--bc-scale:.84}}
-  @media (min-width:769px) and (max-height:639px){.bc-embed{--bc-scale:.76}}
+  /* ---- Qualification form ----
+     Owns the hero's right column. It used to be shadowed by a booking card that held an
+     inline Calendly iframe; the card, its CSS and the iframe are gone (Sep 2026) — the
+     stepper is the only way to a booking now, and it opens Calendly in a new tab. */
 
   /* update form for right side */
 
@@ -585,6 +562,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   /* ---------- SECTIONS ---------- */
   section{position:relative}
+  /* A hidden section stays display:none whatever else is set on it — see the two that
+     carry the attribute in the markup. */
+  section[hidden]{display:none}
   .section-pad{padding:80px 0}
   .section-dark{background:var(--navy);color:#fff}
   .section-light{background:var(--cloud);color:var(--ink)}
@@ -687,6 +667,79 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .services-callout{background:var(--cloud);padding:24px;border-radius:12px;margin-top:40px;font-size:.95rem;color:var(--slate);line-height:1.7;text-align:center}
   .services-callout strong{color:var(--navy)}
 
+  /* ---------- WHAT THIS ACTUALLY IS ---------- */
+  /* One column of running copy, so it reads as prose and not as another card grid. The
+     head's usual 60px gap is too much with nothing but paragraphs under it. */
+  .wti-head{margin-bottom:36px}
+  /* The base rule puts the 16px gap above the h2, where the eyebrow used to be. With the
+     order swapped the gap belongs under it. .eyebrow is inline-flex, so the wrapper needs
+     the block context for a top margin to sit where it should. */
+  .wti-head h2{max-width:none;margin-top:0}
+  .wti-head .eyebrow{margin-top:18px}
+  /* 1060, between the 760px column it started with (a narrow strip in the middle of the
+     section) and the full 1144px wrap (118 characters a line, too long to track). Here the
+     line measures about 115 at 1.18rem.
+     Justified, with hyphens on: justifying a 100-character line without them opens rivers
+     of white space wherever a long word will not fit. `hyphens` needs the lang attribute,
+     which <html> already carries. */
+  .wti-body{max-width:1060px;margin:0 auto}
+  .wti-body p{font-size:1.18rem;line-height:1.75;color:var(--slate);margin:0 0 22px;
+    text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
+  .wti-body p:last-child{margin-bottom:0}
+  .wti-body strong{color:var(--navy);font-weight:700}
+  /* Numbered, and on the section's own background rather than in cards: the block right
+     below it is three white cards, and two identical rows of three read as one long grid
+     with no hierarchy. Shared heading style with .wti-for. */
+  .wti-take{max-width:1060px;margin:48px auto 0}
+  .wti-take ol{list-style:none;margin:0;padding:0;counter-reset:take;display:grid;gap:28px;
+    grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
+  .wti-take li{counter-increment:take;position:relative;padding-left:52px;
+    font-size:.98rem;line-height:1.65;color:var(--ink)}
+  .wti-take li::before{content:counter(take);position:absolute;left:0;top:-2px;
+    width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.95rem;
+    display:flex;align-items:center;justify-content:center}
+  .wti-take h3,.wti-for h3{font-family:'Archivo',sans-serif;font-size:.82rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--green);text-align:center;margin:0 0 26px}
+
+  /* Three cards, same column as the copy above them. minmax(min(300px,100%),1fr) and not
+     minmax(300px,1fr): a bare 300 cannot shrink under a 300px viewport and would push the
+     page sideways, which is exactly what .services-grid used to do. */
+  .wti-for{max-width:1060px;margin:48px auto 0}
+  .wti-for ul{list-style:none;margin:0;padding:0;display:grid;gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+  .wti-for li{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:24px 24px 24px 54px;
+    position:relative;font-size:.98rem;line-height:1.6;color:var(--ink);box-shadow:var(--shadow-sm);
+    transition:transform .3s,box-shadow .3s,border-color .3s}
+  .wti-for li::before{content:"\2713";position:absolute;left:22px;top:23px;color:var(--green);font-weight:700;
+    transition:transform .3s}
+  /* Same lift the tier and reason cards use, so the page has one hover vocabulary. Behind
+     @media(hover:hover) because these are not links: on a touch screen :hover latches after
+     a tap and the card would stay raised with nothing to undo it. */
+  @media(hover:hover){
+    .wti-for li:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--green)}
+    .wti-for li:hover::before{transform:scale(1.25)}
+  }
+
+  /* ---------- ONE-PARAGRAPH SECTIONS (#credibility, #what-to-bring) ---------- */
+  /* Same head arrangement and the same 1060 measure as #what-this-is, one paragraph wide
+     instead of three, so the three copy sections line up at the same left and right edge.
+     It went 900 -> 760 -> 1060: the first two were too narrow against the headline over
+     them, which runs the full wrap. */
+  .copy-head{margin-bottom:32px}
+  .copy-head h2{max-width:none;margin-top:0}
+  .copy-head .eyebrow{margin-top:18px}
+  .copy-body{max-width:1060px;margin:0 auto;font-size:1.12rem;line-height:1.75;color:var(--slate);
+    text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}
+
+  /* ---------- BOOKING PROMPT ---------- */
+  .bp-card{max-width:820px;margin:0 auto;text-align:center}
+  .bp-card h2{font-size:clamp(1.7rem,2.8vw,2.4rem);line-height:1.2;margin:0;color:var(--navy)}
+  .bp-card p{font-size:1.08rem;line-height:1.7;color:var(--slate);margin:18px 0 32px}
+  /* white-space:normal for the same reason the stepper's button needs it: the label's
+     nowrap min-width is wider than a phone. */
+  .bp-card .btn{white-space:normal;justify-content:center}
+
   /* ---------- TIERS ---------- */
   .tiers-pin{position:relative}
   .tiers-sticky{position:static}
@@ -763,9 +816,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
   /* Book a Call under the qualification form — mobile only */
-  .qual-book{display:none;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12)}
-  .qual-book p{font-size:.85rem;color:var(--ice);text-align:center;margin-bottom:12px}
-  .qual-book .btn{text-align:center;justify-content:center}
 
   /* ---------- RESPONSIVE ---------- */
   /* Tablet. Sam goes away entirely below 1081px. The copy column and a 350px card use the
@@ -838,22 +888,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .hero-creds b{font-size:.78rem}
       .hero-creds b+span{font-size:.68rem}
     }
-    /* order 4, explicitly: the default 0 would sort the buttons ABOVE every ordered
-       sibling and land them between Sam and the credentials */
-    .hero-actions{order:4;gap:10px;margin-top:24px;max-width:100%}
-    .hero-actions .btn{width:100%;justify-content:center}
+    /* Ordered explicitly: the default 0 would sort these ABOVE every ordered sibling and
+       land them between Sam and the credentials */
+    .hero-note{order:5;max-width:100%;margin-top:20px}
+    .hero-linkedin{order:6;width:100%}
     /* the wrap is a flex item again, so z-index works without position:relative — and
        leaving it unpositioned is what lets .hero-mark anchor to the hero, same as desktop */
     .hero .wrap{z-index:2}
     /* anchored to the hero now, sitting in the same band as the photo above the copy */
     /* The phone ladder, kept off the desktop one so shrinking the mark on a wide monitor
-       cannot shrink it here. 3.4rem is a fit, not a preference: "SAM PEÑA" is 2.7x wider
-       than "SAM" was, the nbsp forbids a second line, and 3.4rem is what leaves the glyphs
-       18px clear of the 28px padding on a 360px phone. 10vw only takes over above 544.
-       No top here any more: the old flat 2px cut the Ñ's tilde by 7px, and the base rule's
-       .21em lands at 11px for this size. It costs nothing — the mark clears the headline by
-       245px on a phone. */
-    .hero-mark{font-size:clamp(3.4rem,10vw,9.5rem)}
+       cannot shrink it here. 9.6vw is the largest that keeps the longer of the two lines
+       inside the 28px padding at 360, and the 4rem cap holds it there on a tablet. */
+    .hero-mark{font-size:clamp(1.8rem,9.6vw,4rem)}
     /* Lifted above the copy and pushed right, so Sam overlaps the wordmark the way he does
        in the reference. z-index 2 beats the ::after scrim; he still paints over .hero-mark
        because he comes later in the DOM at the same level, which is the whole point.
@@ -870,17 +916,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        hero's own floor. Gone by request; the bottom edge is a hard line. */
     .hero-photo{order:-1;align-self:flex-end;position:relative;z-index:2;transform:none;left:auto;bottom:auto;
       height:auto;width:min(180px,44%);margin:40px 18px 0 0;display:block;filter:none}
-    /* No inline calendar on a phone: a 600px cross-origin iframe stacked under the copy is
-       a lot of weight for something the visitor has to scroll past. The card goes and the
-       .hero-book button takes over as the CTA — see the mobile guard in the script, which
-       also stops the iframe from ever being fetched. */
-    .book-card{display:none}
-    .hero-book{display:inline-flex}
     .wrap{padding:0 18px}
-    .qual-form{padding:20px;position:static;margin-top:24px}
-    .stepper-indicator{gap:4px;margin-bottom:28px}
-    .stepper-step{width:30px;height:30px;font-size:.78rem;border-width:2px}
-    .stepper-line{min-width:5px}
+    .qual-form{padding:20px;margin-top:24px;order:7}
     .trust-row{margin-top:24px;gap:16px 28px}
     .trust-item + .trust-item{padding-left:0;border-left:none}
     .section-pad{padding:60px 0}
@@ -897,6 +934,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .brand--rancho img{--bh:44px}
     .pillars-grid{grid-template-columns:1fr;gap:24px}
     .reasons-grid{grid-template-columns:1fr;gap:20px}
+    /* The one auto-fit grid that never got a phone override. Its minmax(340px,1fr) track
+       cannot shrink past 340, so on a 320px phone the cards ran 38px wider than the
+       viewport and the whole page could be dragged sideways. */
+    .services-grid{grid-template-columns:1fr;gap:24px}
     .tiers-selector{grid-template-columns:1fr;gap:20px}
     .tier-bar{display:none}
     .tier-cols,.tier-cols.cols-3{grid-template-columns:1fr;gap:16px}
@@ -907,8 +948,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .final{padding:80px 0}
     .section-head h2{font-size:1.8rem}
     .nav-links{display:none}
-    #navlinks .js-calendly{display:none}
-    .qual-book{display:block}
+    #navlinks .js-to-quiz{display:none}
     .burger{display:flex}
     .burger.x span:nth-child(1){transform:rotate(45deg) translateY(13px)}
     .burger.x span:nth-child(2){opacity:0}
@@ -926,8 +966,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .nav-drop-menu a{padding:9px 10px;gap:11px;white-space:normal}
     .drop-badge{width:34px;height:34px;border-radius:9px;font-size:.64rem}
     
-    /* Mobile form layout - single column */
-    .form-row{grid-template-columns:1fr;gap:12px}
   }
 
   @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px)}}
@@ -967,7 +1005,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   /* Form animations */
   .qual-form{animation:slideInRight .6s ease-out .3s forwards;opacity:0}
-  .book-card{animation:slideInRight .6s ease-out .3s forwards;opacity:0}
 
   /* Hero animations */
   .hero-copy h1{animation:slideInUp .7s ease-out .1s forwards;opacity:0}
@@ -994,24 +1031,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* Text selection smooth */
   ::selection{background:var(--green-l);color:#fff;transition:all .2s ease}
 
-  /* Calendly popup — override the widget's 700px !important cap */
-  @media(min-width:976px){
-    html .calendly-overlay .calendly-popup{
-      width:min(1100px,92vw)!important;
-      max-width:92vw!important;
-      min-width:0!important;
-      height:96vh!important;
-      max-height:96vh!important;
-    }
-  }
-  @media(max-width:975px){
-    html .calendly-overlay .calendly-popup{top:0!important}
-  }
-  html .calendly-overlay .calendly-popup .calendly-popup-content{height:100%!important}
-  /* stop the page behind the modal from showing its scrollbar (Chrome draws it always) */
-  body.calendly-open{overflow:hidden!important;scrollbar-width:none}
-  body.calendly-open::-webkit-scrollbar{display:none}
-  html .calendly-overlay .calendly-popup-content::-webkit-scrollbar{display:none}
 </style>
 </head>
 <body>
@@ -1024,10 +1043,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="nav" id="top">
   <div class="nav-inner wrap">
     <a href="#lead" class="logo">
-      <img src="images/logo_mi.png?v=2" alt="MI Consulting Group — Manufacturing Intelligence">
+      <img src="images/logo_mi.png?v=2" alt="MI Consulting Group, Manufacturing Intelligence">
     </a>
     <nav class="nav-links" id="navlinks">
-      <a href="#about">About</a>
       <div class="nav-drop">
         <button type="button" class="nav-drop-toggle" aria-expanded="false" aria-controls="drop-get-certified">
           Get Certified
@@ -1064,16 +1082,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ========== HERO ========== -->
 <section class="hero" id="lead">
   <div class="wrap">
-    <!-- Decorative wordmark. aria-hidden because a screen reader announcing a stray
-         "SAM PEÑA" before the headline is noise, not information. Non-breaking space so it
-         can never wrap into two lines — see the note on .hero-mark. -->
-    <span class="hero-mark" aria-hidden="true">SAM&nbsp;PEÑA</span>
+    <!-- Decorative wordmark. aria-hidden because a screen reader announcing it before the
+         headline is noise, not information — the booking card says the same thing.
+         The <br> is the copy, not a fallback: the mark is set as two stacked lines at every
+         width, which is also how it already broke on a phone. -->
+    <span class="hero-mark" aria-hidden="true">FREE 30-MINUTE<br>LIVE SESSION</span>
     <div class="hero-grid">
       <div class="hero-copy" id="about">
-        <h1>Every Manufacturer Deserves a Better Food Safety Partner</h1>
-        <!-- Non-breaking hyphen (U+2011) in "audit‑ready": with a plain one the browser
-             treats it as a break opportunity and splits the word across lines on a phone. -->
-        <p class="sub">Build a stronger system. Train your team. Stay audit‑ready.</p>
+        <h1>Your Free SQF Code Review, Live With Sam Peña</h1>
+        <p class="sub">In 30 minutes, Sam confirms your FSC and modules on SQFI.com and maps your path to certification.</p>
 
         <ul class="hero-creds">
           <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Certified SQF Consultant</b><span>Certified by SQFI</span></span></li>
@@ -1082,278 +1099,122 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.4l2.6 2.6L16 9.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Bilingual</b><span>English and Spanish</span></span></li>
         </ul>
 
-        <div class="hero-actions">
-          <!-- Phones only: the booking card is gone below 769px, so this is the hero's
-               call to action there. .js-calendly sends it to a new tab on mobile. -->
-          <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1" class="btn btn-primary js-calendly hero-book">
-            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            Book a Free Consultation
-          </a>
-          <a href="https://www.linkedin.com/in/sampe%C3%B1a/" target="_blank" rel="noopener" class="btn btn-ghost">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0"/></svg>
-            Connect with Sam on LinkedIn
-          </a>
-        </div>
+        <!-- No booking button here: the stepper beside this copy is the hero's call to
+             action, and nobody reaches Calendly without answering it first. -->
+        <p class="hero-note">No cost, no obligation. Just you, Sam, and the official SQFI site, live.</p>
+        <!-- Was a second button beside the CTA until Sep 2026; it is a quiet text link now so
+             the hero has exactly one thing that looks clickable. -->
+        <a href="https://www.linkedin.com/in/sampe%C3%B1a/" target="_blank" rel="noopener" class="hero-linkedin">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0"/></svg>
+          Connect with Sam on LinkedIn
+        </a>
       </div>
 
-      <!-- BOOKING CARD — owns the right column while the form is shadowed; auto-hides if the form returns -->
-      <aside class="book-card" id="bookCard" aria-labelledby="bcTitle">
-        <h2 class="bc-title" id="bcTitle">Book a Free Consultation</h2>
-        <p class="bc-meta">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          30 min Consultation
-        </p>
+      <!-- INTAKE FORM — the hero's right column, and the only route to a booking. Six
+           questions, then Calendly opens in a new tab with the answers prefilled. -->
+      <div class="qual-form" id="qualForm">
+        <h3>Book your session</h3>
+        <p class="qf-sub">Six quick questions, then pick your time.</p>
 
+        <!-- A bar and a counter instead of the old row of numbered circles: seven circles
+             do not fit the 362px column, and they were unreadable once squeezed. -->
+        <div class="qf-progress"><div class="qf-bar" id="qfBar"></div></div>
+        <p class="qf-count" id="qfCount">Question 1 of 6</p>
 
-        <!-- The client's real Calendly, inline. Everything inside is an iframe: our CSS
-             cannot reach it. Colours are passed as URL params (background/text/primary) —
-             Calendly only honours those on a paid plan; on the free plan the scheduler
-             renders white, which is why the navy header above is a separate block that
-             looks deliberate either way. -->
-        <div class="bc-embed">
-          <div class="bc-cal" id="bcCal"
-               data-url="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1&amp;hide_event_type_details=1&amp;background_color=0a2540&amp;text_color=ffffff&amp;primary_color=1b9e77"
-               style="min-width:320px;height:600px"><div class="calendly-spinner"><div class="calendly-bounce1"></div><div class="calendly-bounce2"></div><div class="calendly-bounce3"></div></div></div>
-          <!-- The iframe is built HERE, while the document is still parsing, instead of by
-               widget.js — which only looks for inline widgets once DOMContentLoaded fires, and
-               that waits on the font CSS, every image decode ahead of it and widget.js itself.
-               Measured: the iframe request moved from ~650–880ms to ~60ms (with the font CSS no
-               longer render-blocking — see the <head>). It is the
-               same iframe widget.js would build (same URL params, so Calendly still posts its
-               calendly.* messages to this page), and the host deliberately does NOT carry the
-               .calendly-inline-widget class, or widget.js would build a second one.
-               Mobile: the card is display:none below 769px, so the frame is only built if the
-               viewport ever crosses the breakpoint (a phone turned landscape, a window widened). -->
-          <script>
-          (function(){
-            var host=document.getElementById('bcCal');
-            var mq=window.matchMedia('(max-width:768px)');
-            var build=function(){
-              if(mq.matches||host.querySelector('iframe'))return;
-              if(mq.removeEventListener)mq.removeEventListener('change',build);
-              var f=document.createElement('iframe');
-              f.src=host.dataset.url.replace('?','?embed_domain='+encodeURIComponent(location.host)+'&embed_type=Inline&');
-              f.width='100%';f.height='100%';f.setAttribute('frameborder','0');
-              f.title='Select a Date & Time - Calendly';
-              host.appendChild(f);
-            };
-            if(mq.matches){ if(mq.addEventListener)mq.addEventListener('change',build); }
-            else build();
-          })();
-          </script>
-          <noscript><a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group" class="btn btn-primary btn-block">Book a Free Consultation</a></noscript>
+        <!-- Q1 -->
+        <div class="form-step active" id="step-1" data-auto="1">
+          <h4>What stage are you at with SQF certification?</h4>
+          <div class="qf-choices">
+            <button type="button" class="qf-opt" data-value="Haven’t started">Haven’t started</button>
+            <button type="button" class="qf-opt" data-value="In progress, no certification date yet">In progress, no certification date yet</button>
+            <button type="button" class="qf-opt" data-value="In progress, certification date set">In progress, certification date set</button>
+          </div>
         </div>
-      </aside>
 
-      <!-- STEPPER QUALIFICATION FORM — SHADOWED: remove the `hidden` attribute to put it back in service -->
-      <div class="qual-form" id="qualForm" hidden>
-          <h3>Quick Qualification</h3>
-          <p style="font-size:.9rem;color:var(--ice);margin-bottom:24px">4 quick questions to confirm fit:</p>
-          
-          <!-- Stepper Indicator -->
-          <div class="stepper-indicator">
-            <div class="stepper-step active" data-step="1">
-              <span class="step-number">1</span>
-            </div>
-            <div class="stepper-line"></div>
-            <div class="stepper-step" data-step="2">
-              <span class="step-number">2</span>
-            </div>
-            <div class="stepper-line"></div>
-            <div class="stepper-step" data-step="3">
-              <span class="step-number">3</span>
-            </div>
-            <div class="stepper-line"></div>
-            <div class="stepper-step" data-step="4">
-              <span class="step-number">4</span>
-            </div>
-            <div class="stepper-line"></div>
-            <div class="stepper-step" data-step="contact">
-              <span class="step-number">✓</span>
-            </div>
+        <!-- Q2 -->
+        <div class="form-step" id="step-2">
+          <h4>What product(s) does your facility produce or process?</h4>
+          <div class="form-input-group">
+            <input type="text" id="qfProducts" placeholder="e.g. bakery snacks, bottled cold brew, fresh-cut produce">
           </div>
+        </div>
 
-          <!-- Step 1 -->
-          <div class="form-step active" id="step-1">
-            <h4>Are you a food or beverage manufacturer, or a company that co-manufactures food or beverage products?</h4>
-            <div class="button-group">
-              <button type="button" class="btn-answer yes" onclick="answerQuestion(1, true)">Yes</button>
-              <button type="button" class="btn-answer no" onclick="answerQuestion(1, false)">No</button>
-            </div>
+        <!-- Q3 -->
+        <div class="form-step" id="step-3">
+          <h4>What happens on site?</h4>
+          <p class="qf-hint">Pick every one that applies.</p>
+          <div class="qf-checks" id="qfOnsite">
+            <label class="qf-check"><input type="checkbox" value="Growing or harvesting"><span>Growing or harvesting</span></label>
+            <label class="qf-check"><input type="checkbox" value="Slaughter or butchery"><span>Slaughter or butchery</span></label>
+            <label class="qf-check"><input type="checkbox" value="Manufacturing or processing"><span>Manufacturing or processing</span></label>
+            <label class="qf-check"><input type="checkbox" value="Packaging or repackaging only"><span>Packaging or repackaging only</span></label>
+            <label class="qf-check"><input type="checkbox" value="Storage and distribution"><span>Storage and distribution</span></label>
+            <label class="qf-check"><input type="checkbox" value="Retail or foodservice"><span>Retail or foodservice</span></label>
+            <label class="qf-check"><input type="checkbox" value="Other"><span>Other</span></label>
           </div>
-
-          <!-- Step 2 -->
-          <div class="form-step" id="step-2">
-            <h4>Do you have, or are you working toward, SQF certification?</h4>
-            <div class="button-group">
-              <button type="button" class="btn-answer yes" onclick="answerQuestion(2, true)">Yes</button>
-              <button type="button" class="btn-answer no" onclick="answerQuestion(2, false)">No</button>
-            </div>
+          <div class="form-input-group qf-reveal" id="qfOnsiteOtherWrap">
+            <input type="text" id="qfOnsiteOther" placeholder="Tell us what else happens on site">
           </div>
+        </div>
 
-          <!-- Step 3 -->
-          <div class="form-step" id="step-3">
-            <h4>Do you manufacture, distribute, or sell cannabis, hemp, or THC-infused products?</h4>
-            <p style="font-size:.85rem;color:var(--ice);margin:12px 0 20px">If YES, we cannot work together.</p>
-            <div class="button-group">
-              <button type="button" class="btn-answer yes" onclick="answerQuestion(3, true)">Yes</button>
-              <button type="button" class="btn-answer no" onclick="answerQuestion(3, false)">No</button>
-            </div>
+        <!-- Q4 -->
+        <div class="form-step" id="step-4">
+          <h4>If you already know it, what’s your Food Sector Category (FSC) number?</h4>
+          <div class="qf-choices">
+            <button type="button" class="qf-opt" data-value="Not sure">Not sure</button>
+            <button type="button" class="qf-opt" data-value="Not yet registered">Not yet registered</button>
+            <button type="button" class="qf-opt" data-value="I know it">I know it</button>
           </div>
-
-          <!-- Step 4 -->
-          <div class="form-step" id="step-4">
-            <h4>Can you afford a monthly retainer (minimum $1,500/month)?</h4>
-            <div class="button-group">
-              <button type="button" class="btn-answer yes" onclick="answerQuestion(4, true)">Yes</button>
-              <button type="button" class="btn-answer no" onclick="answerQuestion(4, false)">No</button>
-            </div>
+          <div class="form-input-group qf-reveal" id="qfFscWrap">
+            <input type="text" id="qfFscNumber" placeholder="FSC number, e.g. 13" inputmode="numeric">
           </div>
+        </div>
 
-          <!-- Contact Form (shown after qualification) - TWO COLUMN LAYOUT -->
-          <div class="form-step" id="step-contact">
-            <h4>You Qualify! Let's Connect</h4>
-            <p style="font-size:.9rem;color:var(--ice);margin-bottom:24px">Tell us about your facility so we can prepare for your discovery call.</p>
-            
-            <!-- Two Column Layout -->
-            <div class="form-row">
-              <div class="form-input-group">
-                <label for="cname">Your Name *</label>
-                <input type="text" id="cname" placeholder="John Smith" required>
-              </div>
-
-              <div class="form-input-group">
-                <label for="cemail">Email Address *</label>
-                <input type="email" id="cemail" placeholder="john@company.com" required>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-input-group">
-                <label for="cphone">Phone Number *</label>
-                <input type="tel" id="cphone" placeholder="(555) 123-4567" required inputmode="tel" autocomplete="tel" maxlength="14" pattern="\(\d{3}\) \d{3}-\d{4}" title="Enter a 10-digit US phone number, e.g. (555) 123-4567">
-              </div>
-
-              <div class="form-input-group">
-                <label for="ccompany">Company Name *</label>
-                <input type="text" id="ccompany" placeholder="Your Company" required>
-              </div>
-            </div>
-
-            <div class="form-row">
-
-              <div class="form-input-group">
-                <label for="cstate">State *</label>
-                <select id="cstate" required>
-                  <option value="">Select State</option>
-                  <option value="AL">Alabama</option>
-                  <option value="AK">Alaska</option>
-                  <option value="AZ">Arizona</option>
-                  <option value="AR">Arkansas</option>
-                  <option value="CA">California</option>
-                  <option value="CO">Colorado</option>
-                  <option value="CT">Connecticut</option>
-                  <option value="DE">Delaware</option>
-                  <option value="FL">Florida</option>
-                  <option value="GA">Georgia</option>
-                  <option value="HI">Hawaii</option>
-                  <option value="ID">Idaho</option>
-                  <option value="IL">Illinois</option>
-                  <option value="IN">Indiana</option>
-                  <option value="IA">Iowa</option>
-                  <option value="KS">Kansas</option>
-                  <option value="KY">Kentucky</option>
-                  <option value="LA">Louisiana</option>
-                  <option value="ME">Maine</option>
-                  <option value="MD">Maryland</option>
-                  <option value="MA">Massachusetts</option>
-                  <option value="MI">Michigan</option>
-                  <option value="MN">Minnesota</option>
-                  <option value="MS">Mississippi</option>
-                  <option value="MO">Missouri</option>
-                  <option value="MT">Montana</option>
-                  <option value="NE">Nebraska</option>
-                  <option value="NV">Nevada</option>
-                  <option value="NH">New Hampshire</option>
-                  <option value="NJ">New Jersey</option>
-                  <option value="NM">New Mexico</option>
-                  <option value="NY">New York</option>
-                  <option value="NC">North Carolina</option>
-                  <option value="ND">North Dakota</option>
-                  <option value="OH">Ohio</option>
-                  <option value="OK">Oklahoma</option>
-                  <option value="OR">Oregon</option>
-                  <option value="PA">Pennsylvania</option>
-                  <option value="RI">Rhode Island</option>
-                  <option value="SC">South Carolina</option>
-                  <option value="SD">South Dakota</option>
-                  <option value="TN">Tennessee</option>
-                  <option value="TX">Texas</option>
-                  <option value="UT">Utah</option>
-                  <option value="VT">Vermont</option>
-                  <option value="VA">Virginia</option>
-                  <option value="WA">Washington</option>
-                  <option value="WV">West Virginia</option>
-                  <option value="WI">Wisconsin</option>
-                  <option value="WY">Wyoming</option>
-                </select>
-              </div>
-
-              <div class="form-input-group">
-                <label for="ccity">City *</label>
-                <select id="ccity" required disabled>
-                  <option value="" disabled selected>Select state first</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-input-group">
-              <label for="ccontacttime">Best Time to Call * <span class="field-hint">(your local time)</span></label>
-              <select id="ccontacttime" required>
-                <option value="" disabled selected>Select a time window</option>
-                <option value="morning">Morning — 8:00 AM to 11:00 AM</option>
-                <option value="late-morning">Late Morning — 11:00 AM to 1:00 PM</option>
-                <option value="afternoon">Afternoon — 1:00 PM to 4:00 PM</option>
-                <option value="late-afternoon">Late Afternoon — 4:00 PM to 6:00 PM</option>
-                <option value="evening">Evening — 6:00 PM to 8:00 PM</option>
-              </select>
-            </div>
-
-            <div class="consent-row">
-              <input type="checkbox" id="cconsent" required>
-              <label for="cconsent">I agree to be contacted about my inquiry by phone call, email, text message, or messaging app (e.g. WhatsApp).</label>
-            </div>
-
-            <button type="button" id="submitBtn" class="btn btn-primary btn-block" onclick="submitContact()" style="margin-top:14px">Submit & Book Call</button>
-            <p style="font-size:.8rem;color:var(--ice);text-align:center;margin-top:16px">We'll email you a calendar link within 1 hour.</p>
+        <!-- Q5 -->
+        <div class="form-step" id="step-5">
+          <h4>What’s the biggest thing holding you back from starting or finishing certification?</h4>
+          <div class="form-input-group">
+            <textarea id="qfBlocker" placeholder="A sentence is plenty"></textarea>
           </div>
+        </div>
 
-          <!-- Disqualified Message -->
-          <div class="form-step" id="step-disqualified">
-            <h4>Not a fit right now</h4>
-            <p style="color:var(--ice);margin:16px 0 24px">Based on your answers, we may not be the right fit. But reach out anyway—there might be a path forward.</p>
-            <a href="mailto:marketing@consultwithmi.com" class="btn btn-ghost-green btn-block" style="text-align:center;justify-content:center">Email Us Anyway</a>
+        <!-- Q6 -->
+        <div class="form-step" id="step-6">
+          <h4>Best phone number in case we need to reach you before the call</h4>
+          <div class="form-input-group">
+            <input type="tel" id="qfPhone" placeholder="(555) 123-4567" autocomplete="tel">
           </div>
+        </div>
 
-          <!-- Success Message -->
-          <div class="form-step" id="step-success">
-            <div style="text-align:center;padding:20px 0">
-              <div style="font-size:3rem;margin-bottom:12px">✓</div>
-              <h4>We'll be in touch!</h4>
-              <p style="color:var(--ice);margin:12px 0 0">Check your inbox for a calendar link to book your discovery call. Questions? Email marketing@consultwithmi.com</p>
-            </div>
+        <!-- The end of the form. The href is rebuilt on the way in (see buildBookingUrl):
+             the six answers ride along as Calendly's a1..a6 prefill params, in the order
+             the questions are defined on the event, so nobody types them twice. -->
+        <div class="form-step" id="step-done">
+          <div style="text-align:center;padding:6px 0 0">
+            <div style="font-size:2.6rem;line-height:1;margin-bottom:10px;color:var(--green-l)">✓</div>
+            <h4 style="margin-bottom:10px">You’re all set</h4>
+            <p style="font-size:.9rem;color:var(--ice);margin:0 0 22px">Pick a time that works for you. Thirty minutes, live with Sam, on the official SQFI site.</p>
           </div>
+          <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1"
+             target="_blank" rel="noopener" class="btn btn-primary btn-block" id="bookBtn"
+             style="text-align:center;justify-content:center">
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <!-- Non-breaking hyphen (U+2011): with a plain one the wrap fell inside the
+                 word, "Book Your Free 30-" / "Minute Session" on a 320px phone. -->
+            Book Your Free 30‑Minute Session
+          </a>
+          <p style="font-size:.8rem;color:var(--ice);text-align:center;margin-top:16px">Opens in a new tab. No cost, no obligation.</p>
+        </div>
 
-          <div class="form-actions" id="formActions">
-            <button type="button" class="btn btn-ghost-green btn-sm" onclick="previousStep()" id="prevBtn" style="display:none">← Back</button>
-            <button type="button" class="btn btn-ghost-green btn-sm" onclick="resetForm()" id="refreshBtn">↻ Refresh</button>
-          </div>
+        <p class="qf-error" id="qfError" role="alert"></p>
 
-          <!-- Mobile-only: Book a Call (moved out of the nav) -->
-          <div class="qual-book">
-            <p>Prefer to talk first?</p>
-            <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1" class="btn btn-primary btn-block js-calendly">Book a Call</a>
-          </div>
+        <div class="form-actions" id="formActions">
+          <button type="button" class="btn btn-ghost-green btn-sm" onclick="previousStep()" id="prevBtn" style="display:none">← Back</button>
+          <button type="button" class="btn btn-ghost-green btn-sm" onclick="nextStep()" id="nextBtn" style="display:none">Continue →</button>
+          <button type="button" class="btn btn-ghost-green btn-sm" onclick="resetForm()" id="refreshBtn" style="display:none">↻ Start over</button>
+        </div>
+
+        </div>
         </div>
       </div>
     </div>
@@ -1480,8 +1341,72 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </section>
+<!-- ========== WHAT THIS ACTUALLY IS ========== -->
+<!-- Sits right under the brand strip, which is the hero's own trust bar. section-light
+     because the strip above it and #tiers below it are both white. -->
+<section class="section-pad section-light" id="what-this-is">
+  <div class="wrap">
+    <!-- Eyebrow under the headline, not over it: the headline is the hook here, and the
+         label reads as a caption for it. -->
+    <div class="section-head wti-head">
+      <h2>Not a webinar. Not a pitch. A real, live review.</h2>
+      <span class="eyebrow">What this actually is</span>
+    </div>
+    <div class="wti-body reveal">
+      <p>Most SQF guidance is generic: the same slides, the same checklist, the same code sections explained the same way to everyone. Part of the problem is that most plants aren’t even sure which SQF Code and modules actually apply to them. That’s determined by your <strong>Food Sector Category (FSC)</strong>, the classification SQFI assigns based on what you produce and how.</p>
+      <p>When you book, you’ll answer a few quick questions about your product and your on-site processes, so Sam can identify your Food Sector Category before the call even starts.</p>
+      <p>Then, for 30 minutes, live, Sam opens the actual SQFI.com site with you, confirms your FSC, and walks the specific Code and modules that apply to it in real time, so you can see for yourself that certification is achievable, not just hear it.</p>
+    </div>
+
+    <div class="wti-take reveal">
+      <h3>What you’ll walk away with</h3>
+      <ol>
+        <li>A live walkthrough of the actual SQFI.com site, confirming your Food Sector Category (FSC) and the exact Code and modules that apply to your plant, so it stops feeling like a black box</li>
+        <li>A live, honest read on where your plant stands against those specific modules, the kind of feedback you’d otherwise only get from an auditor</li>
+        <li>A clear, ordered list of what’s left to reach certification, and proof that it’s genuinely reachable from where you are today</li>
+      </ol>
+    </div>
+
+    <div class="wti-for reveal">
+      <h3>Who this is for</h3>
+      <ul>
+        <li>Plants preparing for their first SQF certification and unsure which Food Sector Category (FSC) and modules actually apply to them</li>
+        <li>Plants that already have SOPs or plan documents drafted (AI-assisted or otherwise) and want a real check against the correct modules before it goes to audit</li>
+        <li>Anyone who has read the Code and still isn’t sure what “enough” looks like for their specific FSC</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CREDIBILITY ========== -->
+<!-- section-white: #what-this-is above it and #what-to-bring below it are both light. -->
+<section class="section-pad section-white" id="credibility">
+  <div class="wrap">
+    <div class="section-head copy-head">
+      <h2>Reviewed by someone who sits across the table from auditors</h2>
+      <span class="eyebrow">Credibility</span>
+    </div>
+    <p class="copy-body reveal">This is the same live review Sam Peña runs with MI Consulting Group clients before their documents go in front of an auditor. Sam is an SQF compliance advisor and sanitation consultant working directly with food and beverage manufacturers on audit readiness.</p>
+  </div>
+</section>
+
+<!-- ========== WHAT TO BRING ========== -->
+<!-- section-light: #credibility above it is white and #tiers below it is white too. -->
+<section class="section-pad section-light" id="what-to-bring">
+  <div class="wrap">
+    <div class="section-head copy-head">
+      <h2>A few quick questions at booking, that’s it</h2>
+      <span class="eyebrow">What to bring</span>
+    </div>
+    <p class="copy-body reveal">When you book on Calendly, you’ll answer a short set of questions about what your plant produces and the processes that happen on site. Sam uses your answers to identify your Food Sector Category (FSC) before the call, so the full 30 minutes is spent live on the SQFI.com site and the modules that actually apply to you, not on intake.</p>
+  </div>
+</section>
+
 <!-- ========== WHAT'S HOLDING YOU BACK ========== -->
-<section class="section-pad section-white" id="holding-back">
+<!-- HIDDEN (Sep 2026): the `hidden` attribute below takes the whole section off the page.
+     Nothing links to it — the nav and the footer point at #tiers and #lead — so removing
+     the attribute is all it takes to bring it back exactly as it was. -->
+<section class="section-pad section-white" id="holding-back" hidden>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">The Real Challenge</span>
@@ -1534,7 +1459,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </section>
 
 <!-- ========== CONSULTING VS COACHING ========== -->
-<section class="section-pad section-light" id="consulting-vs-coaching">
+<!-- HIDDEN (Sep 2026): same as #holding-back above — delete `hidden` to restore it. -->
+<section class="section-pad section-light" id="consulting-vs-coaching" hidden>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Two Services, One Goal</span>
@@ -1774,7 +1700,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div style="margin-top:60px;padding:40px;background:var(--cloud);border-radius:20px;text-align:center">
       <p style="font-size:1rem;color:var(--slate);margin-bottom:16px"><strong>No long-term contracts.</strong> Month-to-month, bilingual support, free cancelation. Our job is to make you less dependent on us, not trap you in a retainer.</p>
-      <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1" class="btn btn-primary js-calendly">Book Your Consultation</a>
+      <a href="#lead" class="btn btn-primary js-to-quiz">Book Your Consultation</a>
     </div>
   </div>
 </section>
@@ -1789,35 +1715,42 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="faq-grid">
       <details class="faq-item reveal" name="faq">
-        <summary>We can't afford a full-time food safety expert, what are our options?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
-        <div class="ans">A qualified SQF Practitioner costs $70K–$100K+ per year, which puts a full-time hire out of reach for most plants. MI gives you an entire corporate food safety department starting at $5,000/mo, scaling down to $1,500/mo as your team grows more expertise than a single hire, at a lower cost, and we never leave.</div>
+        <summary>Is this a sales call?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">No. It’s a live working session. If it becomes clear you need more support afterward, Sam will tell you directly, but there’s no obligation either way.</div>
       </details>
 
       <details class="faq-item reveal" name="faq">
-        <summary>How long does SQF certification take?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
-        <div class="ans">Most clients are audit-ready in 45–90 days, depending on baseline. Some need longer if they're starting from scratch. MI compresses this timeline by coaching your team through implementation in parallel, not sequentially. The certification audit itself takes 1–3 days on-site.</div>
+        <summary>What if I don’t know my Food Sector Category (FSC)?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">Most people don’t. That’s normal. Just describe what you produce and how in the booking questions. Sam will identify your FSC for you and confirm it live on the SQFI.com site during the call.</div>
       </details>
 
       <details class="faq-item reveal" name="faq">
-        <summary>What happens when we invest in training a specialist and they leave?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
-        <div class="ans">It's one of the most common and costly risks in this industry you hire someone, spend months training them, and the knowledge walks out the door when they do. We take a different approach: we train and coach the loyal employees you already have, the people who know your facility best, into food safety leaders. The expertise stays inside your company, not with a single hire who can leave at any time.</div>
+        <summary>Is this the same as the free discovery call?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">No. The discovery call is about your broader certification path. This session is a hands-on, live walkthrough of the Code itself, using your actual Food Sector Category (FSC) and modules as the example.</div>
       </details>
 
       <details class="faq-item reveal" name="faq">
-        <summary>How MI is different from hiring a traditional consultant?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
-        <div class="ans">Most consultants build the system for you but never teach your team to run it, so you end up paying them indefinitely just to stay functional. Our tier model is built for the opposite outcome: as your team grows more capable, MI scales back and your costs go down you decide when and how much to keep us involved.</div>
+        <summary>How long is it, really?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
+        <div class="ans">30 minutes, live, one on one.</div>
       </details>
 
-      <details class="faq-item reveal" name="faq">
-        <summary>Our SQF program is still binders and filling cabinets, can you modernize it?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
-        <div class="ans">Yes, it's one of the most common problems we solve. Paper-based systems make audits stressful, records hard to find, and responsibilities unclear. We move your program into cloud-based software and build a standard work schedule that defines every recurring activity, its frequency, and its owner. No guesswork, ever.</div>
-      </details>
+    </div>
+  </div>
+</section>
 
-      <details class="faq-item reveal" name="faq">
-        <summary>Can you work with bilingual floor teams?<span class="plus"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span></summary>
-        <div class="ans">Yes. English-only training and documentation disconnect a huge portion of most plants' workforce from the food safety program they're expected to follow every day. MI delivers training, documentation, and coaching in both English and Spanish, so everyone from management to the production floor stays engaged and accountable.</div>
-      </details>
-
+<!-- ========== BOOKING PROMPT (after the FAQ) ========== -->
+<!-- The button is .js-to-quiz like every other "book" button on the page: it scrolls to
+     the hero's stepper, which is the only route to the calendar. section-white, between
+     the light FAQ above and the navy final CTA below. -->
+<section class="section-pad section-white" id="book-prompt">
+  <div class="wrap">
+    <div class="bp-card reveal">
+      <h2>See exactly where your plant stands against the SQF Code</h2>
+      <p>Answer a few quick questions when you book. Thirty minutes, live, no cost.</p>
+      <a href="#lead" class="btn btn-primary js-to-quiz">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Book Your Free 30‑Minute Session
+      </a>
     </div>
   </div>
 </section>
@@ -1830,7 +1763,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h2>Stop being locked out. <br> Start <em>scaling up.</em></h2>
       <p>Level up your existing team into SQF practitioners so you keep talent in house and become the preferred supplier for national and global customers.</p>
       <div class="final-actions">
-        <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1" class="btn btn-primary js-calendly">Book a Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#lead" class="btn btn-primary js-to-quiz">Book a Discovery Call <svg class="arrow" viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <a href="MICG-Brochure.pdf" download class="btn btn-ghost on-dark">See the Growth Scale <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </div>
@@ -1843,7 +1776,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="foot-grid">
       <div class="foot-brand">
         <div class="logo">
-          <img src="images/logo_mi_blanco.png?v=2" alt="MI Consulting Group — Manufacturing Intelligence">
+          <img src="images/logo_mi_blanco.png?v=2" alt="MI Consulting Group, Manufacturing Intelligence">
         </div>
         <p>Turn SQF certification into business growth. We build your program, develop your own food safety team, and scale support down as your capability grows. Based in Bakersfield, CA. Serving US manufacturers nationwide.</p>
       </div>
@@ -1865,7 +1798,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="foot-col">
         <h5>Connect</h5>
-        <a href="https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1" class="js-calendly">Book a Call</a>
+        <a href="#lead" class="js-to-quiz">Book a Call</a>
         <a href="mailto:marketing@consultwithmi.com">Email Us</a>
         <a href="#faq">FAQ</a>
         <a href="/privacy.html">Privacy Policy</a>
@@ -1903,50 +1836,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if(e.key==='Escape')document.querySelectorAll('.nav-drop.open').forEach(closeDrop);
   });
 
-  // Calendly — popup on desktop, new tab on mobile; href stays as a graceful fallback
-  const CALENDLY_URL='https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1';
-  const isMobile=()=>window.matchMedia('(max-width:768px)').matches;
-  document.querySelectorAll('.js-calendly').forEach(el=>{
+  /* Every "book" button on the page sends the visitor to the hero's stepper instead of
+     to Calendly: qualifying is the only route to Sam's calendar, and the calendar itself
+     opens in a new tab from the stepper's last screen. The href is #lead, so this still
+     works with JS off — the handler only aims at the form rather than the section top. */
+  document.querySelectorAll('.js-to-quiz').forEach(el=>{
     el.addEventListener('click',(e)=>{
-      if(isMobile()){
-        // let the browser follow the href, just send it to a new tab
-        el.target='_blank';
-        el.rel='noopener';
-        return;
-      }
-      if(window.Calendly&&typeof window.Calendly.initPopupWidget==='function'){
-        e.preventDefault();
-        window.Calendly.initPopupWidget({url:CALENDLY_URL});
-      }
+      const form=document.getElementById('qualForm');
+      if(!form)return;
+      e.preventDefault();
+      form.scrollIntoView({behavior:'smooth',block:'center'});
+      document.getElementById('navlinks').classList.remove('open');
+      document.getElementById('burger').classList.remove('x');
     });
   });
-  /* The hero's Calendly frame is cropped to its day view (see .bc-embed). Give it the
-     full height back as soon as the visitor engages, before they can reach the time list.
-     Two triggers, because neither is guaranteed on its own: focus moving into the iframe
-     (a click inside a cross-origin frame blurs the parent window), and Calendly's late
-     postMessage events as a net. Both only grow the frame, so nothing can end up hidden. */
-  (function(){
-    const box=document.querySelector('.bc-embed');
-    if(!box)return;
-    const open=()=>box.classList.add('is-open');
-    window.addEventListener('blur',()=>{
-      const a=document.activeElement;
-      if(a&&a.tagName==='IFRAME'&&box.contains(a))open();
-    });
-    // Only the late events: calendly.event_type_viewed fires on load and would expand the
-    // frame before the visitor has done anything.
-    const LATE=['calendly.date_and_time_selected','calendly.event_scheduled'];
-    window.addEventListener('message',(e)=>{
-      if(typeof e.origin==='string'&&e.origin.indexOf('calendly.com')>-1
-         &&e.data&&LATE.indexOf(e.data.event)>-1)open();
-    });
-  })();
-
-  // lock page scroll while the Calendly overlay is mounted
-  new MutationObserver(()=>{
-    document.body.classList.toggle('calendly-open',!!document.querySelector('.calendly-overlay'));
-  }).observe(document.body,{childList:true});
-
 
   // scroll reveal — robust: triggers early, staggers siblings, guaranteed fallback
   const revealEls=document.querySelectorAll('.reveal');
@@ -1973,271 +1876,139 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   window.addEventListener('load',()=>{failsafe();setTimeout(failsafe,400);});
   setTimeout(failsafe,1200);
 
-  // stepper qualification form
+  /* ---- INTAKE FORM (hero) ----------------------------------------------------------
+     Six questions, then Calendly. Nothing here qualifies or disqualifies anyone: the
+     answers exist so Sam can work out the Food Sector Category before the call, and they
+     ride to Calendly as its a1..a6 prefill params, in the order the questions are defined
+     on the event. Change the order there and this mapping has to change with it. */
+  const QF_LAST = 6;                 // 1..6 are questions, 'done' is the booking screen
+  const CAL_URL = 'https://calendly.com/consultwithmi/discovery-call-mi-consulting-group?hide_gdpr_banner=1';
   let currentStep = 1;
-  let answers = {
-    1: null,
-    2: null,
-    3: null,
-    4: null
-  };
+  const answers = {1:'', 2:'', 3:[], '3other':'', 4:'', '4num':'', 5:'', 6:''};
 
-  function answerQuestion(step, answer) {
-    answers[step] = answer;
-    
-    // Mark button as selected
-    const buttons = document.querySelectorAll(`#step-${step} .btn-answer`);
-    buttons.forEach(btn => btn.classList.remove('selected'));
-    event.target.classList.add('selected');
-    
-    // Check if all questions are answered
-    if (answers[1] === true && answers[2] === true && answers[3] === false && answers[4] === true) {
-      // All answers correct - go to contact form
-      setTimeout(() => {
-        goToStep('contact');
-      }, 300);
-    } else if (step === 4 && answers[step] !== null) {
-      // After last question, check all answers
-      if (answers[1] === true && answers[2] === true && answers[3] === false && answers[4] === true) {
-        setTimeout(() => {
-          goToStep('contact');
-        }, 300);
-      } else {
-        // Not qualified
-        setTimeout(() => {
-          goToStep('disqualified');
-        }, 300);
-      }
-    } else if (step < 4) {
-      // Move to next step
-      setTimeout(() => {
-        goToStep(step + 1);
-      }, 300);
+  const qf = (id) => document.getElementById(id);
+
+  /* Q3 and Q4 answer with a list or with a second field, so each one gets a reader. */
+  function answerText(step){
+    if(step === 3){
+      const picked = answers[3].map(v => v === 'Other' && answers['3other']
+        ? 'Other: ' + answers['3other'] : v);
+      return picked.join(', ');
     }
+    if(step === 4){
+      return answers[4] === 'I know it' && answers['4num']
+        ? 'FSC ' + answers['4num'] : answers[4];
+    }
+    return answers[step];
   }
 
-  function goToStep(step) {
-    // Hide all steps
+  function buildBookingUrl(){
+    const params = new URLSearchParams();
+    for(let i = 1; i <= QF_LAST; i++){
+      const v = answerText(i).trim();
+      if(v) params.set('a' + i, v);
+    }
+    const q = params.toString();
+    return q ? CAL_URL + '&' + q : CAL_URL;
+  }
+
+  /* Only the two questions Sam needs to read the FSC are required. Everything else can be
+     skipped, because every extra required field costs bookings. */
+  function validate(step){
+    if(step === 2 && !answers[2].trim()) return 'Tell us what you produce, even roughly.';
+    if(step === 3 && !answers[3].length)  return 'Pick at least one.';
+    return '';
+  }
+
+  function goToStep(step){
     document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-    
-    // Show target step
-    const targetStep = document.getElementById(`step-${step}`);
-    if (targetStep) {
-      targetStep.classList.add('active');
-      currentStep = step;
-      updateStepper();
-    }
+    const target = qf('step-' + step);
+    if(!target) return;
+    target.classList.add('active');
+    currentStep = step;
+    qf('qfError').textContent = '';
 
-    // Update buttons
-    const prevBtn = document.getElementById('prevBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
-    if (step === 'contact' || step === 'disqualified' || step === 'success') {
-      prevBtn.style.display = 'none';
-      refreshBtn.style.display = 'none';
-    } else {
-      if (step === 1) {
-        prevBtn.style.display = 'none';
-      } else {
-        prevBtn.style.display = 'inline-flex';
-      }
-      refreshBtn.style.display = 'inline-flex';
-    }
+    const done = step === 'done';
+    qf('qfBar').style.width = (done ? 100 : (step / QF_LAST) * 100) + '%';
+    qf('qfCount').textContent = done ? 'All done' : 'Question ' + step + ' of ' + QF_LAST;
+    qf('prevBtn').style.display = (step === 1 || done) ? 'none' : 'inline-flex';
+    qf('refreshBtn').style.display = done ? 'inline-flex' : 'none';
+    /* Q1 and Q4 advance on the tap itself, so they show no Continue. Q4 keeps it once
+       "I know it" opens the number field, otherwise there is nothing to move the form on. */
+    const auto = !done && target.dataset.auto === '1';
+    qf('nextBtn').style.display = (done || auto) ? 'none' : 'inline-flex';
+    qf('nextBtn').textContent = step === QF_LAST ? 'See times →' : 'Continue →';
+    if(done) qf('bookBtn').href = buildBookingUrl();
   }
 
-  function updateStepper() {
-    document.querySelectorAll('.stepper-step').forEach((step, idx) => {
-      step.classList.remove('active', 'completed');
-      const stepNum = step.dataset.step;
-      const stepInt = stepNum === 'contact' ? 5 : stepNum === 'disqualified' ? 5 : parseInt(stepNum);
-      const currentInt = currentStep === 'contact' ? 5 : currentStep === 'disqualified' ? 5 : currentStep;
-      
-      if (stepInt < currentInt) {
-        step.classList.add('completed');
-      } else if (stepInt === currentInt) {
-        step.classList.add('active');
-      }
-    });
-
-    // Update stepper lines
-    document.querySelectorAll('.stepper-line').forEach((line, idx) => {
-      line.classList.remove('active');
-      const nextStep = document.querySelectorAll('.stepper-step')[idx + 1];
-      if (nextStep && nextStep.classList.contains('completed')) {
-        line.classList.add('active');
-      }
-    });
+  function nextStep(){
+    const msg = validate(currentStep);
+    if(msg){ qf('qfError').textContent = msg; return; }
+    goToStep(currentStep === QF_LAST ? 'done' : currentStep + 1);
   }
 
-  function previousStep() {
-    if (currentStep > 1) {
-      goToStep(currentStep - 1);
-    }
+  function previousStep(){
+    if(currentStep === 'done') return goToStep(QF_LAST);
+    if(currentStep > 1) goToStep(currentStep - 1);
   }
 
-  function skipQualification() {
-    goToStep('contact');
+  function resetForm(){
+    answers[1] = answers[2] = answers[4] = answers[5] = answers[6] = '';
+    answers[3] = []; answers['3other'] = ''; answers['4num'] = '';
+    document.querySelectorAll('.qf-opt').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('#qfOnsite input').forEach(c => { c.checked = false; });
+    ['qfProducts','qfOnsiteOther','qfFscNumber','qfBlocker','qfPhone']
+      .forEach(id => { qf(id).value = ''; });
+    document.querySelectorAll('.qf-reveal').forEach(el => el.classList.remove('show'));
+    goToStep(1);
   }
 
-  // Cascading State -> City for the qualification contact form (keyed by the
-  // existing state-select abbreviations).
-  const miStateCities = {
-    AL:["Birmingham","Montgomery","Huntsville","Mobile","Other"],
-    AK:["Anchorage","Fairbanks","Juneau","Other"],
-    AZ:["Phoenix","Tucson","Mesa","Scottsdale","Chandler","Other"],
-    AR:["Little Rock","Fort Smith","Fayetteville","Springdale","Other"],
-    CA:["Los Angeles","San Diego","San Jose","San Francisco","Fresno","Sacramento","Bakersfield","Oakland","Other"],
-    CO:["Denver","Colorado Springs","Aurora","Fort Collins","Other"],
-    CT:["Bridgeport","New Haven","Hartford","Stamford","Other"],
-    DE:["Wilmington","Dover","Newark","Other"],
-    FL:["Jacksonville","Miami","Tampa","Orlando","St. Petersburg","Other"],
-    GA:["Atlanta","Augusta","Columbus","Savannah","Other"],
-    HI:["Honolulu","Hilo","Kailua","Other"],
-    ID:["Boise","Meridian","Nampa","Other"],
-    IL:["Chicago","Aurora","Naperville","Rockford","Other"],
-    IN:["Indianapolis","Fort Wayne","Evansville","Other"],
-    IA:["Des Moines","Cedar Rapids","Davenport","Other"],
-    KS:["Wichita","Overland Park","Kansas City","Other"],
-    KY:["Louisville","Lexington","Bowling Green","Other"],
-    LA:["New Orleans","Baton Rouge","Shreveport","Other"],
-    ME:["Portland","Lewiston","Bangor","Other"],
-    MD:["Baltimore","Frederick","Rockville","Other"],
-    MA:["Boston","Worcester","Springfield","Other"],
-    MI:["Detroit","Grand Rapids","Ann Arbor","Other"],
-    MN:["Minneapolis","St. Paul","Rochester","Other"],
-    MS:["Jackson","Gulfport","Southaven","Other"],
-    MO:["Kansas City","St. Louis","Springfield","Other"],
-    MT:["Billings","Missoula","Bozeman","Other"],
-    NE:["Omaha","Lincoln","Bellevue","Other"],
-    NV:["Las Vegas","Henderson","Reno","Other"],
-    NH:["Manchester","Nashua","Concord","Other"],
-    NJ:["Newark","Jersey City","Paterson","Other"],
-    NM:["Albuquerque","Las Cruces","Santa Fe","Other"],
-    NY:["New York City","Buffalo","Rochester","Albany","Other"],
-    NC:["Charlotte","Raleigh","Greensboro","Other"],
-    ND:["Fargo","Bismarck","Grand Forks","Other"],
-    OH:["Columbus","Cleveland","Cincinnati","Toledo","Other"],
-    OK:["Oklahoma City","Tulsa","Norman","Other"],
-    OR:["Portland","Salem","Eugene","Other"],
-    PA:["Philadelphia","Pittsburgh","Allentown","Other"],
-    RI:["Providence","Cranston","Warwick","Other"],
-    SC:["Columbia","Charleston","Greenville","Other"],
-    SD:["Sioux Falls","Rapid City","Other"],
-    TN:["Nashville","Memphis","Knoxville","Chattanooga","Other"],
-    TX:["Houston","San Antonio","Dallas","Austin","Fort Worth","El Paso","Other"],
-    UT:["Salt Lake City","West Valley City","Provo","Other"],
-    VT:["Burlington","South Burlington","Other"],
-    VA:["Virginia Beach","Norfolk","Richmond","Other"],
-    WA:["Seattle","Spokane","Tacoma","Other"],
-    WV:["Charleston","Huntington","Other"],
-    WI:["Milwaukee","Madison","Green Bay","Other"],
-    WY:["Cheyenne","Casper","Other"]
-  };
-  (function(){
-    const stateSelect = document.getElementById('cstate');
-    const citySelect = document.getElementById('ccity');
-    if(!stateSelect || !citySelect) return;
-    stateSelect.addEventListener('change', () => {
-      const cities = miStateCities[stateSelect.value] || [];
-      citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
-      cities.forEach(city => {
-        const opt = document.createElement('option');
-        opt.value = city;
-        opt.textContent = city;
-        citySelect.appendChild(opt);
+  (function initIntake(){
+    if(!qf('qualForm')) return;
+
+    /* The single-choice questions. Q1 moves on by itself; Q4 only does when the answer
+       needs no follow-up. */
+    document.querySelectorAll('.form-step .qf-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const stepEl = btn.closest('.form-step');
+        const step = Number(stepEl.id.replace('step-',''));
+        stepEl.querySelectorAll('.qf-opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        answers[step] = btn.dataset.value;
+
+        if(step === 4){
+          const known = btn.dataset.value === 'I know it';
+          qf('qfFscWrap').classList.toggle('show', known);
+          qf('nextBtn').style.display = known ? 'inline-flex' : 'none';
+          if(known){ qf('qfFscNumber').focus(); return; }
+          answers['4num'] = '';
+        }
+        setTimeout(() => goToStep(step === QF_LAST ? 'done' : step + 1), 260);
       });
-      citySelect.disabled = cities.length === 0;
     });
-  })();
 
-  (function(){
-    const phone = document.getElementById('cphone');
-    if(!phone) return;
-    phone.addEventListener('input', () => {
-      const d = phone.value.replace(/\D/g, '').slice(0, 10);
-      let out = '';
-      if (d.length > 0) out = '(' + d.slice(0, 3);
-      if (d.length >= 4) out += ') ' + d.slice(3, 6);
-      if (d.length >= 7) out += '-' + d.slice(6, 10);
-      phone.value = out;
+    qf('qfOnsite').addEventListener('change', () => {
+      answers[3] = [...qf('qfOnsite').querySelectorAll('input:checked')].map(c => c.value);
+      const other = answers[3].includes('Other');
+      qf('qfOnsiteOtherWrap').classList.toggle('show', other);
+      if(!other){ qf('qfOnsiteOther').value = ''; answers['3other'] = ''; }
+      if(answers[3].length) qf('qfError').textContent = '';
     });
+
+    const bind = (id, key) => qf(id).addEventListener('input', e => {
+      answers[key] = e.target.value;
+      if(key === 2 && e.target.value.trim()) qf('qfError').textContent = '';
+    });
+    bind('qfProducts', 2); bind('qfOnsiteOther', '3other');
+    bind('qfFscNumber', '4num'); bind('qfBlocker', 5); bind('qfPhone', 6);
+
+    /* Enter submits the step it is typed in, the way a one-field form would. */
+    ['qfProducts','qfOnsiteOther','qfFscNumber','qfPhone'].forEach(id => {
+      qf(id).addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); nextStep(); } });
+    });
+
+    goToStep(1);
   })();
-
-  function submitContact() {
-    const name = document.getElementById('cname').value.trim();
-    const email = document.getElementById('cemail').value.trim();
-    const phone = document.getElementById('cphone').value.trim();
-    const company = document.getElementById('ccompany').value.trim();
-    const state = document.getElementById('cstate').value.trim();
-    const city = document.getElementById('ccity').value.trim();
-    const contactTime = document.getElementById('ccontacttime').value.trim();
-    const consent = document.getElementById('cconsent').checked;
-
-    if (!name || !email || !phone || !company || !state || !city || !contactTime) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      alert('Please enter a valid email address');
-      return;
-    }
-
-    if (!consent) {
-      alert('Please agree to be contacted to continue');
-      return;
-    }
-
-    // Send the lead to FormSubmit.co (AJAX endpoint — no page redirect)
-    const submitBtn = document.getElementById('submitBtn');
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
-
-    const payload = {
-      _subject: 'New SQF Lead — ' + company,
-      _template: 'table',
-      _captcha: 'false',
-      Name: name,
-      Email: email,
-      Phone: phone,
-      Company: company,
-      City: city,
-      State: state,
-      'Best Time to Call': contactTime,
-      'Consent to Contact': consent ? 'Yes' : 'No',
-      'Q1 Manufacturer': answers[1] ? 'Yes' : 'No',
-      'Q2 SQF Focus': answers[2] ? 'Yes' : 'No',
-      'Q3 Cannabis/THC': answers[3] ? 'Yes' : 'No',
-      'Q4 Budget $1.5k+': answers[4] ? 'Yes' : 'No',
-      Submitted: new Date().toLocaleString()
-    };
-
-    fetch('https://formsubmit.co/ajax/marketing@consultwithmi.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.json())
-      .then(() => {
-        goToStep('success');
-        const card = document.querySelector('.qual-form');
-        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      })
-      .catch(err => {
-        console.error('Lead submission failed:', err);
-        alert('Sorry — something went wrong sending your details. Please email marketing@consultwithmi.com directly.');
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit & Book Call'; }
-      });
-  }
-
-  // Refresh form - reset to first step
-  function resetForm() {
-    currentStep = 1;
-    answers = { 1: null, 2: null, 3: null, 4: null };
-    document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-    document.getElementById('step-1').classList.add('active');
-    document.querySelectorAll('.btn-answer').forEach(btn => btn.classList.remove('selected'));
-    document.getElementById('qualResult').classList.remove('show');
-    updateStepper();
-  }
 
   // Toggle accordion for reasons section
   function toggleAccordion(header) {
@@ -2673,10 +2444,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     setState('stage');
     syncSound();
     focus(minBtn);
-    /* Again on load, and only if nothing else has taken focus in the meantime. The Calendly
-       iframe in the booking card mounts after this script runs and blurs whatever had focus
-       when it does — measured: focus lands on the minimise button, then leaves it for null a
-       moment later. One more pass once the page has finished loading puts it back. */
+    /* Again on load, and only if nothing else has taken focus in the meantime. This was
+       written for the Calendly iframe in the old booking card, which mounted after this
+       script and blurred whatever had focus; the iframe is gone, but a late-loading embed
+       can still steal focus, so the second pass stays as a cheap guard. */
     window.addEventListener('load',()=>{
       if(root.dataset.state==='stage' && !root.hidden &&
          (document.activeElement===document.body || !document.activeElement)) focus(minBtn);

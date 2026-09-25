@@ -26,21 +26,23 @@ Everything is in `index.html`, in three parts:
 
 3. **`<script>` (bottom)** — vanilla JS, no dependencies. Mobile nav toggle, IntersectionObserver scroll-reveal (with a `failsafe()`/`setTimeout` safety net so nothing stays hidden on fast scroll), and the qualification stepper.
 
-### Qualification stepper (the core interactive feature)
+### Intake form (the core interactive feature)
 
-A 4-question YES/NO gate in the hero that decides whether to show the contact form. State lives in two module-level vars: `currentStep` and the `answers` object. Key functions: `answerQuestion(step, answer)`, `goToStep(step)`, `updateStepper()`, and `resetForm()`.
+Six questions in the hero, one per screen, and the only route to Sam's calendar. Nothing qualifies or disqualifies anyone: the answers exist so Sam can work out the plant's Food Sector Category before the call. State is `currentStep` plus the `answers` object; key functions `goToStep`, `nextStep`, `previousStep`, `resetForm`, `answerText`, `buildBookingUrl`, and the `initIntake` IIFE that wires the inputs.
 
-The qualifying path is hardcoded: **Q1=YES, Q2=YES, Q3=NO, Q4=YES** routes to `step-contact`; any other combination routes to `step-disqualified`. This pattern is duplicated in `answerQuestion` (lines ~987 and ~994) — if you change the questions or the qualifying answers, update **both** checks. The semantic meaning: Q1 manufacturer, Q2 SQF focus, Q3 cannabis/THC (YES disqualifies — cannot serve), Q4 budget $1.5k+. See `FORM_FLOW.md`.
+Q1 and Q4 are single-choice and advance on the tap; Q4 stops to ask for the number when the answer is "I know it". Q3 is multi-select with an "Other" field. **Only Q2 and Q3 are required** (`validate`) — they are what the FSC is read from, and every extra required field costs bookings.
 
-### Form submission — IMPORTANT
+The answers reach Calendly as its `a1..a6` prefill params, mapped **by position**: `a1` is the first Invitee Question on the Calendly event, `a2` the second, and so on. Reorder the questions in Calendly and this mapping silently points at the wrong fields. `answerText()` flattens Q3 to a comma-joined list and Q4 to `FSC <n>`; Calendly only prefills a multi-select when the strings match its options exactly.
 
-On valid submit, `submitContact()` POSTs the lead as JSON to the **FormSubmit.co AJAX endpoint** (`https://formsubmit.co/ajax/marketing@consultwithmi.com`) via `fetch`, then shows `step-success`. No `<form>` element / no page redirect — it's a manual `fetch`. The payload is built inline (Name/Email/Phone/Company/City/State + Best Time to Call + Consent + the four Q answers + timestamp), with FormSubmit control fields `_subject`, `_template:table`, `_captcha:false`.
+The stepper it replaced was a 4-question YES/NO gate (manufacturer / SQF / cannabis / budget) that routed to a contact form or to a "not a fit" screen. `FORM_FLOW.md` still describes that flow and is out of date.
 
-Gotchas:
-- **One-time activation:** FormSubmit holds leads until the recipient clicks the activation link emailed on the *first* real POST from the deployed domain. Until then, nothing is forwarded. Activation is per email address + domain.
-- **Won't work from `file://` or some local servers** — needs the deployed (real) origin.
-- To change the destination address, edit the URL in `submitContact()` (separate from the `mailto:` links).
-- On network failure it `alert`s and re-enables the button; success is no longer shown unconditionally.
+### Booking — IMPORTANT
+
+Finishing the questions shows `step-done`, which is a single link: `Book Your Free 30-Minute Session`, a plain `<a target="_blank">` to Sam's Calendly, its href rebuilt with the prefill params on the way in. **Nothing from calendly.com loads on this page** — no `widget.js`, no `widget.css`, no inline iframe, no preconnects. That was deliberate (Sep 2026): the embed was 13 requests and held `load` at ~7s; without it the page settles in ~2s.
+
+Every other "book" button on the page (tiers, final CTA, footer) is `.js-to-quiz`: `href="#lead"` plus a handler that scrolls `#qualForm` into view. Nobody reaches the calendar without going through the six questions, so **do not** point a button straight at Calendly.
+
+There is no lead capture on this page. The contact form that POSTed to FormSubmit.co, its state/city cascade, the phone formatter and `step-success` were removed with the embed; a visitor who answers all six and never books leaves no trace here. If a form is ever wanted back, it is in the history, not commented out in the file.
 
 ## Common edits
 
