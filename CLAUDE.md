@@ -22,27 +22,21 @@ Everything is in `index.html`, in three parts:
 
 1. **`<style>` (top)** — all CSS. Design tokens are CSS variables in `:root` (line ~12): the brand is built on `--green` (`#1B9E77`) with `--ink` text on light sections. A single responsive breakpoint at `@media(max-width:768px)`. Sections alternate `.section-white` / `.section-light`. Scroll-reveal uses the `.reveal` → `.in` class transition.
 
-2. **`<body>`** — stacked `<section>` blocks, each with an `id` used by the nav anchors: hero/`#lead` (contains the qualification form), `#holding-back`, `#consulting-vs-coaching`, `#tiers`, `#faq`, and the final CTA. Mobile nav is a `.burger` toggle.
+2. **`<body>`** — stacked `<section>` blocks, each with an `id` used by the nav anchors: hero/`#lead` (contains the booking card), `#holding-back`, `#consulting-vs-coaching`, `#tiers`, `#faq`, and the final CTA. Mobile nav is a `.burger` toggle.
 
-3. **`<script>` (bottom)** — vanilla JS, no dependencies. Mobile nav toggle, IntersectionObserver scroll-reveal (with a `failsafe()`/`setTimeout` safety net so nothing stays hidden on fast scroll), and the qualification stepper.
-
-### Intake form (the core interactive feature)
-
-Six questions in the hero, one per screen, and the only route to Sam's calendar. Nothing qualifies or disqualifies anyone: the answers exist so Sam can work out the plant's Food Sector Category before the call. State is `currentStep` plus the `answers` object; key functions `goToStep`, `nextStep`, `previousStep`, `resetForm`, `answerText`, `buildBookingUrl`, and the `initIntake` IIFE that wires the inputs.
-
-Q1 and Q4 are single-choice and advance on the tap; Q4 stops to ask for the number when the answer is "I know it". Q3 is multi-select with an "Other" field. **Only Q2 and Q3 are required** (`validate`) — they are what the FSC is read from, and every extra required field costs bookings.
-
-The answers reach Calendly as its `a1..a6` prefill params, mapped **by position**: `a1` is the first Invitee Question on the Calendly event, `a2` the second, and so on. Reorder the questions in Calendly and this mapping silently points at the wrong fields. `answerText()` flattens Q3 to a comma-joined list and Q4 to `FSC <n>`; Calendly only prefills a multi-select when the strings match its options exactly.
-
-The stepper it replaced was a 4-question YES/NO gate (manufacturer / SQF / cannabis / budget) that routed to a contact form or to a "not a fit" screen. `FORM_FLOW.md` still describes that flow and is out of date.
+3. **`<script>` (bottom)** — vanilla JS, no dependencies. Mobile nav toggle, IntersectionObserver scroll-reveal (with a `failsafe()`/`setTimeout` safety net so nothing stays hidden on fast scroll), the nav dropdowns and the FAQ accordion. Nothing on the page needs JS to book.
 
 ### Booking — IMPORTANT
 
-Finishing the questions shows `step-done`, which is a single link: `Book Your Free 30-Minute Session`, a plain `<a target="_blank">` to Sam's Calendly, its href rebuilt with the prefill params on the way in. **Nothing from calendly.com loads on this page** — no `widget.js`, no `widget.css`, no inline iframe, no preconnects. That was deliberate (Sep 2026): the embed was 13 requests and held `load` at ~7s; without it the page settles in ~2s.
+There is no form on this page any more. The hero's right column is `.qual-form#qualForm`, a static card with one link in it: `Book Your Free 30-Minute Session`, a plain `<a target="_blank">` to Sam's Calendly. Every other "book" button (tiers, booking prompt, final CTA, footer) is the same link, so any of them opens the calendar directly. There is no JS behind them.
 
-Every other "book" button on the page (tiers, final CTA, footer) is `.js-to-quiz`: `href="#lead"` plus a handler that scrolls `#qualForm` into view. Nobody reaches the calendar without going through the six questions, so **do not** point a button straight at Calendly.
+The screening questions live on the Calendly event itself (Sep 2026), under Event Types → Invitee Questions. Do not add them back to the page: the client maintains them there, and asking twice is what got the hero's intake removed.
 
-There is no lead capture on this page. The contact form that POSTed to FormSubmit.co, its state/city cascade, the phone formatter and `step-success` were removed with the embed; a visitor who answers all six and never books leaves no trace here. If a form is ever wanted back, it is in the history, not commented out in the file.
+**Nothing from calendly.com loads on this page** — no `widget.js`, no `widget.css`, no inline iframe, no preconnects. That was deliberate: the embed was 13 requests and held `load` at ~7s; without it the page settles in ~2s.
+
+There is no lead capture here. The six-question intake (`currentStep`, `goToStep`, `buildBookingUrl`, the `a1..a6` prefill), the 4-question YES/NO gate before it, the contact form that POSTed to FormSubmit.co, its state/city cascade and the phone formatter are all in the history, not commented out in the file. `FORM_FLOW.md`, `QUICK_START.md` and `SETUP_GUIDE.md` still describe those flows and are out of date.
+
+One structural quirk to know before editing the hero: the markup closes `.wrap` before `<picture>`, so the photo is a direct child of `<section class="hero">`, not of `.wrap`. The mobile layout is tuned to that. Balancing those tags "correctly" makes the credentials list overlap the headline at 390px.
 
 ## Common edits
 
