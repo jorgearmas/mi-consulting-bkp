@@ -28,9 +28,9 @@ Everything is in `index.html`, in three parts:
 
 ### Booking — IMPORTANT
 
-There is no form on this page any more. The hero's right column is `.qual-form#qualForm`, a static card with one link in it: `Book Your Free 30-Minute Session`, a plain `<a target="_blank">` to Sam's Calendly. Every other "book" button (tiers, booking prompt, final CTA, footer) is the same link, so any of them opens the calendar directly. There is no JS behind them.
+There is no form on this page any more. The hero's right column is `.qual-form#qualForm`, a static card with one link in it: `Book Your Free 30-Minute Session`, a plain `<a target="_blank">` to Sam's Calendly (`https://calendly.com/d/d2py-mdz-xkp?hide_gdpr_banner=1`, the client's prescreening event). Every other "book" button (tiers, booking prompt, final CTA, footer) is the same link, so any of them opens the calendar directly. There is no JS behind them.
 
-The screening questions live on the Calendly event itself (Sep 2026), under Event Types → Invitee Questions. Do not add them back to the page: the client maintains them there, and asking twice is what got the hero's intake removed.
+The screening questions live on that Calendly event itself (Sep 2026), under Event Types → Invitee Questions. Do not add them back to the page: the client maintains them there, and asking twice is what got the hero's intake removed.
 
 **Nothing from calendly.com loads on this page** — no `widget.js`, no `widget.css`, no inline iframe, no preconnects. That was deliberate: the embed was 13 requests and held `load` at ~7s; without it the page settles in ~2s.
 
