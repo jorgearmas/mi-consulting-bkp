@@ -205,6 +205,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .drop-text strong{font-weight:700;font-size:.94rem;color:var(--ink);transition:color .18s}
   .drop-text small{font-weight:500;font-size:.78rem;color:var(--slate)}
   .nav-drop-menu a:hover .drop-text strong{color:var(--green-d)}
+  /* The course list is 11 rows long, so the menu scrolls instead of running off the viewport. */
+  .nav-drop-menu{max-height:min(74vh,560px);overflow-y:auto}
+  .drop-sep{display:flex;align-items:center;gap:9px;padding:10px 12px 6px;
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:.63rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--slate)}
+  .drop-sep::after{content:"";flex:1;height:1px;background:var(--line)}
+  .nav-drop-menu a.drop-course{padding:7px 12px;font-weight:600;font-size:.86rem;color:var(--navy-3);gap:0}
+  .nav-drop-menu a.drop-course:hover{color:var(--green-d)}
   .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
   .burger span{width:24px;height:2.4px;background:var(--navy);border-radius:2px;transition:.3s}
 
@@ -906,6 +914,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       background:none;border:none;border-left:2px solid var(--mist);border-radius:0;box-shadow:none}
     .nav-drop:hover .nav-drop-menu{display:none;transform:none}
     .nav-drop.open .nav-drop-menu{display:flex;opacity:1;visibility:visible;transform:none}
+    /* The whole mobile panel already scrolls, so the menu does not need its own scrollbox. */
+    .nav-drop-menu{max-height:none;overflow:visible}
+    .drop-sep{padding:12px 10px 5px}
+    .nav-drop-menu a.drop-course{padding:8px 10px;white-space:normal}
     .nav-drop-menu a{padding:9px 10px;gap:11px;white-space:normal}
     .drop-badge{width:34px;height:34px;border-radius:9px;font-size:.64rem}
     
@@ -1011,6 +1023,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="drop-badge fsma">F</span>
             <span class="drop-text"><strong>FSMA 204 Readiness</strong><small>Traceability &amp; Software</small></span>
           </a>
+          <!-- COURSES - every one of these is the same FoodReady training catalogue page;
+               they are listed separately because that is how the client names them. -->
+          <span class="drop-sep">Courses</span>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">PCQI Training Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">PCQI Conversion Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">FSVP Training Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">FSMA 204 Training Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">Basic HACCP Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">Advanced HACCP Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">Basic Internal Auditor Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">Advanced Internal Auditor Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">SQF Implementation Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">Advanced SQF Course</a>
+          <a class="drop-course" href="https://foodready.ai/foodready-training/" target="_blank" rel="noopener">SQF Edition 10 Conversion Course</a>
         </div>
       </div>
       <a href="#tiers">Tiers</a>
