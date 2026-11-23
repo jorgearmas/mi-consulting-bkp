@@ -1,39 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
-    <loc>https://www.consultwithmi.com/</loc>
-    <lastmod>2026-07-09</lastmod>
+    <loc>https://manufacturingintelligence.ai/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
+
   <url>
-    <loc>https://www.consultwithmi.com/sqf-certification.html</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://manufacturingintelligence.ai/sqf.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://manufacturingintelligence.ai/haccp.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://www.consultwithmi.com/haccp-training.html</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://manufacturingintelligence.ai/pcqi.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://www.consultwithmi.com/pcqi-training.html</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://manufacturingintelligence.ai/fsma-204.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://www.consultwithmi.com/fsma-204-readiness.html</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://manufacturingintelligence.ai/enroll-sqf.html</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
+
   <url>
-    <loc>https://www.consultwithmi.com/privacy.html</loc>
-    <lastmod>2026-07-24</lastmod>
+    <loc>https://manufacturingintelligence.ai/enroll-haccp.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://manufacturingintelligence.ai/enroll-pcqi.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://manufacturingintelligence.ai/privacy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
 </urlset>
